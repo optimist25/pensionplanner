@@ -374,12 +374,12 @@ table.dt tr:hover td{background:var(--bg2)}
 <script>
 const COLORS=['#378ADD','#1D9E75','#D85A30','#7F77DD','#BA7517','#D4537E','#639922','#888780','#E24B4A','#5DCAA5'];
 const DEFAULTS=[
-  {cat:'연금저축',name:'연금저축A',bal:5000,rate:6,add:600,endY:2035,startY:2041,tax:'세액공제',taxedRatio:100,monthly:60,type:'분할'},
-  {cat:'퇴직연금',name:'퇴직연금',bal:8000,rate:5,add:0,endY:2035,startY:2041,tax:'분리과세',taxedRatio:100,monthly:300,type:'분할'},
-  {cat:'IRP',name:'IRP',bal:2000,rate:6,add:300,endY:2037,startY:2041,tax:'세액공제',taxedRatio:100,monthly:40,type:'분할'},
-  {cat:'ISA',name:'ISA',bal:3000,rate:6,add:500,endY:2039,startY:2041,tax:'세액공제',taxedRatio:100,monthly:40,type:'분할'},
-  {cat:'연금보험',name:'연금보험A',bal:0,rate:3,add:1200,endY:2039,startY:2042,tax:'비과세',taxedRatio:0,monthly:100,type:'종신'},
-  {cat:'국민연금',name:'국민연금',bal:5000,rate:3,add:400,endY:2039,startY:2042,tax:'종합과세',taxedRatio:100,monthly:120,type:'종신'},
+  {cat:'연금저축',name:'연금저축A',bal:1000,rate:6,add:600,endY:2035,startY:2041,tax:'세액공제',taxedRatio:100,monthly:60,type:'분할'},
+  {cat:'퇴직연금',name:'퇴직연금',bal:1000,rate:5,add:0,endY:2035,startY:2041,tax:'분리과세',taxedRatio:100,monthly:300,type:'분할'},
+  {cat:'IRP',name:'IRP',bal:1000,rate:6,add:300,endY:2037,startY:2041,tax:'세액공제',taxedRatio:100,monthly:40,type:'분할'},
+  {cat:'ISA',name:'ISA',bal:1000,rate:6,add:500,endY:2039,startY:2041,tax:'세액공제',taxedRatio:100,monthly:40,type:'분할'},
+  {cat:'연금보험',name:'연금보험A',bal:1000,rate:3,add:1200,endY:2039,startY:2042,tax:'비과세',taxedRatio:0,monthly:100,type:'종신'},
+  {cat:'국민연금',name:'국민연금',bal:1000,rate:3,add:400,endY:2039,startY:2042,tax:'종합과세',taxedRatio:100,monthly:120,type:'종신'},
 ];
 
 let products=JSON.parse(JSON.stringify(DEFAULTS));
@@ -405,7 +405,7 @@ function renderTable(){
       +'<td><input type="text" value="'+p.name+'" onchange="products['+i+'].name=this.value" style="width:68px"></td>'
       +(isLifetime ? naCell(72) : '<td><input type="number" value="'+p.bal+'" step="0.01" onchange="products['+i+'].bal=+this.value" style="width:72px"></td>')
       +(isLifetime ? naCell(44) : '<td><input type="number" value="'+p.rate+'" step="0.1" onchange="products['+i+'].rate=+this.value" style="width:44px"></td>')
-      +(isLifetime ? naCell(56) : '<td><input type="number" value="'+p.add+'" onchange="products['+i+'].add=+this.value" style="width:68px"></td>')
+      +(isLifetime ? naCell(68) : '<td><input type="number" value="'+p.add+'" onchange="products['+i+'].add=+this.value" style="width:68px"></td>')
       +(isLifetime ? naCell(54) : '<td><input type="number" value="'+p.endY+'" onchange="products['+i+'].endY=+this.value" style="width:54px"></td>')
       +'<td><input type="number" value="'+p.startY+'" onchange="products['+i+'].startY=+this.value" style="width:54px"></td>'
       +'<td><select onchange="products['+i+'].tax=this.value;renderTable()" style="width:63px">'+taxSel+'</select></td>'
