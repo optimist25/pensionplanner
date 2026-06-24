@@ -219,13 +219,13 @@ table.dt tr:hover td{background:var(--bg2)}
 <body>
 
 <div class="hero">
-  <h1>노후자금 시뮬레이터<span class="hero-ver">V2.2</span></h1>
+  <h1>노후자금 시뮬레이터<span class="hero-ver">V2.3</span></h1>
   <p class="hero-sub">연금·보험·국민연금 통합 수령액 시뮬레이션 — 오프라인 완전독립 버전</p>
 </div>
 
 <div class="page-header">
   <i class="ti ti-chart-line" style="font-size:22px;color:#378ADD"></i>
-  <span class="header-badge">V2.2</span>
+  <span class="header-badge">V2.3</span>
 </div>
 
 <div class="container">
@@ -281,6 +281,7 @@ table.dt tr:hover td{background:var(--bg2)}
   <div class="btn-row">
     <button onclick="addProduct()"><i class="ti ti-plus" style="font-size:14px"></i>상품 추가</button>
     <button class="btn-primary" onclick="runSim()"><i class="ti ti-player-play" style="font-size:14px"></i>시뮬레이션 실행</button>
+    <button id="btnInflatePayout" onclick="toggleInflatePayout()"><i class="ti ti-trending-up" style="font-size:14px"></i>물가상승분 수령액 반영</button>
     <button class="btn-muted" onclick="resetProducts()"><i class="ti ti-refresh" style="font-size:14px"></i>초기화</button>
   </div>
   <div class="guide-box" style="margin-top:12px">
@@ -303,7 +304,7 @@ table.dt tr:hover td{background:var(--bg2)}
   <div class="metric-grid" id="summaryCards"></div>
 
   <div class="card">
-    <div class="section-label">연간 수령액 추이 — 세후 (녹색: 목표 달성 / 파란색: 목표 미달)</div>
+    <div class="section-label">연간 수령액 추이 — 세후 (녹색: 목표 달성 / 파란색: 목표 미달)<span id="inflPayoutBadge"></span></div>
     <div id="legendPayout" class="legend"></div>
     <div class="chart-wrap"><canvas id="chartPayout" role="img" aria-label="연도별 세후 연간 수령액과 목표액 비교 차트"></canvas></div>
   </div>
@@ -346,10 +347,13 @@ table.dt tr:hover td{background:var(--bg2)}
 
 <div class="footer">
   <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:0.5px solid var(--border)">
+    <strong style="color:var(--text2)">V2.3 업데이트</strong>&ensp;
+    📈 인플레이션 감안 월수령액 동반 증가 기능 추가
+    <br>
     <strong style="color:var(--text2)">V2.2 업데이트</strong>&ensp;
     ↕ 항목 순서 변경&ensp;·&ensp;📋 행 복제(Ditto)
   </div>
-  노후연금 시뮬레이터 V2.2 &nbsp;·&nbsp; 완전 독립 오프라인 버전 &nbsp;·&nbsp; 2025.06<br>
+  노후연금 시뮬레이터 V2.3 &nbsp;·&nbsp; 완전 독립 오프라인 버전 &nbsp;·&nbsp; 2025.06<br>
   본 시뮬레이터는 참고용이며, 실제 세금·수익률·법령은 달라질 수 있습니다. 투자 및 연금 계획은 전문가와 상담하시기 바랍니다.
 </div>
 </div>
@@ -383,6 +387,7 @@ const DEFAULTS=[
 ];
 
 let products=JSON.parse(JSON.stringify(DEFAULTS));
+let inflatePayoutMode=false;
 let chartPayout=null,chartBalance=null,chartTaxLimit=null,chartTax=null,pieCharts=[],lastSim=null;
 
 function fmt(n){return Math.round(n).toLocaleString('ko-KR');}
@@ -433,7 +438,27 @@ function moveProduct(i,dir){var j=i+dir;if(j<0||j>=products.length)return;var t=
 function cloneProduct(i){var c=JSON.parse(JSON.stringify(products[i]));c.name=c.name+" (복사)";products.splice(i+1,0,c);renderTable();}
 function resetProducts(){products=JSON.parse(JSON.stringify(DEFAULTS));renderTable();}
 
-function calcAccum(p,startYear){
+function toggleInflatePayout(){
+  inflatePayoutMode=!inflatePayoutMode;
+  var btn=document.getElementById('btnInflatePayout');
+  var infl=v('inflRate');
+  if(inflatePayoutMode){
+    btn.classList.add('btn-primary');
+    btn.innerHTML='<i class="ti ti-check" style="font-size:14px"></i>물가상승 수령 반영 중';
+    if(infl<=0){
+      showToast('⚠️','인플레이션율이 0%입니다','상단 ④ 인플레이션율을 입력해야 수령액이 증액됩니다',4500);
+    } else {
+      showToast('📈','수령액 물가상승 반영 ON','연 '+infl+'%씩 매년 월수령액을 증액합니다 (목표선과 동일 기준)',3500);
+    }
+  } else {
+    btn.classList.remove('btn-primary');
+    btn.innerHTML='<i class="ti ti-trending-up" style="font-size:14px"></i>물가상승분 수령액 반영';
+    showToast('➖','물가상승 반영 OFF','월수령액을 고정 금액으로 계산합니다',2500);
+  }
+  runSim();
+}
+
+function calcAccum(p,startYear,inflRate,inflatePayout){
   const r=p.rate/100;
   let bal=p.bal*10000;
   const result=[];
@@ -443,7 +468,9 @@ function calcAccum(p,startYear){
       bal=(bal+add)*(1+r);
       result.push({year:y,bal,payout:0});
     } else {
-      const annualPayout=p.monthly*10000*12;
+      // 인플레이션 수령액 증액: 목표선과 동일하게 현재연도(startYear) 대비 매년 inflRate만큼 상향
+      const inflF=(inflatePayout&&inflRate>0)?Math.pow(1+inflRate,y-startYear):1;
+      const annualPayout=p.monthly*10000*12*inflF;
       const available=(bal+add)*(1+r);
       if(p.type==='종신'){
         bal=Math.max(0,available-annualPayout);
@@ -484,7 +511,7 @@ function runSim(){
   const tr1=v('taxRate1')/100,tr2=v('taxRate2')/100,tr3=v('taxRate3')/100;
   const compTaxRate=v('compTaxRate')/100||0.154;
 
-  const prodData=products.map(p=>calcAccum(p,curYear));
+  const prodData=products.map(p=>calcAccum(p,curYear,inflRate,inflatePayoutMode));
   const years=[];
   for(let y=curYear;y<=2080;y++) years.push(y);
 
@@ -531,6 +558,10 @@ function runSim(){
   const achRate=Math.round(activeY.filter(d=>d.total>=d.target).length/activeY.length*100);
 
   document.getElementById('resultSection').style.display='block';
+  var ipb=document.getElementById('inflPayoutBadge');
+  if(ipb) ipb.innerHTML = inflatePayoutMode
+    ? ' <span style="display:inline-block;font-size:10px;font-weight:500;background:var(--info-bg);color:var(--info-text);border:.5px solid var(--info-border);padding:1px 8px;border-radius:20px;vertical-align:middle;margin-left:4px">📈 물가상승 반영 (명목금액)</span>'
+    : '';
   document.getElementById('summaryCards').innerHTML=`
     <div class="metric"><div class="metric-label">예상 월 최대 수령액</div><div class="metric-val">${fmt(Math.round(maxMon/10000))}만원</div></div>
     <div class="metric"><div class="metric-label">2040년대 평균 월 수령</div><div class="metric-val ${avg4x>=targetMon?'good':'warn-c'}">${fmt(Math.round(avg4x/10000))}만원</div></div>
