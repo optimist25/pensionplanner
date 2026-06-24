@@ -61,11 +61,11 @@ input:focus,select:focus{border-color:var(--info-text);box-shadow:0 0 0 3px rgba
 .metric-val{font-size:20px;font-weight:500}
 .good{color:var(--success-color)}.warn-c{color:var(--warn-color)}.bad{color:var(--danger-color)}
 .product-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table.pt{width:100%;border-collapse:collapse;font-size:12px;min-width:880px}
-table.pt th{font-size:11px;font-weight:500;color:var(--text3);text-align:left;padding:7px 8px;border-bottom:0.5px solid var(--border);white-space:nowrap;background:var(--bg)}
-table.pt td{padding:4px 5px;border-bottom:0.5px solid var(--border);vertical-align:middle}
+table.pt{width:100%;border-collapse:collapse;font-size:11px}
+table.pt th{font-size:10.5px;font-weight:500;color:var(--text3);text-align:left;padding:5px 5px;border-bottom:0.5px solid var(--border);white-space:nowrap;background:var(--bg)}
+table.pt td{padding:3px 4px;border-bottom:0.5px solid var(--border);vertical-align:middle}
 table.pt tr:last-child td{border-bottom:none}
-table.pt input,table.pt select{height:30px;font-size:12px;padding:0 6px}
+table.pt input,table.pt select{height:27px;font-size:11px;padding:0 4px}
 .btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
 button{height:36px;padding:0 14px;border:0.5px solid var(--border2);border-radius:var(--radius);
   background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;
@@ -155,18 +155,77 @@ table.dt tr:hover td{background:var(--bg2)}
 .guide-num{flex-shrink:0;margin-top:1px}
 .guide-text strong{color:var(--text);font-weight:500}
 .hint{font-size:11px;color:var(--text3);margin-top:6px;padding:8px 10px;background:var(--bg2);border-radius:var(--radius);border-left:2px solid var(--info-border)}
+
+/* ── 행 버튼 ── */
+.btn-ra{background:none;border:1px solid var(--border);border-radius:5px;cursor:pointer;color:var(--text3);padding:3px 6px;line-height:1;transition:background .15s,color .15s}
+.btn-ra:hover:not([disabled]){background:var(--bg2);color:var(--text)}
+.btn-ra[disabled]{opacity:.3;cursor:not-allowed}
+
+/* ── 재무점검 리포트 모달 ── */
+#reportOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:none;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto}
+#reportOverlay.open{display:flex}
+#reportBox{background:#fff;border-radius:16px;width:100%;max-width:720px;box-shadow:0 12px 48px rgba(0,0,0,.22);animation:rpSlide .25s ease;margin:auto}
+@keyframes rpSlide{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(prefers-color-scheme:dark){#reportBox{background:var(--card)}}
+.rp-head{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:14px}
+.rp-title{font-size:16px;font-weight:700;color:var(--text)}
+.rp-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);line-height:1;padding:4px 6px;border-radius:6px}
+.rp-close:hover{background:var(--bg2)}
+.rp-body{padding:20px 24px 24px}
+.rp-section{margin-bottom:20px}
+.rp-section:last-child{margin-bottom:0}
+.rp-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.rp-verdict{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;margin-bottom:14px}
+.rp-verdict.good{background:#eaf3de}.rp-verdict.warn{background:#fff8e6}.rp-verdict.bad{background:#fdecea}
+.rp-verdict-icon{font-size:28px;flex-shrink:0}
+.rp-verdict-text{flex:1}
+.rp-verdict-main{font-size:15px;font-weight:700;color:var(--text)}
+.rp-verdict-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.rp-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.rp-kpi{background:var(--bg2);border-radius:10px;padding:10px 12px}
+.rp-kpi-label{font-size:10px;color:var(--text3);margin-bottom:3px}
+.rp-kpi-val{font-size:17px;font-weight:700;color:var(--text)}
+.rp-kpi-val.good{color:#3a7d0a}.rp-kpi-val.warn{color:#b07800}.rp-kpi-val.bad{color:#c22}
+.rp-products{width:100%;border-collapse:collapse;font-size:12px}
+.rp-products th{background:var(--bg2);padding:6px 8px;text-align:left;font-size:10px;font-weight:600;color:var(--text3);border-bottom:1px solid var(--border)}
+.rp-products td{padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text2)}
+.rp-products tr:last-child td{border:none}
+.rp-checks{list-style:none;padding:0;margin:0}
+.rp-checks li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.rp-checks li:last-child{border:none}
+.rp-check-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.rp-check-icon.ok{background:#eaf3de;color:#27500a}
+.rp-check-icon.warn{background:#fff8e6;color:#7a5200}
+.rp-check-icon.bad{background:#fdecea;color:#a22020}
+.rp-check-body{flex:1}
+.rp-check-title{font-weight:600;color:var(--text);margin-bottom:2px}
+.rp-check-desc{font-size:11px;color:var(--text3);line-height:1.5}
+.rp-actions{list-style:none;padding:0;margin:0}
+.rp-actions li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border)}
+.rp-actions li:last-child{border:none}
+.rp-act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.rp-act-dot.high{background:#c22}.rp-act-dot.mid{background:#b07800}.rp-act-dot.low{background:#3a7d0a}
+.rp-act-text{flex:1;font-size:12px;color:var(--text2);line-height:1.5}
+.rp-act-text strong{color:var(--text);display:block;margin-bottom:2px;font-size:13px}
+.rp-print-btn{width:100%;margin-top:16px;padding:10px;background:var(--info-bg);color:var(--info-text);border:1px solid var(--info-border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.rp-print-btn:hover{opacity:.9}
+@media print{
+  #reportOverlay{position:static;background:none;display:block;padding:0}
+  #reportBox{box-shadow:none;border-radius:0}
+  .rp-close,.rp-print-btn{display:none}
+}
 </style>
 </head>
 <body>
 
 <div class="hero">
-  <h1>노후자금 시뮬레이터<span class="hero-ver">V2.1</span></h1>
+  <h1>노후자금 시뮬레이터<span class="hero-ver">V2.2</span></h1>
   <p class="hero-sub">연금·보험·국민연금 통합 수령액 시뮬레이션 — 오프라인 완전독립 버전</p>
 </div>
 
 <div class="page-header">
   <i class="ti ti-chart-line" style="font-size:22px;color:#378ADD"></i>
-  <span class="header-badge">V2.1</span>
+  <span class="header-badge">V2.2</span>
 </div>
 
 <div class="container">
@@ -205,16 +264,16 @@ table.dt tr:hover td{background:var(--bg2)}
       <thead><tr>
         <th><span class="num-badge">㉮</span>구분</th>
         <th><span class="num-badge">㉯</span>상품명</th>
-        <th><span class="num-badge">㉰</span>현재잔고(만원)</th>
+        <th><span class="num-badge">㉰</span>잔고(만원)</th>
         <th><span class="num-badge">㉱</span>연수익율(%)</th>
-        <th><span class="num-badge">㉲</span>추가불입(만원/년)</th>
-        <th><span class="num-badge">㉳</span>불입완료연도</th>
-        <th><span class="num-badge">㉴</span>연금개시연도</th>
+        <th><span class="num-badge">㉲</span>추가불입(만/년)</th>
+        <th><span class="num-badge">㉳</span>불입완료</th>
+        <th><span class="num-badge">㉴</span>개시연도</th>
         <th><span class="num-badge">㉵</span>세금유형</th>
-        <th><span class="num-badge">㉶</span>과세비율(%)<br><span style="font-size:10px;font-weight:400;color:var(--text3)">세액공제분</span></th>
-        <th><span class="num-badge">㉷</span>월정액수령(만원)</th>
+        <th><span class="num-badge">㉶</span>과세비율</th>
+        <th><span class="num-badge">㉷</span>월수령(만)</th>
         <th><span class="num-badge">㉸</span>수령방식</th>
-        <th></th>
+        <th style="text-align:center">조작</th>
       </tr></thead>
       <tbody id="productBody"></tbody>
     </table>
@@ -223,7 +282,6 @@ table.dt tr:hover td{background:var(--bg2)}
     <button onclick="addProduct()"><i class="ti ti-plus" style="font-size:14px"></i>상품 추가</button>
     <button class="btn-primary" onclick="runSim()"><i class="ti ti-player-play" style="font-size:14px"></i>시뮬레이션 실행</button>
     <button class="btn-muted" onclick="resetProducts()"><i class="ti ti-refresh" style="font-size:14px"></i>초기화</button>
-    <button class="btn-muted" onclick="exportCSV()"><i class="ti ti-download" style="font-size:14px"></i>결과 CSV 저장</button>
   </div>
   <div class="guide-box" style="margin-top:12px">
     <div class="guide-title">상품 입력 안내</div>
@@ -287,10 +345,13 @@ table.dt tr:hover td{background:var(--bg2)}
 </div>
 
 <div class="footer">
-  노후연금 시뮬레이터 · 완전 독립 오프라인 버전 · 오류 수정 로직 적용 (2025.06)<br>
-  본 시뮬레이터는 참고용이며 실제 세금·수익률은 달라질 수 있습니다.
+  <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:0.5px solid var(--border)">
+    <strong style="color:var(--text2)">V2.2 업데이트</strong>&ensp;
+    ↕ 항목 순서 변경&ensp;·&ensp;📋 행 복제(Ditto)
+  </div>
+  노후연금 시뮬레이터 V2.2 &nbsp;·&nbsp; 완전 독립 오프라인 버전 &nbsp;·&nbsp; 2025.06<br>
+  본 시뮬레이터는 참고용이며, 실제 세금·수익률·법령은 달라질 수 있습니다. 투자 및 연금 계획은 전문가와 상담하시기 바랍니다.
 </div>
-
 </div>
 
 <script>
@@ -340,20 +401,25 @@ function renderTable(){
     const typeSel=typeOpts.map(t=>'<option'+(p.type===t?' selected':'')+'>'+t+'</option>').join('');
     const naCell=(w)=>'<td><input type="text" value="N/A" disabled style="width:'+w+'px;background:var(--bg2);color:var(--text3);text-align:center;cursor:not-allowed;border-color:var(--border)"></td>';
     tr.innerHTML=
-      '<td><input type="text" value="'+p.cat+'" onchange="products['+i+'].cat=this.value" style="width:68px"></td>'
-      +'<td><input type="text" value="'+p.name+'" onchange="products['+i+'].name=this.value" style="width:80px"></td>'
-      +(isLifetime ? naCell(88) : '<td><input type="number" value="'+p.bal+'" step="0.01" onchange="products['+i+'].bal=+this.value" style="width:88px"></td>')
-      +(isLifetime ? naCell(52) : '<td><input type="number" value="'+p.rate+'" step="0.1" onchange="products['+i+'].rate=+this.value" style="width:52px"></td>')
-      +(isLifetime ? naCell(80) : '<td><input type="number" value="'+p.add+'" onchange="products['+i+'].add=+this.value" style="width:80px"></td>')
-      +(isLifetime ? naCell(66) : '<td><input type="number" value="'+p.endY+'" onchange="products['+i+'].endY=+this.value" style="width:66px"></td>')
-      +'<td><input type="number" value="'+p.startY+'" onchange="products['+i+'].startY=+this.value" style="width:66px"></td>'
-      +'<td><select onchange="products['+i+'].tax=this.value;renderTable()" style="width:76px">'+taxSel+'</select></td>'
+      '<td><input type="text" value="'+p.cat+'" onchange="products['+i+'].cat=this.value" style="width:56px"></td>'
+      +'<td><input type="text" value="'+p.name+'" onchange="products['+i+'].name=this.value" style="width:68px"></td>'
+      +(isLifetime ? naCell(72) : '<td><input type="number" value="'+p.bal+'" step="0.01" onchange="products['+i+'].bal=+this.value" style="width:72px"></td>')
+      +(isLifetime ? naCell(44) : '<td><input type="number" value="'+p.rate+'" step="0.1" onchange="products['+i+'].rate=+this.value" style="width:44px"></td>')
+      +(isLifetime ? naCell(56) : '<td><input type="number" value="'+p.add+'" onchange="products['+i+'].add=+this.value" style="width:68px"></td>')
+      +(isLifetime ? naCell(54) : '<td><input type="number" value="'+p.endY+'" onchange="products['+i+'].endY=+this.value" style="width:54px"></td>')
+      +'<td><input type="number" value="'+p.startY+'" onchange="products['+i+'].startY=+this.value" style="width:54px"></td>'
+      +'<td><select onchange="products['+i+'].tax=this.value;renderTable()" style="width:63px">'+taxSel+'</select></td>'
       +(p.tax==='세액공제'
         ?'<td><input type="number" value="'+(p.taxedRatio??100)+'" min="0" max="100" step="1" onchange="products['+i+'].taxedRatio=+this.value" style="width:60px" title="세액공제 받은 금액 비율% (나머지는 비과세 처리)"></td>'
         :'<td><input type="text" value="N/A" disabled style="width:60px;background:var(--bg2);color:var(--text3);text-align:center;cursor:not-allowed;border-color:var(--border)"></td>')
-      +'<td><input type="number" value="'+p.monthly+'" step="10" onchange="products['+i+'].monthly=+this.value" style="width:68px"></td>'
-      +'<td><select onchange="products['+i+'].type=this.value;products['+i+'].type=this.value;renderTable()" style="width:58px">'+typeSel+'</select></td>'
-      +'<td><button class="btn-danger" onclick="delProduct('+i+')" title="삭제"><i class="ti ti-trash" style="font-size:14px"></i></button></td>';
+      +'<td><input type="number" value="'+p.monthly+'" step="10" onchange="products['+i+'].monthly=+this.value" style="width:56px"></td>'
+      +'<td><select onchange="products['+i+'].type=this.value;products['+i+'].type=this.value;renderTable()" style="width:50px">'+typeSel+'</select></td>'
+      +'<td style="white-space:nowrap;text-align:center">'
+      +'<button class="btn-ra" onclick="moveProduct('+i+',-1)" title="위로"'+(i===0?' disabled':'')+' ><i class="ti ti-arrow-up" style="font-size:12px"></i></button> '
+      +'<button class="btn-ra" onclick="cloneProduct('+i+')" title="복제"><i class="ti ti-copy" style="font-size:12px"></i></button> '
+      +'<button class="btn-ra" onclick="moveProduct('+i+',1)" title="아래로"'+(i===products.length-1?' disabled':'')+' ><i class="ti ti-arrow-down" style="font-size:12px"></i></button> '
+      +'<button class="btn-danger" onclick="delProduct('+i+')" title="삭제"><i class="ti ti-trash" style="font-size:12px"></i></button>'
+      +'</td>';
     tb.appendChild(tr);
   });
 }
@@ -363,6 +429,8 @@ function addProduct(){
   renderTable();
 }
 function delProduct(i){products.splice(i,1);renderTable();}
+function moveProduct(i,dir){var j=i+dir;if(j<0||j>=products.length)return;var t=products[i];products[i]=products[j];products[j]=t;renderTable();}
+function cloneProduct(i){var c=JSON.parse(JSON.stringify(products[i]));c.name=c.name+" (복사)";products.splice(i+1,0,c);renderTable();}
 function resetProducts(){products=JSON.parse(JSON.stringify(DEFAULTS));renderTable();}
 
 function calcAccum(p,startYear){
@@ -940,24 +1008,36 @@ function renderAnalysis(sim){
     +'<ul class="action-list">'+actionsHtml+'</ul>';
 }
 
-function exportCSV(){
-  if(!lastSim){alert('먼저 시뮬레이션을 실행해주세요.');return;}
-  const display=lastSim.filter(d=>d.year>=2038&&d.year<=2075);
-  const headers=['연도','나이',...products.map(p=>p.name),'합계(만원)','월수령(만원)','목표(만원)','달성여부'];
-  const rows=display.map(d=>[
-    d.year,d.age,
-    ...d.perProd.map(v=>Math.round(v/10000)),
-    Math.round(d.total/10000),
-    Math.round(d.total/12/10000),
-    Math.round(d.target/10000),
-    d.total>=d.target?'달성':'미달'
-  ]);
-  const csv='﻿'+[headers,...rows].map(r=>r.join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download='노후연금_시뮬레이션_결과.csv';
-  a.click();
+
+
+
+
+/* ── 토스트 ── */
+(function(){
+  var w=document.createElement('div');
+  w.id='toastWrap';
+  w.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:10000;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none';
+  document.body.appendChild(w);
+})();
+function showToast(icon,msg,sub,dur){
+  dur=dur||3000;
+  var w=document.getElementById('toastWrap');
+  var el=document.createElement('div');
+  el.style.cssText='display:flex;align-items:center;gap:10px;background:#1a1a1a;color:#fff;font-size:13px;font-weight:500;padding:11px 18px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:auto;white-space:nowrap;animation:toastIn .25s ease';
+  el.innerHTML='<span style="font-size:17px">'+icon+'</span><div><div>'+msg+'</div>'+(sub?'<div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:1px">'+sub+'</div>':'')+'</div>';
+  var style=document.createElement('style');
+  style.textContent='@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(6px)}}';
+  if(!document.getElementById('toastStyle')){style.id='toastStyle';document.head.appendChild(style);}
+  w.appendChild(el);
+  setTimeout(function(){el.style.animation='toastOut .3s ease forwards';setTimeout(function(){el.remove();},300);},dur);
 }
+
+
+
+
+
+
+
 
 renderTable();
 runSim();
