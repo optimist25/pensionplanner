@@ -232,6 +232,7 @@ table.dt tr:hover td{background:var(--bg2)}
 
 <div class="container">
 
+<div id="page1">
 <div class="card">
   <div class="section-label">기본 설정</div>
   <div class="input-grid g4">
@@ -301,8 +302,10 @@ table.dt tr:hover td{background:var(--bg2)}
     <div class="guide-row"><span class="guide-num"><span class="num-badge">㉸</span></span><span class="guide-text"><strong>수령방식</strong> — 분할: 잔고를 나눠 수령 후 소진 종료 / 종신: 평생 지급 (국민연금·연금보험 선택).</span></div>
   </div>
 </div>
+</div><!-- /page1 -->
 
 <div id="resultSection" style="display:none">
+  <div style="margin-bottom:14px"><button class="btn-muted" onclick="showSetup()"><i class="ti ti-arrow-left" style="font-size:14px"></i>입력 화면으로 돌아가기 · 다시 설정</button></div>
   <div class="metric-grid" id="summaryCards"></div>
 
   <div class="card">
@@ -456,6 +459,12 @@ function moveProduct(i,dir){var j=i+dir;if(j<0||j>=products.length)return;var t=
 function cloneProduct(i){var c=JSON.parse(JSON.stringify(products[i]));c.name=c.name+" (복사)";products.splice(i+1,0,c);renderTable();}
 function resetProducts(){products=JSON.parse(JSON.stringify(DEFAULTS));renderTable();}
 
+function showSetup(){
+  document.getElementById('resultSection').style.display='none';
+  document.getElementById('page1').style.display='block';
+  window.scrollTo(0,0);
+}
+
 function toggleInflatePayout(){
   inflatePayoutMode=!inflatePayoutMode;
   var btn=document.getElementById('btnInflatePayout');
@@ -575,7 +584,9 @@ function runSim(){
   const avg4x=activeY.slice(0,10).reduce((s,d)=>s+d.total,0)/10/12;
   const achRate=Math.round(activeY.filter(d=>d.total>=d.target).length/activeY.length*100);
 
+  document.getElementById('page1').style.display='none';
   document.getElementById('resultSection').style.display='block';
+  window.scrollTo(0,0);
   var ipb=document.getElementById('inflPayoutBadge');
   if(ipb) ipb.innerHTML = inflatePayoutMode
     ? ' <span style="display:inline-block;font-size:10px;font-weight:500;background:var(--info-bg);color:var(--info-text);border:.5px solid var(--info-border);padding:1px 8px;border-radius:20px;vertical-align:middle;margin-left:4px">📈 물가상승 반영 (명목금액)</span>'
@@ -615,7 +626,7 @@ function runSim(){
       plugins:{legend:{display:false},tooltip:{
         mode:'index',intersect:false,
         callbacks:{
-          title:items=>'연도: '+items[0].label+'년',
+          title:items=>(items&&items[0]?'연도: '+items[0].label+'년':''),
           label:c=>{
             if(c.datasetIndex===2) return '목표: '+fmt(c.raw)+'만원/년';
             return c.dataset.label+': '+fmt(c.raw)+'만원/년';
@@ -663,7 +674,7 @@ function runSim(){
       plugins:{legend:{display:false},tooltip:{
         mode:'index',intersect:false,
         callbacks:{
-          title:items=>'연도: '+items[0].label+'년',
+          title:items=>(items&&items[0]?'연도: '+items[0].label+'년':''),
           label:c=>{
             if(c.raw===null||c.raw===0) return null;
             return c.dataset.label+': '+fmt(c.raw)+'만원';
@@ -808,7 +819,7 @@ function runSim(){
       plugins:{legend:{display:false},tooltip:{
         mode:'index',intersect:false,
         callbacks:{
-          title:items=>'연도: '+items[0].label+'년',
+          title:items=>(items&&items[0]?'연도: '+items[0].label+'년':''),
           label:c=>{
             if(c.raw===0) return null;
             return c.dataset.label+': '+fmt(c.raw)+'만원';
@@ -865,7 +876,7 @@ function runSim(){
       plugins:{legend:{display:false},tooltip:{
         mode:'index',intersect:false,
         callbacks:{
-          title:items=>'연도: '+items[0].label+'년',
+          title:items=>(items&&items[0]?'연도: '+items[0].label+'년':''),
           label:c=>{
             if(c.raw===null||c.raw===0) return null;
             if(c.dataset.label==='저율과세 한도') return '한도: '+fmt(c.raw)+'만원/년';
@@ -1089,7 +1100,6 @@ function showToast(icon,msg,sub,dur){
 
 
 renderTable();
-runSim();
 </script>
 </body>
 </html>
