@@ -54,6 +54,8 @@ input[type=number],input[type=text],select{
   background:var(--bg);color:var(--text);font-size:13px;width:100%;outline:none;
   font-family:inherit;transition:border-color .15s,box-shadow .15s}
 input:focus,select:focus{border-color:var(--info-text);box-shadow:0 0 0 3px rgba(55,138,221,0.15)}
+.input-group input{text-align:right}
+table.pt input.money,table.pt input[type=number]{text-align:right}
 .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
 @media(max-width:600px){.metric-grid{grid-template-columns:repeat(2,1fr)}}
 .metric{background:var(--bg2);border-radius:var(--radius);padding:14px 16px}
@@ -235,11 +237,11 @@ table.dt tr:hover td{background:var(--bg2)}
   <div class="input-grid g4">
     <div class="input-group"><label><span class="num-badge">①</span>현재 만나이</label><input type="number" id="curAge" value="45" min="20" max="80"></div>
     <div class="input-group"><label><span class="num-badge">②</span>현재 연도</label><input type="number" id="curYear" value="2026" min="2020" max="2040"></div>
-    <div class="input-group"><label><span class="num-badge">③</span>월 목표 수령액 (만원)</label><input type="number" id="targetMon" value="500" min="100" max="5000" step="50"></div>
+    <div class="input-group"><label><span class="num-badge">③</span>월 목표 수령액 (만원)</label><input type="text" inputmode="decimal" id="targetMon" value="500" oninput="liveComma(this)"></div>
     <div class="input-group"><label><span class="num-badge">④</span>인플레이션율 (%/년)</label><input type="number" id="inflRate" value="0" min="0" max="5" step="0.1"></div>
   </div>
   <div class="input-grid g5">
-    <div class="input-group"><label><span class="num-badge">⑤</span>저율과세 한도 (만원/년)</label><input type="number" id="taxLimit" value="1500" min="0" max="3000" step="100"></div>
+    <div class="input-group"><label><span class="num-badge">⑤</span>저율과세 한도 (만원/년)</label><input type="text" inputmode="decimal" id="taxLimit" value="1,500" oninput="liveComma(this)"></div>
     <div class="input-group"><label><span class="num-badge">⑥</span>저율과세율 ~70세 (%)</label><input type="number" id="taxRate1" value="5.5" min="0" max="15" step="0.1"></div>
     <div class="input-group"><label><span class="num-badge">⑦</span>저율과세율 70~80세 (%)</label><input type="number" id="taxRate2" value="4.4" min="0" max="15" step="0.1"></div>
     <div class="input-group"><label><span class="num-badge">⑧</span>저율과세율 80세~ (%)</label><input type="number" id="taxRate3" value="3.3" min="0" max="15" step="0.1"></div>
@@ -391,7 +393,23 @@ let inflatePayoutMode=false;
 let chartPayout=null,chartBalance=null,chartTaxLimit=null,chartTax=null,pieCharts=[],lastSim=null;
 
 function fmt(n){return Math.round(n).toLocaleString('ko-KR');}
-function v(id){return +document.getElementById(id).value;}
+function v(id){return +(''+document.getElementById(id).value).replace(/,/g,'');}
+// 천단위 콤마 헬퍼
+function nf(n){if(n===''||n==null||isNaN(n))return '';var s=(''+n).split('.');s[0]=s[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');return s.join('.');}
+function uncomma(s){return (''+s).replace(/,/g,'');}
+function liveComma(el){
+  var raw=el.value.replace(/[^0-9.]/g,'');
+  var fd=raw.indexOf('.');
+  if(fd>-1) raw=raw.slice(0,fd+1)+raw.slice(fd+1).replace(/\./g,'');
+  if(raw===''||raw==='.'){el.value=raw;return;}
+  var sel=(el.selectionStart==null?el.value.length:el.selectionStart);
+  var fromEnd=el.value.length-sel;
+  var parts=raw.split('.');
+  var intp=parts[0].replace(/^0+(?=\d)/,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  el.value=intp+(parts.length>1?'.'+parts[1]:'');
+  var pos=el.value.length-fromEnd; if(pos<0)pos=0;
+  try{el.setSelectionRange(pos,pos);}catch(e){}
+}
 
 function renderTable(){
   const tb=document.getElementById('productBody');
@@ -408,16 +426,16 @@ function renderTable(){
     tr.innerHTML=
       '<td><input type="text" value="'+p.cat+'" onchange="products['+i+'].cat=this.value" style="width:56px"></td>'
       +'<td><input type="text" value="'+p.name+'" onchange="products['+i+'].name=this.value" style="width:68px"></td>'
-      +(isLifetime ? naCell(72) : '<td><input type="number" value="'+p.bal+'" step="0.01" onchange="products['+i+'].bal=+this.value" style="width:72px"></td>')
+      +(isLifetime ? naCell(72) : '<td><input type="text" inputmode="decimal" class="money" value="'+nf(p.bal)+'" oninput="liveComma(this)" onchange="products['+i+'].bal=+uncomma(this.value)" style="width:72px"></td>')
       +(isLifetime ? naCell(44) : '<td><input type="number" value="'+p.rate+'" step="0.1" onchange="products['+i+'].rate=+this.value" style="width:44px"></td>')
-      +(isLifetime ? naCell(68) : '<td><input type="number" value="'+p.add+'" onchange="products['+i+'].add=+this.value" style="width:68px"></td>')
+      +(isLifetime ? naCell(68) : '<td><input type="text" inputmode="decimal" class="money" value="'+nf(p.add)+'" oninput="liveComma(this)" onchange="products['+i+'].add=+uncomma(this.value)" style="width:68px"></td>')
       +(isLifetime ? naCell(54) : '<td><input type="number" value="'+p.endY+'" onchange="products['+i+'].endY=+this.value" style="width:54px"></td>')
       +'<td><input type="number" value="'+p.startY+'" onchange="products['+i+'].startY=+this.value" style="width:54px"></td>'
       +'<td><select onchange="products['+i+'].tax=this.value;renderTable()" style="width:63px">'+taxSel+'</select></td>'
       +(p.tax==='세액공제'
         ?'<td><input type="number" value="'+(p.taxedRatio??100)+'" min="0" max="100" step="1" onchange="products['+i+'].taxedRatio=+this.value" style="width:60px" title="세액공제 받은 금액 비율% (나머지는 비과세 처리)"></td>'
         :'<td><input type="text" value="N/A" disabled style="width:60px;background:var(--bg2);color:var(--text3);text-align:center;cursor:not-allowed;border-color:var(--border)"></td>')
-      +'<td><input type="number" value="'+p.monthly+'" step="10" onchange="products['+i+'].monthly=+this.value" style="width:56px"></td>'
+      +'<td><input type="text" inputmode="decimal" class="money" value="'+nf(p.monthly)+'" oninput="liveComma(this)" onchange="products['+i+'].monthly=+uncomma(this.value)" style="width:56px"></td>'
       +'<td><select onchange="products['+i+'].type=this.value;products['+i+'].type=this.value;renderTable()" style="width:50px">'+typeSel+'</select></td>'
       +'<td style="white-space:nowrap;text-align:center">'
       +'<button class="btn-ra" onclick="moveProduct('+i+',-1)" title="위로"'+(i===0?' disabled':'')+' ><i class="ti ti-arrow-up" style="font-size:12px"></i></button> '
