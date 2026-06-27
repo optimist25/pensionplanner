@@ -1404,12 +1404,12 @@ renderTable();
 
 <!-- ===== PAGE 4: 국민연금 수령연차 시뮬레이션 (iframe 격리) ===== -->
 <div id="kookminPage" style="display:none;position:fixed;inset:0;z-index:99999;background:#f0efe8;flex-direction:column;">
-  <iframe id="kookminFrame" title="국민연금 수령 시뮬레이터" style="flex:1 1 auto;width:100%;border:0;display:block;" srcdoc="<!DOCTYPE html>
+  <iframe id="kookminFrame" title="국민연금 시뮬레이터" style="flex:1 1 auto;width:100%;border:0;display:block;" srcdoc="<!DOCTYPE html>
 <html lang=&quot;ko&quot;>
 <head>
 <meta charset=&quot;UTF-8&quot;>
 <meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
-<title>국민연금 수령 시뮬레이터</title>
+<title>국민연금 시뮬레이터</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1521,9 +1521,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </head>
 <body>
 <header class=&quot;header&quot;>
-  <div class=&quot;header-title&quot;><svg viewBox=&quot;0 0 100 100&quot; width=&quot;38&quot; height=&quot;38&quot; aria-hidden=&quot;true&quot; style=&quot;vertical-align:middle;margin-right:10px;display:inline-block&quot;><defs><linearGradient id=&quot;npGrad&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;1&quot; y2=&quot;1&quot;><stop offset=&quot;0&quot; stop-color=&quot;#1D90F9&quot;/><stop offset=&quot;.55&quot; stop-color=&quot;#0A5BEA&quot;/><stop offset=&quot;1&quot; stop-color=&quot;#043DC7&quot;/></linearGradient></defs><rect x=&quot;3&quot; y=&quot;3&quot; width=&quot;94&quot; height=&quot;94&quot; rx=&quot;24&quot; fill=&quot;url(#npGrad)&quot;/><rect x=&quot;11&quot; y=&quot;11&quot; width=&quot;78&quot; height=&quot;78&quot; rx=&quot;17&quot; fill=&quot;none&quot; stroke=&quot;#9CC6FF&quot; stroke-width=&quot;2.5&quot; opacity=&quot;.7&quot;/><text x=&quot;50&quot; y=&quot;45&quot; text-anchor=&quot;middle&quot; font-family=&quot;-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif&quot; font-size=&quot;30&quot; font-weight=&quot;800&quot; fill=&quot;#fff&quot;>국민</text><text x=&quot;50&quot; y=&quot;81&quot; text-anchor=&quot;middle&quot; font-family=&quot;-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif&quot; font-size=&quot;30&quot; font-weight=&quot;800&quot; fill=&quot;#fff&quot;>연금</text></svg>국민연금 수령 시뮬레이터<span class=&quot;header-ver&quot;>오프라인 버전</span></div>
+  <div class=&quot;header-title&quot;><svg viewBox=&quot;0 0 100 100&quot; width=&quot;38&quot; height=&quot;38&quot; aria-hidden=&quot;true&quot; style=&quot;vertical-align:middle;margin-right:10px;display:inline-block&quot;><defs><linearGradient id=&quot;npGrad&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;1&quot; y2=&quot;1&quot;><stop offset=&quot;0&quot; stop-color=&quot;#1D90F9&quot;/><stop offset=&quot;.55&quot; stop-color=&quot;#0A5BEA&quot;/><stop offset=&quot;1&quot; stop-color=&quot;#043DC7&quot;/></linearGradient></defs><rect x=&quot;3&quot; y=&quot;3&quot; width=&quot;94&quot; height=&quot;94&quot; rx=&quot;24&quot; fill=&quot;url(#npGrad)&quot;/><rect x=&quot;11&quot; y=&quot;11&quot; width=&quot;78&quot; height=&quot;78&quot; rx=&quot;17&quot; fill=&quot;none&quot; stroke=&quot;#9CC6FF&quot; stroke-width=&quot;2.5&quot; opacity=&quot;.7&quot;/><text x=&quot;50&quot; y=&quot;45&quot; text-anchor=&quot;middle&quot; font-family=&quot;-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif&quot; font-size=&quot;30&quot; font-weight=&quot;800&quot; fill=&quot;#fff&quot;>국민</text><text x=&quot;50&quot; y=&quot;81&quot; text-anchor=&quot;middle&quot; font-family=&quot;-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif&quot; font-size=&quot;30&quot; font-weight=&quot;800&quot; fill=&quot;#fff&quot;>연금</text></svg>국민연금 시뮬레이터<span class=&quot;header-ver&quot;>오프라인 버전</span></div>
   <div class=&quot;header-sub&quot;>조기수령(감액) · 정시수령 · 연기수령(증액) 비교 분석</div>
-  <button type=&quot;button&quot; onclick=&quot;parent.closeKookminPage&amp;&amp;parent.closeKookminPage()&quot; style=&quot;position:absolute;right:14px;bottom:12px;display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:6px 12px;border:1px solid var(--border2);border-radius:9px;background:var(--bg2);color:var(--text1);cursor:pointer&quot;>&larr; 돌아가기</button>
+  <div style=&quot;text-align:right;margin-top:14px&quot;><button type=&quot;button&quot; onclick=&quot;parent.closeKookminPage&amp;&amp;parent.closeKookminPage()&quot; style=&quot;display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:6px 12px;border:1px solid var(--border2);border-radius:9px;background:var(--bg2);color:var(--text1);cursor:pointer&quot;>&larr; 돌아가기</button></div>
 </header>
 
 <div class=&quot;wrap&quot;>
