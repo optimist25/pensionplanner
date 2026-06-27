@@ -1404,11 +1404,6 @@ renderTable();
 
 <!-- ===== PAGE 4: 국민연금 수령연차 시뮬레이션 (iframe 격리) ===== -->
 <div id="kookminPage" style="display:none;position:fixed;inset:0;z-index:99999;background:#f0efe8;flex-direction:column;">
-  <div style="flex:0 0 auto;display:flex;align-items:center;padding:10px 16px;background:#ffffff;border-bottom:.5px solid rgba(0,0,0,.12);">
-    <button type="button" onclick="closeKookminPage()" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:8px 14px;border:1px solid rgba(0,0,0,.18);border-radius:10px;background:#f7f7f5;color:#1a1a18;cursor:pointer;">
-      &larr; 노후연금시뮬레이션으로 돌아가기
-    </button>
-  </div>
   <iframe id="kookminFrame" title="국민연금 수령 시뮬레이터" style="flex:1 1 auto;width:100%;border:0;display:block;" srcdoc="<!DOCTYPE html>
 <html lang=&quot;ko&quot;>
 <head>
@@ -1452,7 +1447,7 @@ renderTable();
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text1);min-height:100vh;font-size:14px;line-height:1.6}
 
 /* Header (노후자금 시뮬레이터 hero 스타일에 맞춤) */
-.header{background:var(--bg2);border-bottom:.5px solid var(--border);padding:32px 24px 28px;text-align:center;display:block}
+.header{background:var(--bg2);border-bottom:.5px solid var(--border);padding:32px 24px 28px;text-align:center;display:block;position:relative}
 .header-title{font-size:26px;font-weight:500;color:var(--text1);margin-bottom:6px;letter-spacing:-.02em}
 .header-sub{font-size:13px;color:var(--text3);margin-top:0}
 .header-ver{display:inline-block;font-size:11px;font-weight:500;background:var(--info-bg);color:var(--info-text);border:.5px solid var(--info-border);padding:2px 10px;border-radius:20px;margin-left:8px;vertical-align:middle}
@@ -1528,6 +1523,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <header class=&quot;header&quot;>
   <div class=&quot;header-title&quot;><svg viewBox=&quot;0 0 100 100&quot; width=&quot;38&quot; height=&quot;38&quot; aria-hidden=&quot;true&quot; style=&quot;vertical-align:middle;margin-right:10px;display:inline-block&quot;><defs><linearGradient id=&quot;npGrad&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;1&quot; y2=&quot;1&quot;><stop offset=&quot;0&quot; stop-color=&quot;#1D90F9&quot;/><stop offset=&quot;.55&quot; stop-color=&quot;#0A5BEA&quot;/><stop offset=&quot;1&quot; stop-color=&quot;#043DC7&quot;/></linearGradient></defs><rect x=&quot;3&quot; y=&quot;3&quot; width=&quot;94&quot; height=&quot;94&quot; rx=&quot;24&quot; fill=&quot;url(#npGrad)&quot;/><rect x=&quot;11&quot; y=&quot;11&quot; width=&quot;78&quot; height=&quot;78&quot; rx=&quot;17&quot; fill=&quot;none&quot; stroke=&quot;#9CC6FF&quot; stroke-width=&quot;2.5&quot; opacity=&quot;.7&quot;/><text x=&quot;50&quot; y=&quot;45&quot; text-anchor=&quot;middle&quot; font-family=&quot;-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif&quot; font-size=&quot;30&quot; font-weight=&quot;800&quot; fill=&quot;#fff&quot;>국민</text><text x=&quot;50&quot; y=&quot;81&quot; text-anchor=&quot;middle&quot; font-family=&quot;-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif&quot; font-size=&quot;30&quot; font-weight=&quot;800&quot; fill=&quot;#fff&quot;>연금</text></svg>국민연금 수령 시뮬레이터<span class=&quot;header-ver&quot;>오프라인 버전</span></div>
   <div class=&quot;header-sub&quot;>조기수령(감액) · 정시수령 · 연기수령(증액) 비교 분석</div>
+  <button type=&quot;button&quot; onclick=&quot;parent.closeKookminPage&amp;&amp;parent.closeKookminPage()&quot; style=&quot;position:absolute;right:14px;bottom:12px;display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:6px 12px;border:1px solid var(--border2);border-radius:9px;background:var(--bg2);color:var(--text1);cursor:pointer&quot;>&larr; 돌아가기</button>
 </header>
 
 <div class=&quot;wrap&quot;>
@@ -2134,7 +2130,7 @@ function closeKookminPage(){
       endY:startY-1,
       startY:startY,
       tax:meta.tax,
-      taxedRatio:100,
+      taxedRatio:70,
       monthly:info.monthly!=null?info.monthly:0,
       type:meta.type
     });
@@ -2144,6 +2140,7 @@ function closeKookminPage(){
     clearFoot();
     var n=S.prods.length;
     bot('입력을 정리했어요. 📝\n· 현재 '+S.age+'세 / 월 목표 '+fmtK(S.target)+'만원\n· 연금 상품 '+n+'개 등록');
+    if(n>0){bot('💡 세액공제비율은 70%로 입력됩니다. 필요시 조정하세요.');}
     bot('아래 버튼을 누르면 입력칸에 자동으로 채워집니다. 기존 예시 상품은 새로 입력한 내용으로 교체돼요.');
     var wrap=document.createElement('div');wrap.className='wiz-quick';
     var apply=document.createElement('button');apply.textContent='입력칸에 채우기';apply.style.background='#378ADD';apply.style.color='#fff';apply.style.borderColor='#378ADD';
