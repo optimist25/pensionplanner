@@ -1066,12 +1066,14 @@ function renderAnalysis(sim){
         :soginMap.map(x=>'<strong>'+x.name+'</strong>: '+x.year+'년 (만 '+x.age+'세) 소진 예상').join('<br>')
     },
     {
-      status:taxLimitRemain>0?'warn':'good',
+      status:(taxLimitRemain>0||taxLimitUsed>taxLimit)?'warn':'good',
       title:'저율과세 한도 활용',
       body:'한도 '+fmt(taxLimit)+'만원 중 <strong>'+fmt(taxLimitUsed)+'만원 사용</strong><br>'
         +(taxLimitRemain>0
           ?'<strong>'+fmt(taxLimitRemain)+'만원 여유</strong> — 세액공제 상품 수령 확대 시 절세 가능'
-          :'한도를 효율적으로 활용하고 있습니다.')
+          :(taxLimitUsed>taxLimit
+            ?'<strong>'+fmt(taxLimitUsed-taxLimit)+'만원 초과</strong> — 저율과세 한도는 향후 점진적 상향이 예상되나, 초과 시 종합과세 전환이 우려됩니다.'
+            :'한도를 효율적으로 활용하고 있습니다.'))
     }
   ];
 
@@ -1412,6 +1414,30 @@ renderTable();
   --info-bg:#e6f1fb;--info-text:#0c447c;--info-border:#b5d4f4;
   --blue:#378ADD;--green:#1D9E75;--warn:#BA7517;--danger:#a32d2d;--purple:#7F77DD;
   --radius:8px;--radius-lg:12px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1e1e1c;--bg2:#2a2a27;--bg3:#323230;--bg4:#3a3a37;
+    --border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.25);
+    --text1:#f0efe8;--text2:#b4b2a9;--text3:#888780;
+    --info-bg:#042c53;--info-text:#b5d4f4;--info-border:#185fa5;
+    --blue:#5EA6EC;--green:#35C49A;--warn:#E5A23C;--danger:#E88A8A;--purple:#9D96E8;
+  }
+}
+/* 부모가 시스템 테마를 직접 주입(웹뷰에서 srcdoc이 prefers-color-scheme를 못 받는 문제 보정) */
+:root[data-theme='dark']{
+  --bg:#1e1e1c;--bg2:#2a2a27;--bg3:#323230;--bg4:#3a3a37;
+  --border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.25);
+  --text1:#f0efe8;--text2:#b4b2a9;--text3:#888780;
+  --info-bg:#042c53;--info-text:#b5d4f4;--info-border:#185fa5;
+  --blue:#5EA6EC;--green:#35C49A;--warn:#E5A23C;--danger:#E88A8A;--purple:#9D96E8;
+}
+:root[data-theme='light']{
+  --bg:#f0efe8;--bg2:#ffffff;--bg3:#ffffff;--bg4:#f0efe8;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.25);
+  --text1:#1a1a18;--text2:#5f5e5a;--text3:#888780;
+  --info-bg:#e6f1fb;--info-text:#0c447c;--info-border:#b5d4f4;
+  --blue:#378ADD;--green:#1D9E75;--warn:#BA7517;--danger:#a32d2d;--purple:#7F77DD;
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text1);min-height:100vh;font-size:14px;line-height:1.6}
 
@@ -1864,11 +1890,32 @@ render();
 "></iframe>
 </div>
 <script>
+/* 국민연금 iframe 다크모드 동기화
+   일부 웹뷰에서 srcdoc iframe이 시스템 prefers-color-scheme를 상속하지 못해
+   부모 페이지가 현재 테마를 iframe에 직접 주입한다. */
+var _kmDarkMQ = window.matchMedia('(prefers-color-scheme: dark)');
+function syncKookminTheme(){
+  var f=document.getElementById('kookminFrame');
+  if(!f) return;
+  try{
+    var doc=f.contentDocument||(f.contentWindow&&f.contentWindow.document);
+    if(doc&&doc.documentElement){
+      doc.documentElement.setAttribute('data-theme', _kmDarkMQ.matches?'dark':'light');
+    }
+  }catch(e){}
+}
+(function(){
+  var f=document.getElementById('kookminFrame');
+  if(f) f.addEventListener('load', syncKookminTheme);
+  if(_kmDarkMQ.addEventListener) _kmDarkMQ.addEventListener('change', syncKookminTheme);
+  else if(_kmDarkMQ.addListener) _kmDarkMQ.addListener(syncKookminTheme);
+})();
 function openKookminPage(){
   var p=document.getElementById('kookminPage');
   p.style.display='flex';
   document.body.style.overflow='hidden';
   window.scrollTo(0,0);
+  syncKookminTheme();
 }
 function closeKookminPage(){
   var p=document.getElementById('kookminPage');
