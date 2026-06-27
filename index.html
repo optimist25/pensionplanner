@@ -308,7 +308,7 @@ window.addEventListener("load",function(){
     <div class="input-group"><label><span class="num-badge">①</span>현재 만나이</label><input type="number" id="curAge" value="45" min="20" max="80"></div>
     <div class="input-group"><label><span class="num-badge">②</span>현재 연도</label><input type="number" id="curYear" value="2026" min="2020" max="2040"></div>
     <div class="input-group"><label><span class="num-badge">③</span>월 목표 수령액 (만원)</label><input type="text" inputmode="decimal" id="targetMon" value="500" oninput="liveComma(this)"></div>
-    <div class="input-group"><label><span class="num-badge">④</span>인플레이션율 (%/년)</label><input type="number" id="inflRate" value="0" min="0" max="5" step="0.1"></div>
+    <div class="input-group"><label><span class="num-badge">④</span>인플레이션율 (%/년)</label><input type="number" id="inflRate" value="2" min="0" max="5" step="0.1"></div>
   </div>
   <div class="input-grid g5">
     <div class="input-group"><label><span class="num-badge">⑤</span>저율과세 한도 (만원/년)</label><input type="text" inputmode="decimal" id="taxLimit" value="1,500" oninput="liveComma(this)"></div>
@@ -555,7 +555,7 @@ function renderTable(doScroll){
 }
 
 function addProduct(){
-  products.push({cat:'연금저축',name:'신규상품',bal:1000,rate:5,add:0,endY:2035,startY:2040,tax:'세액공제',taxedRatio:100,monthly:50,type:'분할'});
+  products.push({cat:'연금저축',name:'신규상품',bal:1000,rate:4.5,add:0,endY:2035,startY:2040,tax:'세액공제',taxedRatio:100,monthly:50,type:'분할'});
   renderTable();
 }
 function delProduct(i){products.splice(i,1);var ns=new Set();openRows.forEach(function(k){if(k<i)ns.add(k);else if(k>i)ns.add(k-1);});openRows=ns;renderTable();}
@@ -1986,10 +1986,11 @@ function closeKookminPage(){
   function num(s){var n=parseFloat((''+s).replace(/[^0-9.]/g,''));return isNaN(n)?null:n;}
   function fmtK(n){try{return Math.round(n).toLocaleString('ko-KR');}catch(e){return n;}}
 
-  function askText(placeholder,unit,onOk){
+  function askText(placeholder,unit,onOk,defVal){
     clearFoot();
     var row=document.createElement('div');row.className='wiz-inrow';
     var inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=placeholder||'';
+    if(defVal!=null)inp.value=defVal;
     var btn=document.createElement('button');btn.className='wiz-send';btn.textContent='입력';
     row.appendChild(inp);
     if(unit){var u=document.createElement('span');u.className='wiz-unit';u.textContent=unit;row.appendChild(u);}
@@ -2084,15 +2085,22 @@ function closeKookminPage(){
     bot('매년 추가로 납입하는 금액이 있나요? 없으면 0. (만원/년)');
     askText('예: 600','만원/년',function(val){
       var n=num(val);if(n===null||n<0){bot('숫자로 입력해 주세요.');return;}
-      usr(fmtK(n)+'만원/년');S.cur.add=n;qPrivRate();
+      usr(fmtK(n)+'만원/년');S.cur.add=n;qPrivEnd();
+    });
+  }
+  function qPrivEnd(){
+    bot('언제까지 납입(불입)하실 예정인가요? (몇 세까지)');
+    askText('예: 60','세',function(val){
+      var n=num(val);if(n===null||n<S.age){bot('현재 나이('+S.age+'세) 이상으로 입력해 주세요.');return;}
+      usr(n+'세까지 납입');S.cur.endAge=n;qPrivRate();
     });
   }
   function qPrivRate(){
-    bot('예상 연수익률은 몇 %로 볼까요? (펀드형 6~8 / 채권형 3~4 / 원리금보장 2~3)');
-    askText('예: 5','%',function(val){
+    bot('예상 연수익률은 몇 %로 볼까요? (펀드형 6~8 / 채권형 3~4 / 원리금보장 2~3)\n기본값은 안내 평균인 4.5%로 채워뒀어요. 그대로 두거나 수정하세요.');
+    askText('예: 4.5','%',function(val){
       var n=num(val);if(n===null||n<0){bot('숫자로 입력해 주세요.');return;}
       usr(n+'%');S.cur.rate=n;qPrivStart();
-    });
+    },'4.5');
   }
   function qPrivStart(){
     bot(S.catNow+'은(는) 몇 세부터 받으실 예정인가요?');
@@ -2122,12 +2130,14 @@ function closeKookminPage(){
   function addProd(cat,name,info){
     var meta=CAT[cat]||{tax:'세액공제',type:'분할',lifetime:false};
     var startY=S.base+((info.startAge||S.age)-S.age);
+    var endY=(info.endAge!=null)?(S.base+(info.endAge-S.age)):(startY-1);
+    if(endY>startY-1)endY=startY-1;
     S.prods.push({
       cat:cat,name:name,
       bal:info.bal!=null?info.bal:1000,
-      rate:info.rate!=null?info.rate:3,
+      rate:info.rate!=null?info.rate:4.5,
       add:info.add!=null?info.add:0,
-      endY:startY-1,
+      endY:endY,
       startY:startY,
       tax:meta.tax,
       taxedRatio:70,
@@ -2152,11 +2162,10 @@ function closeKookminPage(){
   function applyAll(){
     document.getElementById('curAge').value=S.age;
     document.getElementById('targetMon').value=(typeof nf==='function')?nf(S.target):S.target;
-    if(S.prods.length){
-      products=JSON.parse(JSON.stringify(S.prods));
-      openRows=new Set();
-      renderTable();
-    }
+    products=JSON.parse(JSON.stringify(S.prods));
+    openRows=new Set();
+    for(var _i=0;_i<products.length;_i++)openRows.add(_i);
+    renderTable();
     bot('완료! 입력칸에 모두 채웠어요. 닫고 「시뮬레이션 실행」을 눌러보세요. 🚀');
     setTimeout(function(){
       window.Wiz.close();
