@@ -1981,6 +1981,7 @@ function closeKookminPage(){
 (function(){
   var CAT={
     '국민연금':{tax:'종합과세',type:'종신',lifetime:true},
+    '국민연금(배우자)':{tax:'종합과세',type:'종신',lifetime:true},
     '연금저축':{tax:'세액공제',type:'분할',lifetime:false},
     'IRP':{tax:'세액공제',type:'분할',lifetime:false},
     '퇴직연금':{tax:'분리과세',type:'분할',lifetime:false},
@@ -1997,10 +1998,10 @@ function closeKookminPage(){
   function num(s){var n=parseFloat((''+s).replace(/[^0-9.]/g,''));return isNaN(n)?null:n;}
   function fmtK(n){try{return Math.round(n).toLocaleString('ko-KR');}catch(e){return n;}}
 
-  function askText(placeholder,unit,onOk,defVal,asText){
+  function askText(placeholder,unit,onOk,defVal){
     clearFoot();
     var row=document.createElement('div');row.className='wiz-inrow';
-    var inp=document.createElement('input');inp.type='text';inp.inputMode=asText?'text':'decimal';inp.placeholder=placeholder||'';
+    var inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=placeholder||'';
     if(defVal!=null)inp.value=defVal;
     var btn=document.createElement('button');btn.className='wiz-send';btn.textContent='입력';
     row.appendChild(inp);
@@ -2060,7 +2061,7 @@ function closeKookminPage(){
       addProd('국민연금','국민연금',{startAge:S.npAge,monthly:mon});
       usr(fmtK(mon)+'만원/월');
       bot('국민연금 입력 완료! ✅');
-      setTimeout(qHasPriv,350);
+      setTimeout(qNpSpouse,350);
     };
     bot('국민연금 월 예상 수령액은 얼마인가요? 국민연금공단 「내 연금 알아보기」에서 확인할 수 있어요.');
     askText('예: 120','만원/월',function(val){
@@ -2071,6 +2072,44 @@ function closeKookminPage(){
     var b=document.createElement('button');b.type='button';b.textContent='모름 (100만원으로)';
     b.onclick=function(){done(100);};q.appendChild(b);foot().appendChild(q);
   }
+  function qNpSpouse(){
+    bot('배우자분도 국민연금을 받으실 예정인가요? (맞벌이 등으로 별도 수령 시)');
+    askChoice(['네, 있어요','아니요, 없어요'],function(o){
+      usr(o);
+      if(o.charAt(0)==='아'){setTimeout(qHasPriv,300);}else{qNpSpAge();}
+    });
+  }
+  function qNpSpAge(){
+    bot('배우자분은 지금 만으로 몇 세이신가요?');
+    askText('예: 43','세',function(val){
+      var n=num(val);if(n===null||n<10||n>90){bot('10~90 사이 숫자로 입력해 주세요.');return;}
+      usr(n+'세');S.spAge=n;qNpSpStart();
+    });
+  }
+  function qNpSpStart(){
+    bot('배우자분은 국민연금을 몇 세부터 받으실 예정인가요? (보통 63~65세)');
+    askText('예: 65','세',function(val){
+      var n=num(val);if(n===null||n<S.spAge){bot('배우자 현재 나이('+S.spAge+'세) 이상으로 입력해 주세요.');return;}
+      usr(n+'세부터');S.spNpAge=n;qNpSpMon();
+    });
+  }
+  function qNpSpMon(){
+    var done=function(mon){
+      var equivAge=S.age+(S.spNpAge-S.spAge); // 본인 타임라인 기준 연도로 환산
+      addProd('국민연금(배우자)','국민연금(배우자)',{startAge:equivAge,monthly:mon});
+      usr(fmtK(mon)+'만원/월');
+      bot('배우자 국민연금 입력 완료! ✅');
+      setTimeout(qHasPriv,350);
+    };
+    bot('배우자분의 국민연금 월 예상 수령액은 얼마인가요?');
+    askText('예: 80','만원/월',function(val){
+      var n=num(val);if(n===null||n<0){bot('숫자로 입력하거나 아래 \"모름\"을 눌러주세요.');return;}
+      done(n);
+    });
+    var q=document.createElement('div');q.className='wiz-quick';q.style.marginTop='10px';
+    var b=document.createElement('button');b.type='button';b.textContent='모름 (80만원으로)';
+    b.onclick=function(){done(80);};q.appendChild(b);foot().appendChild(q);
+  }
   function qHasPriv(){
     bot('이제 사적연금이에요. 가지고 계신 사적연금이 있으신가요?');
     askChoice(['네, 있어요','아니요, 없어요'],function(o){
@@ -2080,20 +2119,10 @@ function closeKookminPage(){
   }
   function qPrivType(){
     bot('어떤 종류인가요?');
-    askChoice(['연금저축','IRP','퇴직연금','연금보험','기타'],function(o){
-      usr(o);
-      if(o==='기타'){qPrivCustom();return;}
-      S.catNow=o;S.cur={cat:o};
-      if(CAT[o]&&CAT[o].lifetime){qPrivStart();}else{qPrivBal();}
+    askChoice(['연금저축','IRP','퇴직연금','연금보험'],function(o){
+      usr(o);S.catNow=o;S.cur={cat:o};
+      if(CAT[o].lifetime){qPrivStart();}else{qPrivBal();}
     });
-  }
-  function qPrivCustom(){
-    bot('상품 종류(이름)를 직접 입력해 주세요. 예: ISA · 변액연금 · 주택연금 등');
-    askText('예: ISA','',function(val){
-      var name=val.trim();if(!name){bot('상품 이름을 입력해 주세요.');return;}
-      usr(name);S.catNow=name;S.cur={cat:name};
-      qPrivBal();
-    },null,true);
   }
   function qPrivBal(){
     bot(S.catNow+'의 현재 적립 잔고는 얼마인가요? (만원)');
