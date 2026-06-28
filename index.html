@@ -1998,10 +1998,10 @@ function closeKookminPage(){
   function num(s){var n=parseFloat((''+s).replace(/[^0-9.]/g,''));return isNaN(n)?null:n;}
   function fmtK(n){try{return Math.round(n).toLocaleString('ko-KR');}catch(e){return n;}}
 
-  function askText(placeholder,unit,onOk,defVal){
+  function askText(placeholder,unit,onOk,defVal,asText){
     clearFoot();
     var row=document.createElement('div');row.className='wiz-inrow';
-    var inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';inp.placeholder=placeholder||'';
+    var inp=document.createElement('input');inp.type='text';inp.inputMode=asText?'text':'decimal';inp.placeholder=placeholder||'';
     if(defVal!=null)inp.value=defVal;
     var btn=document.createElement('button');btn.className='wiz-send';btn.textContent='입력';
     row.appendChild(inp);
@@ -2119,10 +2119,20 @@ function closeKookminPage(){
   }
   function qPrivType(){
     bot('어떤 종류인가요?');
-    askChoice(['연금저축','IRP','퇴직연금','연금보험'],function(o){
-      usr(o);S.catNow=o;S.cur={cat:o};
-      if(CAT[o].lifetime){qPrivStart();}else{qPrivBal();}
+    askChoice(['연금저축','IRP','퇴직연금','연금보험','기타'],function(o){
+      usr(o);
+      if(o==='기타'){qPrivCustom();return;}
+      S.catNow=o;S.cur={cat:o};
+      if(CAT[o]&&CAT[o].lifetime){qPrivStart();}else{qPrivBal();}
     });
+  }
+  function qPrivCustom(){
+    bot('상품 종류(이름)를 직접 입력해 주세요. 예: ISA · 변액연금 · 주택연금 등');
+    askText('예: ISA','',function(val){
+      var name=val.trim();if(!name){bot('상품 이름을 입력해 주세요.');return;}
+      usr(name);S.catNow=name;S.cur={cat:name};
+      qPrivBal();
+    },null,true);
   }
   function qPrivBal(){
     bot(S.catNow+'의 현재 적립 잔고는 얼마인가요? (만원)');
