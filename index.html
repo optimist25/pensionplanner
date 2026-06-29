@@ -78,6 +78,11 @@ table.pt td{padding:3px 4px;border-bottom:0.5px solid var(--border);vertical-ali
 table.pt tr:last-child td{border-bottom:none}
 table.pt input,table.pt select{height:27px;font-size:11px;padding:0 4px}
 .exp-btn{display:none}
+.grip-cell{width:24px;padding:0 0 0 2px;text-align:center;vertical-align:middle}
+.drag-grip{display:inline-flex;align-items:center;justify-content:center;width:22px;height:26px;color:var(--text3);cursor:grab;touch-action:none;border-radius:6px;-webkit-user-select:none;user-select:none}
+.drag-grip:hover{background:var(--bg2);color:var(--text2)}
+.drag-grip:active{cursor:grabbing}
+table.pt tr.row-dragging{opacity:.96;background:var(--info-bg);box-shadow:0 8px 22px rgba(0,0,0,.16);position:relative;z-index:5}
 /* ===== 모바일: 상품 입력 표를 카드형으로 ===== */
 @media(max-width:640px){
   .product-wrap{overflow-x:visible}
@@ -98,7 +103,7 @@ table.pt input,table.pt select{height:27px;font-size:11px;padding:0 4px}
   table.pt td.act{flex-wrap:wrap;justify-content:flex-end;gap:8px;padding-top:12px}
   table.pt td.act .btn-ra,table.pt td.act .btn-danger{height:34px;width:42px;font-size:15px}
   /* 접힘 상태: 상품명만 보이고 나머지는 숨김 */
-  table.pt tr:not(.open) td:not(.namecell){display:none}
+  table.pt tr:not(.open) td:not(.namecell):not(.grip-cell){display:none}
   table.pt tr:not(.open) td.namecell{border-bottom:none;padding-bottom:4px}
   table.pt td.namecell{gap:10px}
   table.pt td.namecell::before{content:"상품명"}
@@ -112,6 +117,10 @@ table.pt input,table.pt select{height:27px;font-size:11px;padding:0 4px}
   table.pt td.lumpcell .lumpwrap input{flex:0 0 auto;min-width:0;text-align:right}
   table.pt td.lumpcell .lumpwrap input.money{width:88px!important}
   table.pt td.lumpcell .lumpwrap input[type=number]{width:72px!important}
+  table.pt tr{position:relative;padding-left:32px}
+  table.pt td.grip-cell{position:absolute;left:3px;top:7px;width:26px;padding:0;border:none;justify-content:center}
+  table.pt td.grip-cell::before{display:none}
+  table.pt td.grip-cell .drag-grip{height:36px;width:26px}
 }
 .lumpcell .lumpwrap{display:flex;align-items:center;gap:6px}
 .lump-at{opacity:.5;font-size:12px;flex-shrink:0}
@@ -351,6 +360,7 @@ window.addEventListener("load",function(){
   <div class="product-wrap">
     <table class="pt">
       <thead><tr>
+        <th style="width:24px"></th>
         <th><span class="num-badge">㉮</span>구분</th>
         <th><span class="num-badge">㉯</span>상품명</th>
         <th><span class="num-badge">㉰</span>잔고(만원)</th>
@@ -362,7 +372,7 @@ window.addEventListener("load",function(){
         <th><span class="num-badge">㉶</span>과세비율</th>
         <th><span class="num-badge">㉷</span>월수령(만)</th>
         <th><span class="num-badge">㉸</span>수령방식</th>
-        <th style="text-align:center">조작</th>
+        <th style="text-align:center"></th>
       </tr></thead>
       <tbody id="productBody"></tbody>
     </table>
@@ -550,7 +560,8 @@ function renderTable(doScroll){
     const typeSel=typeOpts.map(t=>'<option'+(p.type===t?' selected':'')+'>'+t+'</option>').join('');
     const naCell=(w,lbl)=>'<td data-label="'+lbl+'"><input type="text" value="N/A" disabled style="width:'+w+'px;background:var(--bg2);color:var(--text3);text-align:center;cursor:not-allowed;border-color:var(--border)"></td>';
     tr.innerHTML=
-      '<td data-label="구분"><input type="text" value="'+p.cat+'" onchange="products['+i+'].cat=this.value" style="width:56px"></td>'
+      '<td class="grip-cell"><span class="drag-grip" title="드래그하여 순서 변경"><i class="ti ti-grip-vertical"></i></span></td>'
+      +'<td data-label="구분"><input type="text" value="'+p.cat+'" onchange="products['+i+'].cat=this.value" style="width:56px"></td>'
       +'<td data-label="상품명" class="namecell"><input type="text" value="'+p.name+'" onchange="products['+i+'].name=this.value" style="width:68px"><button type="button" class="exp-btn" onclick="toggleRow('+i+')"></button></td>'
       +(isLump
         ? '<td data-label="일시금/입금연도" class="lumpcell"><div class="lumpwrap"><input type="text" inputmode="decimal" class="money" value="'+nf(p.lumpAmt||0)+'" oninput="liveComma(this)" onchange="products['+i+'].lumpAmt=+uncomma(this.value)" style="width:68px" title="추후 특정 시점에 입금되는 일시금(만원)"><span class="lump-at">@</span><input type="number" value="'+(p.lumpYear||'')+'" onchange="products['+i+'].lumpYear=+this.value" style="width:58px" title="일시금이 입금되는 연도"></div></td>'
@@ -565,10 +576,7 @@ function renderTable(doScroll){
         :'<td data-label="과세비율"><input type="text" value="N/A" disabled style="width:60px;background:var(--bg2);color:var(--text3);text-align:center;cursor:not-allowed;border-color:var(--border)"></td>')
       +'<td data-label="월수령(만)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.monthly)+'" oninput="liveComma(this)" onchange="products['+i+'].monthly=+uncomma(this.value)" style="width:56px"></td>'
       +'<td data-label="수령방식"><select onchange="products['+i+'].type=this.value;products['+i+'].type=this.value;renderTable()" style="width:50px">'+typeSel+'</select></td>'
-      +'<td class="act" data-label="조작" style="white-space:nowrap;text-align:center">'
-      +'<button class="btn-ra" onclick="moveProduct('+i+',-1)" title="위로"'+(i===0?' disabled':'')+' ><i class="ti ti-arrow-up" style="font-size:12px"></i></button> '
-      +'<button class="btn-ra" onclick="cloneProduct('+i+')" title="복제"><i class="ti ti-copy" style="font-size:12px"></i></button> '
-      +'<button class="btn-ra" onclick="moveProduct('+i+',1)" title="아래로"'+(i===products.length-1?' disabled':'')+' ><i class="ti ti-arrow-down" style="font-size:12px"></i></button> '
+      +'<td class="act" data-label="" style="white-space:nowrap;text-align:center">'
       +'<button class="btn-danger" onclick="delProduct('+i+')" title="삭제"><i class="ti ti-trash" style="font-size:12px"></i></button>'
       +'</td>';
     tb.appendChild(tr);
@@ -589,6 +597,53 @@ function delProduct(i){products.splice(i,1);var ns=new Set();openRows.forEach(fu
 function moveProduct(i,dir){var j=i+dir;if(j<0||j>=products.length)return;var t=products[i];products[i]=products[j];products[j]=t;var hi=openRows.has(i),hj=openRows.has(j);if(hj)openRows.add(i);else openRows.delete(i);if(hi)openRows.add(j);else openRows.delete(j);renderTable();}
 function cloneProduct(i){var c=JSON.parse(JSON.stringify(products[i]));c.name=c.name+" (복사)";products.splice(i+1,0,c);var ns=new Set();openRows.forEach(function(k){if(k<=i)ns.add(k);else ns.add(k+1);});openRows=ns;renderTable();}
 function resetProducts(){products=JSON.parse(JSON.stringify(DEFAULTS));openRows.clear();renderTable();}
+
+/* ===== 행 드래그 정렬 (마우스·터치 공용, 의존성 없음) ===== */
+function commitRowOrder(order){
+  if(!order||order.length!==products.length)return renderTable();
+  var seen={},ok=true;order.forEach(function(k){if(k<0||k>=products.length||seen[k])ok=false;seen[k]=1;});
+  if(!ok)return renderTable();
+  var np=order.map(function(k){return products[k];});
+  var no=new Set();order.forEach(function(oldIdx,newIdx){if(openRows.has(oldIdx))no.add(newIdx);});
+  products=np;openRows=no;renderTable();
+}
+(function(){
+  var dragTr=null,scrollV=0,raf=null;
+  function tb(){return document.getElementById('productBody');}
+  function rows(){return tb()?Array.prototype.slice.call(tb().children):[];}
+  document.addEventListener('pointerdown',function(e){
+    var grip=e.target.closest&&e.target.closest('.drag-grip');if(!grip)return;
+    var tr=grip.closest('tr');if(!tr||!tb()||tr.parentNode!==tb())return;
+    e.preventDefault();
+    dragTr=tr;tr.classList.add('row-dragging');
+    try{grip.setPointerCapture(e.pointerId);}catch(_){}
+    document.body.style.userSelect='none';
+  });
+  document.addEventListener('pointermove',function(e){
+    if(!dragTr)return;e.preventDefault();
+    var y=e.clientY,rs=rows(),before=null;
+    for(var k=0;k<rs.length;k++){
+      var r=rs[k];if(r===dragTr)continue;
+      var rect=r.getBoundingClientRect();
+      if(y<rect.top+rect.height/2){before=r;break;}
+    }
+    if(before){if(dragTr.nextSibling!==before)tb().insertBefore(dragTr,before);}
+    else if(dragTr!==tb().lastElementChild)tb().appendChild(dragTr);
+    var m=72,sp=0;
+    if(y<m)sp=-Math.ceil((m-y)/5);else if(y>window.innerHeight-m)sp=Math.ceil((y-(window.innerHeight-m))/5);
+    scrollV=sp;if(sp&&!raf)raf=requestAnimationFrame(tick);if(!sp)stopScroll();
+  });
+  function tick(){if(scrollV){window.scrollBy(0,scrollV);raf=requestAnimationFrame(tick);}else{raf=null;}}
+  function stopScroll(){if(raf){cancelAnimationFrame(raf);raf=null;}scrollV=0;}
+  function endDrag(){
+    if(!dragTr)return;
+    dragTr.classList.remove('row-dragging');document.body.style.userSelect='';stopScroll();
+    var order=rows().map(function(tr){return +tr.dataset.idx;});
+    dragTr=null;commitRowOrder(order);
+  }
+  document.addEventListener('pointerup',endDrag);
+  document.addEventListener('pointercancel',endDrag);
+})();
 
 function showSetup(){
   document.getElementById('resultSection').style.display='none';
