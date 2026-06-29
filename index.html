@@ -108,19 +108,11 @@ table.pt input,table.pt select{height:27px;font-size:11px;padding:0 4px}
     font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
   .exp-btn::after{content:"펼치기 ▾"}
   table.pt tr.open .exp-btn::after{content:"접기 ▴"}
-  table.pt td.lumpcell{flex-direction:column;align-items:stretch;gap:9px}
-  table.pt td.lumpcell::before{display:none}
-  table.pt td.lumpcell .lumpwrap{flex-direction:column;align-items:stretch;gap:9px;width:100%}
-  table.pt td.lumpcell .lumprow{justify-content:space-between;gap:12px}
-  table.pt td.lumpcell .lumprow .lump-lbl{font-size:12.5px;font-weight:600;color:var(--text2);flex-shrink:0}
-  table.pt td.lumpcell .lumprow input{flex:1;min-width:0}
-  table.pt td.lumpcell .lump-toggle{align-self:flex-end;height:34px}
+  table.pt td.lumpcell .lumpwrap{flex:1;min-width:0;justify-content:flex-end}
+  table.pt td.lumpcell .lumpwrap input{flex:1 1 0;min-width:0}
 }
-.lumpcell .lumpwrap{display:flex;align-items:center;gap:10px}
-.lumpcell .lumprow{display:flex;align-items:center;gap:6px}
-.lump-lbl{font-size:11px;color:var(--text2);white-space:nowrap}
-.lump-toggle{flex-shrink:0;white-space:nowrap;padding:2px 8px;font-size:11px;line-height:1.6;border:1px solid var(--border);border-radius:7px;background:var(--bg2);color:var(--text2);cursor:pointer}
-.lump-toggle:hover{background:var(--border)}
+.lumpcell .lumpwrap{display:flex;align-items:center;gap:6px}
+.lump-at{opacity:.5;font-size:12px;flex-shrink:0}
 .btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
 button,label.btn-file{height:36px;padding:0 14px;border:0.5px solid var(--border2);border-radius:var(--radius);
   background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;
@@ -559,7 +551,7 @@ function renderTable(doScroll){
       '<td data-label="구분"><input type="text" value="'+p.cat+'" onchange="products['+i+'].cat=this.value" style="width:56px"></td>'
       +'<td data-label="상품명" class="namecell"><input type="text" value="'+p.name+'" onchange="products['+i+'].name=this.value" style="width:68px"><button type="button" class="exp-btn" onclick="toggleRow('+i+')"></button></td>'
       +(isLump
-        ? '<td data-label="일시금/입금연도" class="lumpcell"><div class="lumpwrap"><div class="lumprow"><span class="lump-lbl">일시금(만원)</span><input type="text" inputmode="decimal" class="money" value="'+nf(p.lumpAmt||0)+'" oninput="liveComma(this)" onchange="products['+i+'].lumpAmt=+uncomma(this.value)" style="width:74px" title="추후 특정 시점에 입금되는 일시금(만원)"></div><div class="lumprow"><span class="lump-lbl">입금연도</span><input type="number" value="'+(p.lumpYear||'')+'" onchange="products['+i+'].lumpYear=+this.value" style="width:64px" title="일시금이 입금되는 연도"></div><button type="button" class="lump-toggle" onclick="toggleLump('+i+')" title="현재 보유 잔고형으로 전환">잔고형</button></div></td>'
+        ? '<td data-label="일시금/입금연도" class="lumpcell"><div class="lumpwrap"><input type="text" inputmode="decimal" class="money" value="'+nf(p.lumpAmt||0)+'" oninput="liveComma(this)" onchange="products['+i+'].lumpAmt=+uncomma(this.value)" style="width:78px" title="추후 특정 시점에 입금되는 일시금(만원)"><span class="lump-at">@</span><input type="number" value="'+(p.lumpYear||'')+'" onchange="products['+i+'].lumpYear=+this.value" style="width:64px" title="일시금이 입금되는 연도"></div></td>'
         : (isLifetime ? naCell(72,'잔고(만원)') : '<td data-label="잔고(만원)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.bal)+'" oninput="liveComma(this)" onchange="products['+i+'].bal=+uncomma(this.value)" style="width:72px"></td>'))
       +(isLifetime ? naCell(44,'연수익율(%)') : '<td data-label="연수익율(%)"><input type="number" value="'+p.rate+'" step="0.1" onchange="products['+i+'].rate=+this.value" style="width:44px"></td>')
       +(isLifetime ? naCell(68,'추가불입(만/년)') : '<td data-label="추가불입(만/년)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.add)+'" oninput="liveComma(this)" onchange="products['+i+'].add=+uncomma(this.value)" style="width:68px"></td>')
@@ -590,18 +582,6 @@ function addLumpProduct(){
   products.push({cat:'기타',name:'추후일시금',bal:0,rate:3,add:0,endY:cy+9,startY:cy+10,tax:'비과세',taxedRatio:0,monthly:50,type:'분할',lump:true,lumpAmt:5000,lumpYear:cy+10});
   openRows.add(products.length-1);
   renderTable(true);
-}
-function toggleLump(i){
-  var p=products[i];
-  if(p.lump){
-    p.lump=false;
-  } else {
-    p.lump=true;
-    if(p.lumpAmt==null||isNaN(p.lumpAmt))p.lumpAmt=p.bal||0;
-    if(!p.lumpYear){var cy=v('curYear')||new Date().getFullYear();p.lumpYear=(p.startY&&p.startY>cy)?p.startY:cy+10;}
-    p.bal=0;
-  }
-  renderTable();
 }
 function delProduct(i){products.splice(i,1);var ns=new Set();openRows.forEach(function(k){if(k<i)ns.add(k);else if(k>i)ns.add(k-1);});openRows=ns;renderTable();}
 function moveProduct(i,dir){var j=i+dir;if(j<0||j>=products.length)return;var t=products[i];products[i]=products[j];products[j]=t;var hi=openRows.has(i),hj=openRows.has(j);if(hj)openRows.add(i);else openRows.delete(i);if(hi)openRows.add(j);else openRows.delete(j);renderTable();}
