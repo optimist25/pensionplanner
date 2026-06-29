@@ -2185,7 +2185,7 @@ function closeKookminPage(){
     },'3');
   }
   function qLumpStart(){
-    bot('이 돈은 몇 세부터 나눠 쓰실 건가요? (입금되자마자 바로 쓸 거면 입금 나이와 같게 입력)');
+    bot('언제부터 수령 개시하시겠어요? (입금되자마자 바로 받으실 거면 입금 나이와 같게 입력)');
     askText('예: 60','세',function(val){
       var n=num(val);if(n===null||n<S.age){bot('현재 나이('+S.age+'세) 이상으로 입력해 주세요.');return;}
       if(n<S.cur.lumpAge){bot('입금 나이('+S.cur.lumpAge+'세) 이후로 입력해 주세요.');return;}
@@ -2193,7 +2193,7 @@ function closeKookminPage(){
     });
   }
   function qLumpMon(){
-    bot('받기 시작하면 매달 얼마씩 헐어 쓰실 건가요? (만원/월)\n잔액이 바닥나면 자동으로 종료돼요.');
+    bot('받기 시작하면 매달 얼마씩 분할수령하시겠어요? (만원/월)\n잔액이 소진되면 자동으로 종료돼요.');
     askText('예: 50','만원/월',function(val){
       var n=num(val);if(n===null||n<0){bot('숫자로 입력해 주세요.');return;}
       usr(fmtK(n)+'만원/월');S.cur.monthly=n;
