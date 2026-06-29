@@ -108,8 +108,10 @@ table.pt input,table.pt select{height:27px;font-size:11px;padding:0 4px}
     font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
   .exp-btn::after{content:"펼치기 ▾"}
   table.pt tr.open .exp-btn::after{content:"접기 ▴"}
-  table.pt td.lumpcell .lumpwrap{flex:1;min-width:0;justify-content:flex-end}
-  table.pt td.lumpcell .lumpwrap input{flex:1 1 0;min-width:0}
+  table.pt td.lumpcell .lumpwrap{flex:1;min-width:0;justify-content:flex-end;gap:6px}
+  table.pt td.lumpcell .lumpwrap input{flex:0 0 auto;min-width:0;text-align:right}
+  table.pt td.lumpcell .lumpwrap input.money{width:88px!important}
+  table.pt td.lumpcell .lumpwrap input[type=number]{width:72px!important}
 }
 .lumpcell .lumpwrap{display:flex;align-items:center;gap:6px}
 .lump-at{opacity:.5;font-size:12px;flex-shrink:0}
@@ -551,11 +553,11 @@ function renderTable(doScroll){
       '<td data-label="구분"><input type="text" value="'+p.cat+'" onchange="products['+i+'].cat=this.value" style="width:56px"></td>'
       +'<td data-label="상품명" class="namecell"><input type="text" value="'+p.name+'" onchange="products['+i+'].name=this.value" style="width:68px"><button type="button" class="exp-btn" onclick="toggleRow('+i+')"></button></td>'
       +(isLump
-        ? '<td data-label="일시금/입금연도" class="lumpcell"><div class="lumpwrap"><input type="text" inputmode="decimal" class="money" value="'+nf(p.lumpAmt||0)+'" oninput="liveComma(this)" onchange="products['+i+'].lumpAmt=+uncomma(this.value)" style="width:78px" title="추후 특정 시점에 입금되는 일시금(만원)"><span class="lump-at">@</span><input type="number" value="'+(p.lumpYear||'')+'" onchange="products['+i+'].lumpYear=+this.value" style="width:64px" title="일시금이 입금되는 연도"></div></td>'
+        ? '<td data-label="일시금/입금연도" class="lumpcell"><div class="lumpwrap"><input type="text" inputmode="decimal" class="money" value="'+nf(p.lumpAmt||0)+'" oninput="liveComma(this)" onchange="products['+i+'].lumpAmt=+uncomma(this.value)" style="width:68px" title="추후 특정 시점에 입금되는 일시금(만원)"><span class="lump-at">@</span><input type="number" value="'+(p.lumpYear||'')+'" onchange="products['+i+'].lumpYear=+this.value" style="width:58px" title="일시금이 입금되는 연도"></div></td>'
         : (isLifetime ? naCell(72,'잔고(만원)') : '<td data-label="잔고(만원)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.bal)+'" oninput="liveComma(this)" onchange="products['+i+'].bal=+uncomma(this.value)" style="width:72px"></td>'))
       +(isLifetime ? naCell(44,'연수익율(%)') : '<td data-label="연수익율(%)"><input type="number" value="'+p.rate+'" step="0.1" onchange="products['+i+'].rate=+this.value" style="width:44px"></td>')
-      +(isLifetime ? naCell(68,'추가불입(만/년)') : '<td data-label="추가불입(만/년)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.add)+'" oninput="liveComma(this)" onchange="products['+i+'].add=+uncomma(this.value)" style="width:68px"></td>')
-      +(isLifetime ? naCell(54,'불입완료') : '<td data-label="불입완료"><input type="number" value="'+p.endY+'" onchange="products['+i+'].endY=+this.value" style="width:54px"></td>')
+      +((isLifetime||isLump) ? naCell(68,'추가불입(만/년)') : '<td data-label="추가불입(만/년)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.add)+'" oninput="liveComma(this)" onchange="products['+i+'].add=+uncomma(this.value)" style="width:68px"></td>')
+      +((isLifetime||isLump) ? naCell(54,'불입완료') : '<td data-label="불입완료"><input type="number" value="'+p.endY+'" onchange="products['+i+'].endY=+this.value" style="width:54px"></td>')
       +'<td data-label="개시연도"><input type="number" value="'+p.startY+'" onchange="products['+i+'].startY=+this.value" style="width:54px"></td>'
       +'<td data-label="세금유형"><select onchange="products['+i+'].tax=this.value;renderTable()" style="width:63px">'+taxSel+'</select></td>'
       +(p.tax==='세액공제'
