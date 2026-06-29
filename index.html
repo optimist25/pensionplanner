@@ -2063,7 +2063,7 @@ function closeKookminPage(){
     '연금보험':{tax:'비과세',type:'종신',lifetime:true}
   };
   var S={};
-  function reset(){ S={age:null,base:null,target:null,npAge:null,prods:[],cur:null,catNow:null}; }
+  function reset(){ S={age:null,base:null,target:null,npAge:null,prods:[],cur:null,catNow:null}; steps=[]; }
   function body(){return document.getElementById('wizBody');}
   function foot(){return document.getElementById('wizFoot');}
   function scroll(){var b=body();b.scrollTop=b.scrollHeight;}
@@ -2073,7 +2073,28 @@ function closeKookminPage(){
   function num(s){var n=parseFloat((''+s).replace(/[^0-9.]/g,''));return isNaN(n)?null:n;}
   function fmtK(n){try{return Math.round(n).toLocaleString('ko-KR');}catch(e){return n;}}
 
+  // ===== 대화 되돌리기(이전 질문 수정) =====
+  var steps=[];
+  function pushStep(reAsk){ steps.push({html:body().innerHTML, S:JSON.parse(JSON.stringify(S)), reAsk:reAsk}); }
+  function goBack(){
+    if(steps.length<2)return;
+    steps.pop();
+    var prev=steps.pop();
+    body().innerHTML=prev.html;
+    S=JSON.parse(JSON.stringify(prev.S));
+    scroll();
+    prev.reAsk();
+  }
+  function addBackBtn(){
+    if(steps.length<2)return;
+    var wrapb=document.createElement('div');wrapb.style.cssText='margin-top:8px;text-align:center';
+    var b=document.createElement('button');b.type='button';b.textContent='← 이전 질문 수정';
+    b.style.cssText='background:none;border:none;color:#8a93a0;font-size:12.5px;cursor:pointer;padding:4px 8px;text-decoration:underline';
+    b.onclick=goBack;wrapb.appendChild(b);foot().appendChild(wrapb);
+  }
+
   function askText(placeholder,unit,onOk,defVal,asText){
+    pushStep(function(){askText(placeholder,unit,onOk,defVal,asText);});
     clearFoot();
     var row=document.createElement('div');row.className='wiz-inrow';
     var inp=document.createElement('input');inp.type='text';inp.inputMode=asText?'text':'decimal';inp.placeholder=placeholder||'';
@@ -2088,9 +2109,11 @@ function closeKookminPage(){
     function go(){var val=inp.value.trim();if(!val)return;onOk(val);}
     btn.onclick=go;
     inp.addEventListener('keydown',function(e){if(e.key==='Enter')go();});
+    addBackBtn();
     return foot();
   }
   function askChoice(opts,onPick){
+    pushStep(function(){askChoice(opts,onPick);});
     clearFoot();
     var wrap=document.createElement('div');wrap.className='wiz-quick';
     opts.forEach(function(o){
@@ -2099,6 +2122,7 @@ function closeKookminPage(){
       wrap.appendChild(b);
     });
     foot().appendChild(wrap);
+    addBackBtn();
   }
 
   function start(){
@@ -2351,6 +2375,7 @@ function closeKookminPage(){
 
   function finish(){
     clearFoot();
+    pushStep(function(){finish();});
     var n=S.prods.length;
     bot('입력을 정리했어요. 📝\n· 현재 '+S.age+'세 / 월 목표 '+fmtK(S.target)+'만원\n· 연금 상품 '+n+'개 등록');
     if(n>0){bot('💡 세액공제비율은 70%로 입력됩니다. 필요시 조정하세요.');}
@@ -2360,6 +2385,7 @@ function closeKookminPage(){
     apply.onclick=function(){applyAll();};
     var redo=document.createElement('button');redo.textContent='처음부터 다시';redo.onclick=function(){start();};
     wrap.appendChild(apply);wrap.appendChild(redo);foot().appendChild(wrap);
+    addBackBtn();
   }
 
   function applyAll(){
