@@ -538,13 +538,16 @@ function renderTable(doScroll){
     tr.dataset.idx=i;
     if(openRows.has(i))tr.classList.add('open');
     const isLifetime=(p.type==='종신');
+    const isLump=!!p.lump;
     const taxSel=taxOpts.map(t=>'<option'+(p.tax===t?' selected':'')+'>'+t+'</option>').join('');
     const typeSel=typeOpts.map(t=>'<option'+(p.type===t?' selected':'')+'>'+t+'</option>').join('');
     const naCell=(w,lbl)=>'<td data-label="'+lbl+'"><input type="text" value="N/A" disabled style="width:'+w+'px;background:var(--bg2);color:var(--text3);text-align:center;cursor:not-allowed;border-color:var(--border)"></td>';
     tr.innerHTML=
       '<td data-label="구분"><input type="text" value="'+p.cat+'" onchange="products['+i+'].cat=this.value" style="width:56px"></td>'
       +'<td data-label="상품명" class="namecell"><input type="text" value="'+p.name+'" onchange="products['+i+'].name=this.value" style="width:68px"><button type="button" class="exp-btn" onclick="toggleRow('+i+')"></button></td>'
-      +(isLifetime ? naCell(72,'잔고(만원)') : '<td data-label="잔고(만원)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.bal)+'" oninput="liveComma(this)" onchange="products['+i+'].bal=+uncomma(this.value)" style="width:72px"></td>')
+      +(isLump
+        ? '<td data-label="일시금(만원)@입금연도" class="lumpcell"><input type="text" inputmode="decimal" class="money" value="'+nf(p.lumpAmt||0)+'" oninput="liveComma(this)" onchange="products['+i+'].lumpAmt=+uncomma(this.value)" style="width:62px" title="추후 특정 시점에 입금되는 일시금(만원)"><span style="opacity:.55;font-size:11px;margin:0 2px">@</span><input type="number" value="'+(p.lumpYear||'')+'" onchange="products['+i+'].lumpYear=+this.value" style="width:56px" title="일시금이 입금되는 연도"></td>'
+        : (isLifetime ? naCell(72,'잔고(만원)') : '<td data-label="잔고(만원)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.bal)+'" oninput="liveComma(this)" onchange="products['+i+'].bal=+uncomma(this.value)" style="width:72px"></td>'))
       +(isLifetime ? naCell(44,'연수익율(%)') : '<td data-label="연수익율(%)"><input type="number" value="'+p.rate+'" step="0.1" onchange="products['+i+'].rate=+this.value" style="width:44px"></td>')
       +(isLifetime ? naCell(68,'추가불입(만/년)') : '<td data-label="추가불입(만/년)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.add)+'" oninput="liveComma(this)" onchange="products['+i+'].add=+uncomma(this.value)" style="width:68px"></td>')
       +(isLifetime ? naCell(54,'불입완료') : '<td data-label="불입완료"><input type="number" value="'+p.endY+'" onchange="products['+i+'].endY=+this.value" style="width:54px"></td>')
@@ -605,6 +608,7 @@ function calcAccum(p,startYear,inflRate,inflatePayout){
   let bal=p.bal*10000;
   const result=[];
   for(let y=startYear;y<=2080;y++){
+    if(p.lump&&+p.lumpYear===y){bal+=(+p.lumpAmt||0)*10000;}
     const add=y<=p.endY?p.add*10000:0;
     if(y<p.startY){
       bal=(bal+add)*(1+r);
@@ -1316,9 +1320,9 @@ function exportCSV(){
     var lines=[];
     // ── 입력값 섹션 (불러오기로 복원되는 영역) ──
     lines.push("■ 입력값 — 이 영역을 수정 후 'CSV 불러오기'하면 다시 시뮬레이션됩니다");
-    lines.push(['구분','상품명','잔고(만원)','연수익율(%)','추가불입(만/년)','불입완료','개시연도','세금유형','과세비율','월수령(만)','수령방식'].join(','));
+    lines.push(['구분','상품명','잔고(만원)','연수익율(%)','추가불입(만/년)','불입완료','개시연도','세금유형','과세비율','월수령(만)','수령방식','일시금(만원)','입금연도'].join(','));
     products.forEach(function(p){
-      var row=[p.cat,p.name,p.bal,p.rate,p.add,p.endY,p.startY,p.tax,(p.taxedRatio==null?100:p.taxedRatio),p.monthly,p.type];
+      var row=[p.cat,p.name,p.bal,p.rate,p.add,p.endY,p.startY,p.tax,(p.taxedRatio==null?100:p.taxedRatio),p.monthly,p.type,(p.lump?(p.lumpAmt||0):''),(p.lump?(p.lumpYear||''):'')];
       lines.push(row.map(csvCell).join(','));
     });
     lines.push('');
@@ -1383,7 +1387,7 @@ function importCSV(input){
         if(first.charAt(0)==='■'){break;} // 결과 섹션 시작
         if(cells.length<11){continue;}
         var tax=(cells[7]||'').trim(); if(!taxOk[tax])tax='세액공제';
-        np.push({
+        var _obj={
           cat:(cells[0]||'').trim(),
           name:(cells[1]||'').trim(),
           bal:num(cells[2]),
@@ -1395,7 +1399,10 @@ function importCSV(input){
           taxedRatio:num(cells[8]),
           monthly:num(cells[9]),
           type:((cells[10]||'').trim()==='종신')?'종신':'분할'
-        });
+        };
+        var _lumpYear=cells.length>12?Math.round(num(cells[12])):0;
+        if(_lumpYear>0){_obj.lump=true;_obj.lumpAmt=num(cells[11]);_obj.lumpYear=_lumpYear;}
+        np.push(_obj);
       }
       if(!np.length){alert('불러올 상품이 없습니다.');input.value='';return;}
       products=np;
@@ -2119,8 +2126,9 @@ function closeKookminPage(){
   }
   function qPrivType(){
     bot('어떤 종류인가요?');
-    askChoice(['연금저축','IRP','퇴직연금','연금보험','기타'],function(o){
+    askChoice(['연금저축','IRP','퇴직연금','연금보험','기타','기타(추후 일시금)'],function(o){
       usr(o);
+      if(o==='기타(추후 일시금)'){qLumpName();return;}
       if(o==='기타'){qPrivCustom();return;}
       S.catNow=o;S.cur={cat:o};
       if(CAT[o]&&CAT[o].lifetime){qPrivStart();}else{qPrivBal();}
@@ -2133,6 +2141,53 @@ function closeKookminPage(){
       usr(name);S.catNow=name;S.cur={cat:name};
       qPrivBal();
     },null,true);
+  }
+  function qLumpName(){
+    bot('특정 시점에 한 번에 들어오는 돈이군요. 예: 퇴직 위로금 · 명예퇴직금 · 보험 만기 일시금 · 부동산 처분금 등.\n항목 이름을 입력해 주세요.');
+    askText('예: 퇴직위로금','',function(val){
+      var name=val.trim();if(!name){bot('이름을 입력해 주세요.');return;}
+      usr(name);S.catNow=name;S.cur={cat:name,lump:true,bal:0};
+      qLumpAmt();
+    },null,true);
+  }
+  function qLumpAmt(){
+    bot(S.catNow+'(으)로 받게 될 금액은 얼마인가요? (세후 실수령 기준 · 만원)');
+    askText('예: 5,000','만원',function(val){
+      var n=num(val);if(n===null||n<=0){bot('숫자로 입력해 주세요.');return;}
+      usr(fmtK(n)+'만원');S.cur.lumpAmt=n;qLumpWhen();
+    });
+  }
+  function qLumpWhen(){
+    bot('이 금액은 몇 세 시점에 입금되나요? (예: 퇴직하는 나이)');
+    askText('예: 60','세',function(val){
+      var n=num(val);if(n===null||n<S.age){bot('현재 나이('+S.age+'세) 이상으로 입력해 주세요.');return;}
+      usr(n+'세에 입금');S.cur.lumpAge=n;qLumpRate();
+    });
+  }
+  function qLumpRate(){
+    bot('입금 후 굴릴 예상 연수익률은 몇 %로 볼까요? (안 굴리고 그대로 둘 거면 0)');
+    askText('예: 3','%',function(val){
+      var n=num(val);if(n===null||n<0){bot('숫자로 입력해 주세요.');return;}
+      usr(n+'%');S.cur.rate=n;qLumpStart();
+    },'3');
+  }
+  function qLumpStart(){
+    bot('이 돈은 몇 세부터 나눠 쓰실 건가요? (입금되자마자 바로 쓸 거면 입금 나이와 같게 입력)');
+    askText('예: 60','세',function(val){
+      var n=num(val);if(n===null||n<S.age){bot('현재 나이('+S.age+'세) 이상으로 입력해 주세요.');return;}
+      if(n<S.cur.lumpAge){bot('입금 나이('+S.cur.lumpAge+'세) 이후로 입력해 주세요.');return;}
+      usr(n+'세부터');S.cur.startAge=n;qLumpMon();
+    });
+  }
+  function qLumpMon(){
+    bot('받기 시작하면 매달 얼마씩 헐어 쓰실 건가요? (만원/월)\n잔액이 바닥나면 자동으로 종료돼요.');
+    askText('예: 50','만원/월',function(val){
+      var n=num(val);if(n===null||n<0){bot('숫자로 입력해 주세요.');return;}
+      usr(fmtK(n)+'만원/월');S.cur.monthly=n;
+      addLump(S.cur);
+      bot(S.catNow+' 입력 완료! ✅  (입금 '+S.cur.lumpAge+'세 · '+S.cur.startAge+'세부터 수령)');
+      setTimeout(qMore,300);
+    });
   }
   function qPrivBal(){
     bot(S.catNow+'의 현재 적립 잔고는 얼마인가요? (만원)');
@@ -2203,6 +2258,26 @@ function closeKookminPage(){
       taxedRatio:70,
       monthly:info.monthly!=null?info.monthly:0,
       type:meta.type
+    });
+  }
+
+  function addLump(info){
+    var startY=S.base+((info.startAge||S.age)-S.age);
+    var lumpY=S.base+((info.lumpAge||S.age)-S.age);
+    S.prods.push({
+      cat:info.cat,name:info.cat,
+      bal:0,
+      rate:info.rate!=null?info.rate:3,
+      add:0,
+      endY:lumpY-1,
+      startY:startY,
+      tax:'비과세',
+      taxedRatio:0,
+      monthly:info.monthly!=null?info.monthly:0,
+      type:'분할',
+      lump:true,
+      lumpAmt:info.lumpAmt!=null?info.lumpAmt:0,
+      lumpYear:lumpY
     });
   }
 
