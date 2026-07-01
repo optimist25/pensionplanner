@@ -2291,7 +2291,7 @@ function closeKookminPage(){
     askText('예: 퇴직위로금 / 자녀결혼자금','',function(val){
       var name=val.trim();if(!name){bot('이름을 입력해 주세요.');return;}
       usr(name);S.catNow=name;S.cur={cat:name,lump:true,bal:0};
-      qLumpDir();
+      qLumpAmt();
     },null,true);
   }
   function qLumpDir(){
@@ -2321,20 +2321,23 @@ function closeKookminPage(){
     });
   }
   function qLumpAmt(){
-    bot(S.catNow+'(으)로 받게 될 금액은 얼마인가요? (세후 실수령 기준 · 만원)\n나가는 돈이면 −를 붙여 입력하세요. 예: -5,000');
+    bot(S.catNow+'은(는) 얼마인가요? (만원)\n들어오는 돈이면 숫자만, 나가는 돈(지출)이면 앞에 −를 붙여 주세요.  예: 5,000  또는  -5,000');
     askText('예: 5,000 또는 -5,000','만원',function(val){
       var n=snum(val);if(n===null||n===0){bot('숫자로 입력해 주세요.');return;}
-      if(n<0){ // 음수 → 지출로 자동 전환
-        usr(fmtK(Math.abs(n))+'만원 지출');S.cur.outflow=true;S.cur.lumpAmt=Math.abs(n);qLumpOutWhen();return;
-      }
-      usr(fmtK(n)+'만원');S.cur.outflow=false;S.cur.lumpAmt=n;qLumpWhen();
+      S.cur.outflow=(n<0);S.cur.lumpAmt=Math.abs(n);
+      usr(fmtK(Math.abs(n))+'만원 '+(n<0?'지출':'입금'));
+      qLumpWhen();
     },null,true);
   }
   function qLumpWhen(){
-    bot('이 금액은 몇 세 시점에 입금되나요? (예: 퇴직하는 나이)');
+    bot('이 일시금은 몇 세 시점에 생기나요? ('+(S.cur.outflow?'지출':'입금')+' 시점)');
     askText('예: 60','세',function(val){
       var n=num(val);if(n===null||n<S.age){bot('현재 나이('+S.age+'세) 이상으로 입력해 주세요.');return;}
-      usr(n+'세에 입금');S.cur.lumpAge=n;qLumpRate();
+      S.cur.lumpAge=n;
+      usr(n+'세에 '+(S.cur.outflow?'지출':'입금'));
+      addLump(S.cur);
+      bot(S.catNow+' 입력 완료! ✅  ('+n+'세에 '+fmtK(S.cur.lumpAmt)+'만원 일시 '+(S.cur.outflow?'지출 · 월 수령 없음':'입금')+')');
+      setTimeout(qMore,300);
     });
   }
   function qLumpRate(){
@@ -2449,20 +2452,14 @@ function closeKookminPage(){
       });
       return;
     }
-    var startY=S.base+((info.startAge||S.age)-S.age);
     S.prods.push({
       cat:info.cat,name:info.cat,
-      bal:0,
-      rate:info.rate!=null?info.rate:3,
-      add:0,
-      endY:lumpY-1,
-      startY:startY,
-      tax:'비과세',
-      taxedRatio:0,
-      monthly:info.monthly!=null?info.monthly:0,
-      type:'분할',
-      lump:true,
-      lumpAmt:info.lumpAmt!=null?info.lumpAmt:0,
+      bal:0,rate:0,add:0,
+      endY:lumpY-1,startY:lumpY,
+      tax:'비과세',taxedRatio:0,
+      monthly:0,type:'분할',
+      lump:true,outflow:false,
+      lumpAmt:Math.abs(info.lumpAmt!=null?info.lumpAmt:0),
       lumpYear:lumpY
     });
   }
