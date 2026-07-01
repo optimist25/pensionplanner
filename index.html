@@ -889,18 +889,26 @@ function runSim(doScroll){
   });
 
   document.getElementById('legendBalance').innerHTML=products.map((p,i)=>
-    `<span class="legend-item"><span class="legend-dot" style="background:${COLORS[i%COLORS.length]}"></span>${p.name}</span>`).join('');
+    `<span class="legend-item"><span class="legend-dot" style="background:${COLORS[i%COLORS.length]}"></span>${p.name}</span>`).join('')
+    +`<span class="legend-item"><span class="legend-dot" style="background:#F2C14E;border-radius:1px;width:14px;height:3px"></span>순자산(일시금 지출 반영)</span>`;
 
   chartBalance=new Chart(document.getElementById('chartBalance'),{
     type:'bar',
     data:{
       labels:display.map(d=>d.year),
-      datasets:products.map((p,i)=>({
-        label:p.name,
-        data:p.type==='종신'?display.map(()=>null):display.map(d=>Math.round(d.bal[i]/10000)),
-        backgroundColor:COLORS[i%COLORS.length],stack:'b',borderRadius:0,
-        hidden:p.type==='종신'
-      }))
+      datasets:(function(){
+        const bars=products.map((p,i)=>{
+          const skip=(p.type==='종신')||p.outflow;
+          return {
+          label:p.name,
+          data:skip?display.map(()=>null):display.map(d=>Math.round(d.bal[i]/10000)),
+          backgroundColor:COLORS[i%COLORS.length],stack:'b',borderRadius:0,order:1,
+          hidden:skip
+        };});
+        const net=display.map(d=>d.bal.reduce((s,b,i)=>s+(products[i].type==='종신'?0:Math.round(b/10000)),0));
+        bars.push({label:'순자산(일시금 지출 반영)',type:'line',data:net,borderColor:'#F2C14E',backgroundColor:'#F2C14E',borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:0.15,fill:false,order:0,stack:'net'});
+        return bars;
+      })()
     },
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{
@@ -912,7 +920,7 @@ function runSim(doScroll){
             return c.dataset.label+': '+fmt(c.raw)+'만원';
           },
           footer:items=>{
-            const total=items.reduce((s,c)=>s+(c.raw||0),0);
+            const total=items.filter(c=>c.dataset.label!=='순자산(일시금 지출 반영)').reduce((s,c)=>s+(c.raw||0),0);
             if(total<=0) return '';
             return ['─────────────','누적잔고 합계: '+fmt(total)+'만원'];
           }
