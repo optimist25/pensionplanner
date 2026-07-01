@@ -127,6 +127,7 @@ table.pt tr.row-dragging{opacity:.96;background:var(--info-bg);box-shadow:0 8px 
 .lump-sign{flex:0 0 auto;width:22px;height:24px;border-radius:6px;border:1px solid var(--border);font-size:15px;font-weight:700;line-height:1;cursor:pointer;padding:0}
 .lump-sign.in{background:rgba(99,153,34,.12);color:#5e8c1f;border-color:rgba(99,153,34,.4)}
 .lump-sign.out{background:rgba(226,75,74,.12);color:#d8413f;border-color:rgba(226,75,74,.45)}
+.money.lump-neg{color:#d8413f;border-color:rgba(226,75,74,.5);background:rgba(226,75,74,.06)}
 .btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
 button,label.btn-file{height:36px;padding:0 14px;border:0.5px solid var(--border2);border-radius:var(--radius);
   background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;
@@ -552,7 +553,7 @@ function liveComma(el){
 }
 // 부호(-) 허용 콤마 포매터 — 일시금 지출 직접 입력용
 function liveCommaSigned(el){
-  var neg=el.value.trim().charAt(0)==='-';
+  var neg=el.value.indexOf('-')!==-1;
   var raw=el.value.replace(/[^0-9.]/g,'');
   var fd=raw.indexOf('.');
   if(fd>-1) raw=raw.slice(0,fd+1)+raw.slice(fd+1).replace(/\./g,'');
@@ -596,7 +597,7 @@ function renderTable(doScroll){
       +'<td data-label="구분"><input type="text" value="'+p.cat+'" onchange="products['+i+'].cat=this.value" style="width:56px"></td>'
       +'<td data-label="상품명" class="namecell"><input type="text" value="'+p.name+'" onchange="products['+i+'].name=this.value" style="width:68px"><button type="button" class="exp-btn" onclick="toggleRow('+i+')"></button></td>'
       +(isLump
-        ? '<td data-label="일시금/입금연도" class="lumpcell"><div class="lumpwrap"><button type="button" class="lump-sign '+(isOut?'out':'in')+'" onclick="toggleLumpSign('+i+')" title="수입(+) / 지출(−) 전환">'+(isOut?'−':'+')+'</button><input type="text" inputmode="text" class="money" value="'+nf(p.lumpAmt||0)+'" oninput="liveCommaSigned(this)" onchange="setLumpAmt('+i+',this)" style="width:70px" title="'+(isOut?'특정 시점에 한 번 빠져나가는 지출(−, 만원)':'추후 특정 시점에 입금되는 일시금(만원)  ·  지출이면 앞에 −를 붙이세요')+'"><span class="lump-at">@</span><input type="number" value="'+(p.lumpYear||'')+'" onchange="products['+i+'].lumpYear=+this.value" style="width:54px" title="일시금이 입금·지출되는 연도"></div></td>'
+        ? '<td data-label="일시금/입금(출금)연도" class="lumpcell"><div class="lumpwrap"><input type="text" inputmode="text" class="money'+(isOut?' lump-neg':'')+'" value="'+nf(p.lumpAmt||0)+'" oninput="liveCommaSigned(this)" onchange="setLumpAmt('+i+',this)" style="width:86px" title="추후 특정 시점에 입금되는 일시금(만원)  ·  나가는 돈(출금)이면 앞에 −를 붙여 입력하세요"><span class="lump-at">@</span><input type="number" value="'+(p.lumpYear||'')+'" onchange="products['+i+'].lumpYear=+this.value" style="width:54px" title="일시금이 입금(+)·출금(−)되는 연도"></div></td>'
         : (isLifetime ? naCell(72,'잔고(만원)') : '<td data-label="잔고(만원)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.bal)+'" oninput="liveComma(this)" onchange="products['+i+'].bal=+uncomma(this.value)" style="width:72px"></td>'))
       +((isLifetime||isOut) ? naCell(44,'연수익율(%)') : '<td data-label="연수익율(%)"><input type="number" value="'+p.rate+'" step="0.1" onchange="products['+i+'].rate=+this.value" style="width:44px"></td>')
       +((isLifetime||isLump) ? naCell(68,'추가불입(만/년)') : '<td data-label="추가불입(만/년)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.add)+'" oninput="liveComma(this)" onchange="products['+i+'].add=+uncomma(this.value)" style="width:68px"></td>')
@@ -624,14 +625,6 @@ function addLumpProduct(){
   products.push({cat:'기타',name:'추후일시금',bal:0,rate:3,add:0,endY:cy+9,startY:cy+10,tax:'비과세',taxedRatio:0,monthly:50,type:'분할',lump:true,lumpAmt:5000,lumpYear:cy+10});
   openRows.add(products.length-1);
   renderTable(true);
-}
-function toggleLumpSign(i){
-  var p=products[i]; if(!p)return;
-  p.outflow=!p.outflow;
-  var mag=Math.abs(p.lumpAmt||0);
-  p.lumpAmt=(p.outflow?-1:1)*mag;
-  if(p.outflow){p.rate=0;p.monthly=0;}
-  renderTable();
 }
 function delProduct(i){products.splice(i,1);var ns=new Set();openRows.forEach(function(k){if(k<i)ns.add(k);else if(k>i)ns.add(k-1);});openRows=ns;renderTable();}
 function moveProduct(i,dir){var j=i+dir;if(j<0||j>=products.length)return;var t=products[i];products[i]=products[j];products[j]=t;var hi=openRows.has(i),hj=openRows.has(j);if(hj)openRows.add(i);else openRows.delete(i);if(hi)openRows.add(j);else openRows.delete(j);renderTable();}
@@ -1433,7 +1426,7 @@ function exportCSV(){
     var lines=[];
     // ── 입력값 섹션 (불러오기로 복원되는 영역) ──
     lines.push("■ 입력값 — 이 영역을 수정 후 'CSV 불러오기'하면 다시 시뮬레이션됩니다");
-    lines.push(['구분','상품명','잔고(만원)','연수익율(%)','추가불입(만/년)','불입완료','개시연도','세금유형','과세비율','월수령(만)','수령방식','일시금(만원)','입금연도'].join(','));
+    lines.push(['구분','상품명','잔고(만원)','연수익율(%)','추가불입(만/년)','불입완료','개시연도','세금유형','과세비율','월수령(만)','수령방식','일시금(만원)','입금(출금)연도'].join(','));
     products.forEach(function(p){
       var row=[p.cat,p.name,p.bal,p.rate,p.add,p.endY,p.startY,p.tax,(p.taxedRatio==null?100:p.taxedRatio),p.monthly,p.type,(p.lump?(p.lumpAmt||0):''),(p.lump?(p.lumpYear||''):'')];
       lines.push(row.map(csvCell).join(','));
