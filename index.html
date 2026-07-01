@@ -124,6 +124,9 @@ table.pt tr.row-dragging{opacity:.96;background:var(--info-bg);box-shadow:0 8px 
 }
 .lumpcell .lumpwrap{display:flex;align-items:center;gap:6px}
 .lump-at{opacity:.5;font-size:12px;flex-shrink:0}
+.lump-sign{flex:0 0 auto;width:22px;height:24px;border-radius:6px;border:1px solid var(--border);font-size:15px;font-weight:700;line-height:1;cursor:pointer;padding:0}
+.lump-sign.in{background:rgba(99,153,34,.12);color:#5e8c1f;border-color:rgba(99,153,34,.4)}
+.lump-sign.out{background:rgba(226,75,74,.12);color:#d8413f;border-color:rgba(226,75,74,.45)}
 .btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
 button,label.btn-file{height:36px;padding:0 14px;border:0.5px solid var(--border2);border-radius:var(--radius);
   background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;
@@ -547,6 +550,30 @@ function liveComma(el){
   var pos=el.value.length-fromEnd; if(pos<0)pos=0;
   try{el.setSelectionRange(pos,pos);}catch(e){}
 }
+// 부호(-) 허용 콤마 포매터 — 일시금 지출 직접 입력용
+function liveCommaSigned(el){
+  var neg=el.value.trim().charAt(0)==='-';
+  var raw=el.value.replace(/[^0-9.]/g,'');
+  var fd=raw.indexOf('.');
+  if(fd>-1) raw=raw.slice(0,fd+1)+raw.slice(fd+1).replace(/\./g,'');
+  if(raw===''||raw==='.'){el.value=(neg?'-':'')+raw;return;}
+  var sel=(el.selectionStart==null?el.value.length:el.selectionStart);
+  var fromEnd=el.value.length-sel;
+  var parts=raw.split('.');
+  var intp=parts[0].replace(/^0+(?=\d)/,'').replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  el.value=(neg?'-':'')+intp+(parts.length>1?'.'+parts[1]:'');
+  var pos=el.value.length-fromEnd; if(pos<0)pos=0;
+  try{el.setSelectionRange(pos,pos);}catch(e){}
+}
+// 일시금 입력칸 변경 처리: 부호로 수입/지출 자동 판별
+function setLumpAmt(i,el){
+  var p=products[i]; if(!p)return;
+  var val=+uncomma(el.value)||0;
+  p.lumpAmt=val;
+  p.outflow=val<0;
+  if(val<0){p.rate=0;p.monthly=0;}
+  renderTable();
+}
 
 function renderTable(doScroll){
   const tb=document.getElementById('productBody');
@@ -560,6 +587,7 @@ function renderTable(doScroll){
     if(openRows.has(i))tr.classList.add('open');
     const isLifetime=(p.type==='종신');
     const isLump=!!p.lump;
+    const isOut=isLump&&!!p.outflow;
     const taxSel=taxOpts.map(t=>'<option'+(p.tax===t?' selected':'')+'>'+t+'</option>').join('');
     const typeSel=typeOpts.map(t=>'<option'+(p.type===t?' selected':'')+'>'+t+'</option>').join('');
     const naCell=(w,lbl)=>'<td data-label="'+lbl+'"><input type="text" value="N/A" disabled style="width:'+w+'px;background:var(--bg2);color:var(--text3);text-align:center;cursor:not-allowed;border-color:var(--border)"></td>';
@@ -568,18 +596,18 @@ function renderTable(doScroll){
       +'<td data-label="구분"><input type="text" value="'+p.cat+'" onchange="products['+i+'].cat=this.value" style="width:56px"></td>'
       +'<td data-label="상품명" class="namecell"><input type="text" value="'+p.name+'" onchange="products['+i+'].name=this.value" style="width:68px"><button type="button" class="exp-btn" onclick="toggleRow('+i+')"></button></td>'
       +(isLump
-        ? '<td data-label="일시금/입금연도" class="lumpcell"><div class="lumpwrap"><input type="text" inputmode="decimal" class="money" value="'+nf(p.lumpAmt||0)+'" oninput="liveComma(this)" onchange="products['+i+'].lumpAmt=+uncomma(this.value)" style="width:68px" title="추후 특정 시점에 입금되는 일시금(만원)"><span class="lump-at">@</span><input type="number" value="'+(p.lumpYear||'')+'" onchange="products['+i+'].lumpYear=+this.value" style="width:58px" title="일시금이 입금되는 연도"></div></td>'
+        ? '<td data-label="일시금/입금연도" class="lumpcell"><div class="lumpwrap"><button type="button" class="lump-sign '+(isOut?'out':'in')+'" onclick="toggleLumpSign('+i+')" title="수입(+) / 지출(−) 전환">'+(isOut?'−':'+')+'</button><input type="text" inputmode="text" class="money" value="'+nf(p.lumpAmt||0)+'" oninput="liveCommaSigned(this)" onchange="setLumpAmt('+i+',this)" style="width:70px" title="'+(isOut?'특정 시점에 한 번 빠져나가는 지출(−, 만원)':'추후 특정 시점에 입금되는 일시금(만원)  ·  지출이면 앞에 −를 붙이세요')+'"><span class="lump-at">@</span><input type="number" value="'+(p.lumpYear||'')+'" onchange="products['+i+'].lumpYear=+this.value" style="width:54px" title="일시금이 입금·지출되는 연도"></div></td>'
         : (isLifetime ? naCell(72,'잔고(만원)') : '<td data-label="잔고(만원)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.bal)+'" oninput="liveComma(this)" onchange="products['+i+'].bal=+uncomma(this.value)" style="width:72px"></td>'))
-      +(isLifetime ? naCell(44,'연수익율(%)') : '<td data-label="연수익율(%)"><input type="number" value="'+p.rate+'" step="0.1" onchange="products['+i+'].rate=+this.value" style="width:44px"></td>')
+      +((isLifetime||isOut) ? naCell(44,'연수익율(%)') : '<td data-label="연수익율(%)"><input type="number" value="'+p.rate+'" step="0.1" onchange="products['+i+'].rate=+this.value" style="width:44px"></td>')
       +((isLifetime||isLump) ? naCell(68,'추가불입(만/년)') : '<td data-label="추가불입(만/년)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.add)+'" oninput="liveComma(this)" onchange="products['+i+'].add=+uncomma(this.value)" style="width:68px"></td>')
       +((isLifetime||isLump) ? naCell(54,'불입완료') : '<td data-label="불입완료"><input type="number" value="'+p.endY+'" onchange="products['+i+'].endY=+this.value" style="width:54px"></td>')
-      +'<td data-label="개시연도"><input type="number" value="'+p.startY+'" onchange="products['+i+'].startY=+this.value" style="width:54px"></td>'
-      +'<td data-label="세금유형"><select onchange="products['+i+'].tax=this.value;renderTable()" style="width:63px">'+taxSel+'</select></td>'
+      +(isOut ? naCell(54,'개시연도') : '<td data-label="개시연도"><input type="number" value="'+p.startY+'" onchange="products['+i+'].startY=+this.value" style="width:54px"></td>')
+      +(isOut ? naCell(63,'세금유형') : '<td data-label="세금유형"><select onchange="products['+i+'].tax=this.value;renderTable()" style="width:63px">'+taxSel+'</select></td>')
       +(p.tax==='세액공제'
         ?'<td data-label="과세비율"><input type="number" value="'+(p.taxedRatio??100)+'" min="0" max="100" step="1" onchange="products['+i+'].taxedRatio=+this.value" style="width:60px" title="세액공제 받은 금액 비율% (나머지는 비과세 처리)"></td>'
         :'<td data-label="과세비율"><input type="text" value="N/A" disabled style="width:60px;background:var(--bg2);color:var(--text3);text-align:center;cursor:not-allowed;border-color:var(--border)"></td>')
-      +'<td data-label="월수령(만)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.monthly)+'" oninput="liveComma(this)" onchange="products['+i+'].monthly=+uncomma(this.value)" style="width:56px"></td>'
-      +'<td data-label="수령방식"><select onchange="products['+i+'].type=this.value;products['+i+'].type=this.value;renderTable()" style="width:50px">'+typeSel+'</select></td>'
+      +(isOut ? naCell(56,'월수령(만)') : '<td data-label="월수령(만)"><input type="text" inputmode="decimal" class="money" value="'+nf(p.monthly)+'" oninput="liveComma(this)" onchange="products['+i+'].monthly=+uncomma(this.value)" style="width:56px"></td>')
+      +(isOut ? naCell(50,'수령방식') : '<td data-label="수령방식"><select onchange="products['+i+'].type=this.value;products['+i+'].type=this.value;renderTable()" style="width:50px">'+typeSel+'</select></td>')
       +'<td class="act" data-label="" style="white-space:nowrap;text-align:center">'
       +'<button class="btn-danger" onclick="delProduct('+i+')" title="삭제"><i class="ti ti-trash" style="font-size:12px"></i></button>'
       +'</td>';
@@ -596,6 +624,14 @@ function addLumpProduct(){
   products.push({cat:'기타',name:'추후일시금',bal:0,rate:3,add:0,endY:cy+9,startY:cy+10,tax:'비과세',taxedRatio:0,monthly:50,type:'분할',lump:true,lumpAmt:5000,lumpYear:cy+10});
   openRows.add(products.length-1);
   renderTable(true);
+}
+function toggleLumpSign(i){
+  var p=products[i]; if(!p)return;
+  p.outflow=!p.outflow;
+  var mag=Math.abs(p.lumpAmt||0);
+  p.lumpAmt=(p.outflow?-1:1)*mag;
+  if(p.outflow){p.rate=0;p.monthly=0;}
+  renderTable();
 }
 function delProduct(i){products.splice(i,1);var ns=new Set();openRows.forEach(function(k){if(k<i)ns.add(k);else if(k>i)ns.add(k-1);});openRows=ns;renderTable();}
 function moveProduct(i,dir){var j=i+dir;if(j<0||j>=products.length)return;var t=products[i];products[i]=products[j];products[j]=t;var hi=openRows.has(i),hj=openRows.has(j);if(hj)openRows.add(i);else openRows.delete(i);if(hi)openRows.add(j);else openRows.delete(j);renderTable();}
@@ -682,6 +718,11 @@ function calcAccum(p,startYear,inflRate,inflatePayout){
   for(let y=startYear;y<=2080;y++){
     if(p.lump&&+p.lumpYear===y){bal+=(+p.lumpAmt||0)*10000;}
     const add=y<=p.endY?p.add*10000:0;
+    if(p.outflow){
+      // 일시 지출: 입금연도에 1회 차감, 이후 월 수령 없이 잔액 유지
+      result.push({year:y,bal,payout:0});
+      continue;
+    }
     if(y<p.startY){
       bal=(bal+add)*(1+r);
       result.push({year:y,bal,payout:0});
@@ -1473,7 +1514,7 @@ function importCSV(input){
           type:((cells[10]||'').trim()==='종신')?'종신':'분할'
         };
         var _lumpYear=cells.length>12?Math.round(num(cells[12])):0;
-        if(_lumpYear>0){_obj.lump=true;_obj.lumpAmt=num(cells[11]);_obj.lumpYear=_lumpYear;}
+        if(_lumpYear>0){_obj.lump=true;_obj.lumpAmt=num(cells[11]);_obj.lumpYear=_lumpYear;if(_obj.lumpAmt<0){_obj.outflow=true;_obj.rate=0;_obj.monthly=0;}}
         np.push(_obj);
       }
       if(!np.length){alert('불러올 상품이 없습니다.');input.value='';return;}
@@ -2082,6 +2123,7 @@ function closeKookminPage(){
   function usr(t){var d=document.createElement('div');d.className='wiz-msg wiz-user';d.textContent=t;body().appendChild(d);scroll();}
   function clearFoot(){foot().innerHTML='';}
   function num(s){var n=parseFloat((''+s).replace(/[^0-9.]/g,''));return isNaN(n)?null:n;}
+  function snum(s){var neg=/^\s*-/.test(''+s);var n=parseFloat((''+s).replace(/[^0-9.]/g,''));if(isNaN(n))return null;return neg?-n:n;}
   function fmtK(n){try{return Math.round(n).toLocaleString('ko-KR');}catch(e){return n;}}
 
   // ===== 대화 되돌리기(이전 질문 수정) =====
@@ -2246,19 +2288,48 @@ function closeKookminPage(){
     },null,true);
   }
   function qLumpName(){
-    bot('특정 시점에 한 번에 들어오는 돈이군요. 예: 퇴직 위로금 · 명예퇴직금 · 보험 만기 일시금 · 부동산 처분금 등.\n항목 이름을 입력해 주세요.');
-    askText('예: 퇴직위로금','',function(val){
+    bot('특정 시점에 한 번에 생기는 큰 돈이군요. 들어오는 일시금(퇴직 위로금·보험 만기금·부동산 처분금 등)뿐 아니라, 한 번에 빠져나가는 큰 지출(자녀 결혼자금·자동차 구매·대출 상환 등)도 등록할 수 있어요.\n먼저 항목 이름을 입력해 주세요.');
+    askText('예: 퇴직위로금 / 자녀결혼자금','',function(val){
       var name=val.trim();if(!name){bot('이름을 입력해 주세요.');return;}
       usr(name);S.catNow=name;S.cur={cat:name,lump:true,bal:0};
-      qLumpAmt();
+      qLumpDir();
     },null,true);
   }
-  function qLumpAmt(){
-    bot(S.catNow+'(으)로 받게 될 금액은 얼마인가요? (세후 실수령 기준 · 만원)');
-    askText('예: 5,000','만원',function(val){
-      var n=num(val);if(n===null||n<=0){bot('숫자로 입력해 주세요.');return;}
-      usr(fmtK(n)+'만원');S.cur.lumpAmt=n;qLumpWhen();
+  function qLumpDir(){
+    bot('이 항목은 들어오는 돈인가요, 나가는 돈인가요?');
+    askChoice(['들어오는 돈 (수입 +)','나가는 돈 (지출 −)'],function(o){
+      usr(o);
+      if(o.charAt(0)==='나'){S.cur.outflow=true;qLumpOutAmt();}
+      else{S.cur.outflow=false;qLumpAmt();}
     });
+  }
+  function qLumpOutAmt(){
+    bot(S.catNow+'(으)로 한 번에 빠져나가는 금액은 얼마인가요? (만원)\n−를 붙여 입력해도 됩니다.');
+    askText('예: 5,000 또는 -5,000','만원',function(val){
+      var n=snum(val);if(n===null||n===0){bot('숫자로 입력해 주세요.');return;}
+      n=Math.abs(n);
+      usr(fmtK(n)+'만원 지출');S.cur.outflow=true;S.cur.lumpAmt=n;qLumpOutWhen();
+    },null,true);
+  }
+  function qLumpOutWhen(){
+    bot('이 지출은 몇 세 시점에 발생하나요?');
+    askText('예: 60','세',function(val){
+      var n=num(val);if(n===null||n<S.age){bot('현재 나이('+S.age+'세) 이상으로 입력해 주세요.');return;}
+      usr(n+'세에 지출');S.cur.lumpAge=n;
+      addLump(S.cur);
+      bot(S.catNow+' 입력 완료! ✅  ('+S.cur.lumpAge+'세에 '+fmtK(S.cur.lumpAmt)+'만원 일시 지출 · 월 수령 없음)');
+      setTimeout(qMore,300);
+    });
+  }
+  function qLumpAmt(){
+    bot(S.catNow+'(으)로 받게 될 금액은 얼마인가요? (세후 실수령 기준 · 만원)\n나가는 돈이면 −를 붙여 입력하세요. 예: -5,000');
+    askText('예: 5,000 또는 -5,000','만원',function(val){
+      var n=snum(val);if(n===null||n===0){bot('숫자로 입력해 주세요.');return;}
+      if(n<0){ // 음수 → 지출로 자동 전환
+        usr(fmtK(Math.abs(n))+'만원 지출');S.cur.outflow=true;S.cur.lumpAmt=Math.abs(n);qLumpOutWhen();return;
+      }
+      usr(fmtK(n)+'만원');S.cur.outflow=false;S.cur.lumpAmt=n;qLumpWhen();
+    },null,true);
   }
   function qLumpWhen(){
     bot('이 금액은 몇 세 시점에 입금되나요? (예: 퇴직하는 나이)');
@@ -2365,8 +2436,21 @@ function closeKookminPage(){
   }
 
   function addLump(info){
-    var startY=S.base+((info.startAge||S.age)-S.age);
     var lumpY=S.base+((info.lumpAge||S.age)-S.age);
+    if(info.outflow){
+      S.prods.push({
+        cat:info.cat,name:info.cat,
+        bal:0,rate:0,add:0,
+        endY:lumpY-1,startY:lumpY,
+        tax:'비과세',taxedRatio:0,
+        monthly:0,type:'분할',
+        lump:true,outflow:true,
+        lumpAmt:-Math.abs(info.lumpAmt!=null?info.lumpAmt:0),
+        lumpYear:lumpY
+      });
+      return;
+    }
+    var startY=S.base+((info.startAge||S.age)-S.age);
     S.prods.push({
       cat:info.cat,name:info.cat,
       bal:0,
