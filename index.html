@@ -316,7 +316,7 @@ window.addEventListener("load",function(){
     var badge=document.getElementById("visitorBadge");
     if(el&&badge){
       el.textContent=Number(num).toLocaleString("ko-KR");
-      badge.style.display="block";
+      badge.style.display="inline-flex";
     }
   }
   /* 같은 세션 새로고침: 저장해둔 숫자 즉시 표시 (네트워크 호출 없음) */
@@ -339,8 +339,9 @@ window.addEventListener("load",function(){
 <div class="hero">
   <h1><svg viewBox="0 0 100 100" width="38" height="38" aria-hidden="true" style="vertical-align:middle;margin-right:10px;display:inline-block"><defs><linearGradient id="planbGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1D90F9"/><stop offset=".55" stop-color="#0A5BEA"/><stop offset="1" stop-color="#043DC7"/></linearGradient></defs><rect x="3" y="3" width="94" height="94" rx="24" fill="url(#planbGrad)"/><rect x="11" y="11" width="78" height="78" rx="16" fill="none" stroke="#9CC6FF" stroke-width="2.5" opacity=".7"/><text y="45" text-anchor="middle" font-family="-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="30" font-weight="800" fill="#fff"><tspan x="36">노</tspan><tspan x="64">후</tspan></text><text y="81" text-anchor="middle" font-family="-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="30" font-weight="800"><tspan x="36" fill="#fff">준</tspan><tspan x="64" fill="#FDC307">B</tspan></text></svg>노후자금 시뮬레이터<span class="hero-ver">V3.1</span></h1>
   <p class="hero-sub">연금·보험·국민연금 통합 수령액 시뮬레이션<br>— 오프라인 완전독립 버전</p>
-  <div id="visitorBadge" style="display:none;margin-top:12px;">
-    <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--info-text);background:var(--info-bg);border:.5px solid var(--info-border);padding:5px 14px;border-radius:20px;">누적 상담수 <b id="visitorNum" style="font-weight:800"></b></span>
+  <div style="margin-top:14px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;">
+    <span id="visitorBadge" style="display:none;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--info-text);background:var(--info-bg);border:.5px solid var(--info-border);padding:8px 14px;border-radius:22px;">누적 상담수 <b id="visitorNum" style="font-weight:800"></b></span>
+    <button type="button" onclick="shareApp()" style="display:inline-flex;align-items:center;gap:7px;height:auto;font-size:13px;font-weight:700;padding:9px 18px;border:none;border-radius:22px;background:#0A5BEA;color:#fff;cursor:pointer;box-shadow:0 3px 12px rgba(10,91,234,.28);"><i class="ti ti-share" style="font-size:15px"></i>친구에게 공유하기</button>
   </div>
 </div>
 
@@ -1364,6 +1365,44 @@ function showToast(icon,msg,sub,dur){
   if(!document.getElementById('toastStyle')){style.id='toastStyle';document.head.appendChild(style);}
   w.appendChild(el);
   setTimeout(function(){el.style.animation='toastOut .3s ease forwards';setTimeout(function(){el.remove();},300);},dur);
+}
+
+// ===== 공유하기 (Web Share API + 링크 복사 폴백) =====
+var SHARE_URL='https://www.nohuplan.com';
+function shareApp(){
+  var data={
+    title:'내 노후준비 플랜B',
+    text:'내 노후자금, 몇 살에 바닥날까? 무료 1분 계산 🔗',
+    url:SHARE_URL
+  };
+  if(navigator.share){
+    navigator.share(data).catch(function(err){
+      // 사용자가 공유창을 닫은 경우(AbortError)는 무시, 그 외엔 복사로 폴백
+      if(err && err.name!=='AbortError'){copyShareLink();}
+    });
+  }else{
+    copyShareLink();
+  }
+}
+function copyShareLink(){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(SHARE_URL)
+      .then(function(){showToast('🔗','링크가 복사되었어요','원하는 곳에 붙여넣기 하세요');})
+      .catch(function(){fallbackCopyLink();});
+  }else{
+    fallbackCopyLink();
+  }
+}
+function fallbackCopyLink(){
+  try{
+    var ta=document.createElement('textarea');
+    ta.value=SHARE_URL;ta.style.position='fixed';ta.style.top='-9999px';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.focus();ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    showToast('🔗','링크가 복사되었어요','원하는 곳에 붙여넣기 하세요');
+  }catch(e){
+    prompt('아래 링크를 복사하세요:',SHARE_URL);
+  }
 }
 
 
