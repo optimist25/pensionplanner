@@ -334,6 +334,14 @@ window.addEventListener("load",function(){
     show(disp);
   }).catch(function(){/* 오프라인/실패 시 배지 숨김 유지 */});
 })();
+function toggleHistory(){
+  var d=document.getElementById("histOld");
+  var t=document.getElementById("histToggle");
+  if(!d||!t)return;
+  var open=d.style.display!=="none";
+  d.style.display=open?"none":"block";
+  t.textContent=open?"▾ 지난 업데이트 이력 보기":"▴ 지난 업데이트 이력 접기";
+}
 </script>
 
 <div class="hero">
@@ -509,6 +517,8 @@ window.addEventListener("load",function(){
     <strong style="color:var(--text2)">V3.3 업데이트</strong>&ensp;
     📊 그래프 생성기간 조정기능 추가 (수령 개시연도 기준 자동 설정, 시작연도 수동 변경 가능)
     <br>
+    <a href="javascript:void(0)" id="histToggle" onclick="toggleHistory()" style="display:inline-block;margin-top:6px;color:var(--text3);text-decoration:none;font-weight:600;font-size:11px">▾ 지난 업데이트 이력 보기</a>
+    <div id="histOld" style="display:none;margin-top:6px">
     <strong style="color:var(--text2)">V3.2 업데이트</strong>&ensp;
     🔗 친구에게 공유하기 기능 추가 (헤더에서 바로 링크 공유)
     <br>
@@ -541,6 +551,7 @@ window.addEventListener("load",function(){
     <br>
     <strong style="color:var(--text2)">V2.2 업데이트</strong>&ensp;
     ↕ 항목 순서 변경&ensp;·&ensp;📋 행 복제(Ditto)
+    </div>
   </div>
   노후연금 시뮬레이터 V3.3 &nbsp;·&nbsp; 완전 독립 오프라인 버전 &nbsp;·&nbsp; 2026.07<br>
   <a href="https://www.nohuplan.com" style="color:#0A5BEA;text-decoration:none;font-weight:600">https://www.nohuplan.com</a><br>
