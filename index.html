@@ -456,6 +456,10 @@ window.addEventListener("load",function(){
 
   <div class="card">
     <div class="section-label">연간 수령액 추이 — 세후 (녹색: 목표 달성 / 파란색: 목표 미달)<span id="inflPayoutBadge"></span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:12px;color:var(--text2);flex-wrap:wrap">
+      그래프 기간 <input type="number" id="chartStartYear" min="2020" max="2046" step="1" onchange="setChartStart(this.value)" style="width:72px;padding:4px 6px;font-size:12px;background:var(--bg2);color:var(--text);border:.5px solid var(--border);border-radius:6px">년 ~ <span id="chartEndYear" style="font-weight:600;color:var(--text)"></span> <span style="color:var(--text3)">(35년)</span>
+      <button type="button" onclick="setChartStart('')" style="font-size:11px;padding:3px 10px;background:var(--bg2);color:var(--text2);border:.5px solid var(--border);border-radius:12px;cursor:pointer">자동(개시연도)</button>
+    </div>
     <div id="legendPayout" class="legend"></div>
     <div class="chart-wrap"><canvas id="chartPayout" role="img" aria-label="연도별 세후 연간 수령액과 목표액 비교 차트"></canvas></div>
   </div>
@@ -574,6 +578,12 @@ function toggleRow(i){
 }
 let inflatePayoutMode=false;
 let chartPayout=null,chartBalance=null,chartTaxLimit=null,chartTax=null,pieCharts=[],lastSim=null;
+let chartStartOverride=null; // 그래프 시작연도 수동 지정 (null=자동: 가장 이른 수령 개시연도)
+function setChartStart(v){
+  const n=parseInt(v,10);
+  chartStartOverride=isNaN(n)?null:n;
+  runSim();
+}
 
 function fmt(n){return Math.round(n).toLocaleString('ko-KR');}
 function v(id){return +(''+document.getElementById(id).value).replace(/,/g,'');}
@@ -845,8 +855,17 @@ function runSim(doScroll){
 
   lastSim=sim;
 
-  const display=sim.filter(d=>d.year>=2038&&d.year<=2072);
-  const activeY=sim.filter(d=>d.year>=2040&&d.year<=2075);
+  // 그래프/지표 기간: 기본은 가장 이른 수령 개시연도부터 35년, 시작연도 수동 조정 가능
+  const payoutStarts=products.filter(p=>!p.outflow&&p.startY).map(p=>+p.startY).filter(y=>y>0);
+  const autoStart=payoutStarts.length?Math.min(...payoutStarts):curYear+10;
+  let cStart=(chartStartOverride!=null)?chartStartOverride:autoStart;
+  if(cStart<curYear)cStart=curYear;
+  if(cStart>2080-34)cStart=2080-34;
+  const cEnd=cStart+34;
+  const csInput=document.getElementById('chartStartYear');
+  if(csInput){csInput.value=cStart;var ceEl=document.getElementById('chartEndYear');if(ceEl)ceEl.textContent=cEnd+'년';}
+  const display=sim.filter(d=>d.year>=cStart&&d.year<=cEnd);
+  const activeY=display;
   const miss=activeY.filter(d=>d.total>0&&d.total<d.target);
   const maxMon=Math.max(...sim.map(d=>d.total))/12;
   const avg4x=activeY.slice(0,10).reduce((s,d)=>s+d.total,0)/10/12;
@@ -861,8 +880,8 @@ function runSim(doScroll){
     : '';
   document.getElementById('summaryCards').innerHTML=`
     <div class="metric"><div class="metric-label">예상 월 최대 수령액</div><div class="metric-val">${fmt(Math.round(maxMon/10000))}만원</div></div>
-    <div class="metric"><div class="metric-label">2040년대 평균 월 수령</div><div class="metric-val ${avg4x>=targetMon?'good':'warn-c'}">${fmt(Math.round(avg4x/10000))}만원</div></div>
-    <div class="metric"><div class="metric-label">목표 달성률 (2040~2075)</div><div class="metric-val ${achRate>=80?'good':achRate>=50?'warn-c':'bad'}">${achRate}%</div></div>
+    <div class="metric"><div class="metric-label">수령 초기 10년 평균 월</div><div class="metric-val ${avg4x>=targetMon?'good':'warn-c'}">${fmt(Math.round(avg4x/10000))}만원</div></div>
+    <div class="metric"><div class="metric-label">목표 달성률 (${cStart}~${cEnd})</div><div class="metric-val ${achRate>=80?'good':achRate>=50?'warn-c':'bad'}">${achRate}%</div></div>
     <div class="metric"><div class="metric-label">목표 미달 연도</div><div class="metric-val ${miss.length===0?'good':'bad'}">${miss.length}년</div></div>
   `;
 
@@ -2520,7 +2539,8 @@ var Help=(function(){
     bot('매년 추가로 납입하는 금액이 있나요? 없으면 0. (만원/년)');
     askText('예: 600','만원/년',function(val){
       var n=num(val);if(n===null||n<0){bot('숫자로 입력해 주세요.');return;}
-      usr(fmtK(n)+'만원/년');S.cur.add=n;qPrivEnd();
+      usr(fmtK(n)+'만원/년');S.cur.add=n;
+      if(n===0){qPrivRate();}else{qPrivEnd();}
     });
   }
   function qPrivEnd(){
