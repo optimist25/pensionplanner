@@ -447,18 +447,22 @@ window.addEventListener("load",function(){
 
 <div id="resultSection" style="display:none">
   <div style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-    <button class="btn-muted" onclick="showSetup()"><i class="ti ti-arrow-left" style="font-size:14px"></i>입력 화면으로 돌아가기 · 다시 설정</button>
+    <button class="btn-muted" onclick="showSetup()" style="white-space:nowrap"><i class="ti ti-arrow-left" style="font-size:14px"></i>입력으로 돌아가기</button>
     <span style="flex:1"></span>
-    <button class="btn-primary" onclick="exportPNG()"><i class="ti ti-photo-down" style="font-size:14px"></i>PNG 저장</button>
-    <button class="btn-primary" onclick="exportCSV()"><i class="ti ti-file-spreadsheet" style="font-size:14px"></i>CSV 저장</button>
+    <span style="display:inline-flex;gap:8px;flex-shrink:0">
+      <button class="btn-primary" onclick="exportPNG()" style="white-space:nowrap"><i class="ti ti-photo-down" style="font-size:14px"></i>PNG 저장</button>
+      <button class="btn-primary" onclick="exportCSV()" style="white-space:nowrap"><i class="ti ti-file-spreadsheet" style="font-size:14px"></i>CSV 저장</button>
+    </span>
   </div>
   <div class="metric-grid" id="summaryCards"></div>
 
   <div class="card">
     <div class="section-label">연간 수령액 추이 — 세후 (녹색: 목표 달성 / 파란색: 목표 미달)<span id="inflPayoutBadge"></span></div>
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:12px;color:var(--text2);flex-wrap:wrap">
-      그래프 기간 <input type="number" id="chartStartYear" min="2020" max="2046" step="1" onchange="setChartStart(this.value)" style="width:72px;padding:4px 6px;font-size:12px;background:var(--bg2);color:var(--text);border:.5px solid var(--border);border-radius:6px">년 ~ <span id="chartEndYear" style="font-weight:600;color:var(--text)"></span> <span style="color:var(--text3)">(35년)</span>
-      <button type="button" onclick="setChartStart('')" style="font-size:11px;padding:3px 10px;background:var(--bg2);color:var(--text2);border:.5px solid var(--border);border-radius:12px;cursor:pointer">자동(개시연도)</button>
+    <div style="display:flex;align-items:center;gap:6px;margin:2px 0 10px;font-size:12px;color:var(--text2)">
+      <span style="white-space:nowrap;flex-shrink:0">그래프 기간</span>
+      <input type="number" id="chartStartYear" min="2020" max="2046" step="1" onchange="setChartStart(this.value)" style="width:64px;height:28px;padding:0 6px;font-size:12px;background:var(--bg2);color:var(--text);border:.5px solid var(--border);border-radius:6px;text-align:center;flex-shrink:0">
+      <span style="white-space:nowrap;flex-shrink:0">~ <b id="chartEndYear" style="font-weight:600;color:var(--text)"></b> <span style="color:var(--text3)">(35년)</span></span>
+      <button type="button" onclick="setChartStart('')" style="margin-left:auto;font-size:11px;padding:4px 10px;background:var(--bg2);color:var(--text2);border:.5px solid var(--border);border-radius:12px;cursor:pointer;white-space:nowrap;flex-shrink:0">자동</button>
     </div>
     <div id="legendPayout" class="legend"></div>
     <div class="chart-wrap"><canvas id="chartPayout" role="img" aria-label="연도별 세후 연간 수령액과 목표액 비교 차트"></canvas></div>
