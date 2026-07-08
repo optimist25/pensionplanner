@@ -2461,17 +2461,17 @@ var Help=(function(){
     wrap.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:4px';
     [PERSONAS.female,PERSONAS.male,PERSONAS.ytb,PERSONAS.prof].forEach(function(p){
       var b=document.createElement('button');b.type='button';
-      b.style.cssText='height:auto;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px 12px;border:1.5px solid var(--blue);border-radius:14px;background:var(--bg3);color:var(--text);cursor:pointer;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.25)';
+      b.style.cssText='height:auto;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px 12px;border:1.5px solid #378ADD;border-radius:14px;background:var(--bg3);color:var(--text);cursor:pointer;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.25)';
       var av=document.createElement('span');
       av.className='wiz-avatar';
-      av.style.cssText='width:56px;height:56px;display:inline-block;border:2px solid var(--blue);border-radius:50%';
+      av.style.cssText='width:56px;height:56px;display:inline-block;border:2px solid #378ADD;border-radius:50%';
       if(p.key==='male'){av.style.backgroundImage='url("'+maleImgSrc()+'")';}
       else if(p.img){av.style.backgroundImage='url("'+p.img+'")';}
       else if(p.emoji){av.style.backgroundImage='none';av.style.background='var(--bg4)';av.style.display='inline-flex';av.style.alignItems='center';av.style.justifyContent='center';av.style.fontSize='30px';av.textContent=p.emoji;}
       var nm=document.createElement('span');nm.style.cssText='font-size:13.5px;font-weight:800';nm.textContent=p.name;
-      var sb=document.createElement('span');sb.style.cssText='font-size:10.5px;color:var(--blue);font-weight:700';sb.textContent=p.sub;
+      var sb=document.createElement('span');sb.style.cssText='font-size:10.5px;color:#378ADD;font-weight:700';sb.textContent=p.sub;
       var ds=document.createElement('span');ds.style.cssText='font-size:10.5px;color:var(--text3);line-height:1.5;white-space:pre-line';ds.textContent=p.desc;
-      var pick=document.createElement('span');pick.style.cssText='margin-top:2px;font-size:11.5px;font-weight:700;color:#fff;background:var(--blue);padding:4px 16px;border-radius:999px';pick.textContent='선택';
+      var pick=document.createElement('span');pick.style.cssText='margin-top:2px;font-size:11.5px;font-weight:700;color:#fff;background:#378ADD;padding:4px 16px;border-radius:999px';pick.textContent='선택';
       b.appendChild(av);b.appendChild(nm);b.appendChild(sb);b.appendChild(ds);b.appendChild(pick);
       b.onclick=function(){pickPersona(p);};
       wrap.appendChild(b);
