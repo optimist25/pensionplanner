@@ -2656,9 +2656,15 @@ var Help=(function(){
       var n=num(val);if(n===null||n<S.age){bot('현재 나이('+S.age+'세) 이상으로 입력해 주세요.');return;}
       S.cur.lumpAge=n;
       usr(n+'세에 '+(S.cur.outflow?'지출':'입금'));
-      addLump(S.cur);
-      bot(S.catNow+' 입력 완료! ✅  ('+n+'세에 '+fmtK(S.cur.lumpAmt)+'만원 일시 '+(S.cur.outflow?'지출 · 월 수령 없음':'입금')+')');
-      setTimeout(qMore,300);
+      if(S.cur.outflow){
+        /* 지출: 바로 완료 */
+        addLump(S.cur);
+        bot(S.catNow+' 입력 완료! ✅  ('+n+'세에 '+fmtK(S.cur.lumpAmt)+'만원 일시 지출 · 월 수령 없음)');
+        setTimeout(qMore,300);
+      }else{
+        /* 입금: 수익률 → 수령개시 → 월수령액 질문으로 진행 */
+        qLumpRate();
+      }
     });
   }
   function qLumpRate(){
@@ -2776,10 +2782,14 @@ var Help=(function(){
     }
     S.prods.push({
       cat:info.cat,name:info.cat,
-      bal:0,rate:0,add:0,
-      endY:lumpY-1,startY:lumpY,
+      bal:0,
+      rate:(info.rate!=null?info.rate:0),
+      add:0,
+      endY:lumpY-1,
+      startY:(info.startAge!=null?S.base+(info.startAge-S.age):lumpY),
       tax:'비과세',taxedRatio:0,
-      monthly:0,type:'분할',
+      monthly:(info.monthly!=null?info.monthly:0),
+      type:'분할',
       lump:true,outflow:false,
       lumpAmt:Math.abs(info.lumpAmt!=null?info.lumpAmt:0),
       lumpYear:lumpY
