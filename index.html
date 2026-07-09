@@ -379,12 +379,32 @@ function toggleHistory(){
 </div>
 <button type="button" onclick="Help.open()" class="help-cta"><span class="qm">?</span>입력 방법 영상으로 보기 (채팅·직접입력)</button>
 <div class="card">
+  <details class="guide-box">
+    <summary>👤 <span style="color:#378ADD;font-weight:800">기입된 예시를 알아볼까요?</span><br><span style="display:inline-block;margin-top:2px;font-weight:700">만45세 외벌이 직장인 A씨 가상사례입니다</span></summary>
+    <div class="guide-body">
+      <div class="guide-text" style="line-height:1.7">
+        기본으로 채워진 값은 이해를 돕기 위한 <strong>가상의 예시</strong>입니다.<br><br>
+        <strong>A씨(만 45세)</strong>는 외벌이 직장인으로, 은퇴 후 <strong>월 500만원</strong>(세후)의 생활비를 목표로 준비 중입니다. 지금까지 모아둔 노후자산과 계획은 이렇습니다.<br><br>
+        · <strong>연금저축</strong> 5,000만원 — 매년 500만원씩 납입, 60세부터 수령<br>
+        · <strong>퇴직연금</strong> 1억원 — 회사가 매년 800만원 적립, 65세부터 월 180만원<br>
+        · <strong>IRP</strong> 3,000만원 — 매년 300만원 납입, 65세부터 월 80만원<br>
+        · <strong>ISA</strong> 2,000만원 — 매년 700만원 납입, 60세부터 월 80만원<br>
+        · <strong>연금보험</strong> — 62세부터 월 100만원 종신 수령<br>
+        · <strong>국민연금</strong> — 65세부터 월 150만원 (본인 기준, 배우자 연금은 별도 추가 가능)<br><br>
+        전략은 이렇습니다. <strong>55세까지 납입을 마치고</strong>, 60세 퇴직 후에는 연금저축·ISA부터 수령을 시작해 <strong>국민연금이 나오는 65세까지의 소득 공백기</strong>를 메웁니다. 65세부터는 퇴직연금·IRP·국민연금이 더해져 수령액이 두터워지는 구조예요.<br><br>
+        👉 본인 상황에 맞게 아래 칸의 숫자를 직접 바꾸거나, 위의 <strong>'대화형으로 입력'</strong> 버튼으로 상담사와 대화하며 처음부터 만들어 보세요.
+      </div>
+      <div style="text-align:center;margin-top:10px">
+        <a href="javascript:void(0)" onclick="this.closest('details').removeAttribute('open');this.closest('details').scrollIntoView({block:'center'})" style="display:inline-block;font-size:12px;font-weight:700;color:#378ADD;text-decoration:none;padding:6px 18px;border:1px solid #378ADD;border-radius:999px">▲ 접기</a>
+      </div>
+    </div>
+  </details>
   <div class="section-label">기본 설정</div>
   <div class="input-grid g4">
     <div class="input-group"><label><span class="num-badge">①</span>현재 만나이</label><input type="number" id="curAge" value="45" min="20" max="80"></div>
     <div class="input-group"><label><span class="num-badge">②</span>현재 연도</label><input type="number" id="curYear" value="2026" min="2020" max="2040"></div>
     <div class="input-group"><label><span class="num-badge">③</span>월 목표 수령액 (만원)</label><input type="text" inputmode="decimal" id="targetMon" value="500" oninput="liveComma(this)"></div>
-    <div class="input-group"><label><span class="num-badge">④</span>인플레이션율 (%/년)</label><input type="number" id="inflRate" value="2" min="0" max="5" step="0.1"></div>
+    <div class="input-group"><label><span class="num-badge">④</span>인플레이션율 (%/년)</label><input type="number" id="inflRate" value="2.5" min="0" max="5" step="0.1"></div>
   </div>
   <div class="input-grid g5">
     <div class="input-group"><label><span class="num-badge">⑤</span>저율과세 한도 (만원/년)</label><input type="text" inputmode="decimal" id="taxLimit" value="1,500" oninput="liveComma(this)"></div>
@@ -590,12 +610,12 @@ function toggleHistory(){
 <script>
 const COLORS=['#378ADD','#1D9E75','#D85A30','#7F77DD','#BA7517','#D4537E','#639922','#888780','#E24B4A','#5DCAA5'];
 const DEFAULTS=[
-  {cat:'연금저축',name:'연금저축A',bal:1000,rate:6,add:600,endY:2035,startY:2041,tax:'세액공제',taxedRatio:100,monthly:60,type:'분할'},
-  {cat:'퇴직연금',name:'퇴직연금',bal:1000,rate:5,add:0,endY:2035,startY:2041,tax:'분리과세',taxedRatio:100,monthly:300,type:'분할'},
-  {cat:'IRP',name:'IRP',bal:1000,rate:6,add:300,endY:2037,startY:2041,tax:'세액공제',taxedRatio:100,monthly:40,type:'분할'},
-  {cat:'ISA',name:'ISA',bal:1000,rate:6,add:500,endY:2039,startY:2041,tax:'세액공제',taxedRatio:100,monthly:40,type:'분할'},
-  {cat:'연금보험',name:'연금보험A',bal:1000,rate:3,add:1200,endY:2039,startY:2042,tax:'비과세',taxedRatio:0,monthly:100,type:'종신'},
-  {cat:'국민연금',name:'국민연금',bal:1000,rate:3,add:400,endY:2039,startY:2042,tax:'종합과세',taxedRatio:100,monthly:120,type:'종신'},
+  {cat:'연금저축',name:'연금저축A',bal:5000,rate:6,add:500,endY:2036,startY:2041,tax:'세액공제',taxedRatio:100,monthly:60,type:'분할'},
+  {cat:'퇴직연금',name:'퇴직연금',bal:10000,rate:5,add:800,endY:2036,startY:2046,tax:'분리과세',taxedRatio:100,monthly:180,type:'분할'},
+  {cat:'IRP',name:'IRP',bal:3000,rate:6,add:300,endY:2036,startY:2046,tax:'세액공제',taxedRatio:100,monthly:80,type:'분할'},
+  {cat:'ISA',name:'ISA',bal:2000,rate:6,add:700,endY:2036,startY:2041,tax:'세액공제',taxedRatio:100,monthly:80,type:'분할'},
+  {cat:'연금보험',name:'연금보험A',bal:1000,rate:3,add:1200,endY:2039,startY:2043,tax:'비과세',taxedRatio:0,monthly:100,type:'종신'},
+  {cat:'국민연금',name:'국민연금',bal:1000,rate:3,add:400,endY:2039,startY:2046,tax:'종합과세',taxedRatio:100,monthly:150,type:'종신'},
 ];
 
 let products=JSON.parse(JSON.stringify(DEFAULTS));
