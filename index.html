@@ -496,13 +496,14 @@ function toggleHistory(){
 
   <div class="card">
     <details class="guide-box">
-      <summary>🧭 <span style="color:#378ADD;font-weight:800">결과가 아쉽다면? — A씨가 고민 중인 4가지 개선 방향</span></summary>
+      <summary>🧭 <span style="color:#378ADD;font-weight:800">결과 진단 — 개선이 필요하다면?</span></summary>
       <div class="guide-body" style="background:rgba(128,134,148,.14);border-radius:14px;padding:14px 16px;margin-top:8px">
         <div class="guide-text" style="line-height:1.7">
-          예시의 A씨도 시뮬레이션을 돌려 보고 두 가지 약점을 발견했습니다. 국민연금이 나오기 전인 <strong>60~64세 소득 공백기</strong>, 그리고 연금저축·퇴직연금이 소진되는 <strong>80대 후반 이후 미달 구간</strong>이에요. 그래서 A씨는 지금 네 가지 방향을 저울질하고 있습니다.<br><br>
+          <div id="resultDiag" style="margin-bottom:4px"></div>
+          목표에 못 미치는 구간이 있다면, 아래 네 가지 방향을 하나씩 검토해 보세요.<br><br>
           <strong>① 추가불입</strong> — 납입 여력이 있을 때 연금저축·IRP에 더 넣기. 두 계좌 합산 연 900만원까지 세액공제 혜택도 있어, 같은 돈이면 가장 효율이 높은 선택지예요.<br><br>
           <strong>② 지연수령</strong> — 개시 나이를 늦춰 적립 기간을 늘리기. 특히 국민연금은 최대 5년 연기하면 <strong>연 7.2%씩 증액</strong>돼, 장수할수록 유리해요. 다만 그 사이 생활비를 버틸 다른 재원이 필요하죠.<br><br>
-          <strong>③ 지출 재검토</strong> — 자녀 결혼자금·대출 상환 같은 목돈 지출의 시점과 규모를 조정하거나, 목표 생활비 자체를 다시 점검하기. 지출 1억원을 줄이면 수령 기간이 몇 년 늘어나는지 바로 확인할 수 있어요.<br><br>
+          <strong>③ 지출 재검토</strong> — 목돈 지출(자녀 결혼·대출 상환 등)의 시점과 규모를 조정하거나, 목표 생활비 자체를 다시 점검하기. 지출을 줄이면 수령 기간이 얼마나 늘어나는지 바로 확인할 수 있어요.<br><br>
           <strong>④ 수익률 개선</strong> — 원리금보장형에 몰려 있다면 일부를 분산 투자로 옮겨 연수익률 가정을 높이기. 단, 계획은 보수적인 수익률로 세우는 게 안전합니다.<br><br>
           👉 위 항목의 숫자를 하나씩 바꿔 다시 시뮬레이션하면서, 어떤 조합이 미달 구간을 가장 효과적으로 줄이는지 비교해 보세요.
         </div>
@@ -655,6 +656,7 @@ function toggleRow(i){
 let inflatePayoutMode=false;
 let chartPayout=null,chartBalance=null,chartTaxLimit=null,chartTax=null,pieCharts=[],lastSim=null;
 let chartStartOverride=null; // 그래프 시작연도 수동 지정 (null=자동: 가장 이른 수령 개시연도)
+let lastChartStart=null,lastChartEnd=null; // 최근 시뮬레이션의 표시 구간 (분석 영역과 공유)
 function setChartStart(v){
   const n=parseInt(v,10);
   chartStartOverride=isNaN(n)?null:n;
@@ -940,6 +942,7 @@ function runSim(doScroll){
   const cEnd=cStart+34;
   const csInput=document.getElementById('chartStartYear');
   if(csInput){csInput.value=cStart;var ceEl=document.getElementById('chartEndYear');if(ceEl)ceEl.textContent=cEnd+'년';}
+  lastChartStart=cStart;lastChartEnd=cEnd;
   const display=sim.filter(d=>d.year>=cStart&&d.year<=cEnd);
   const activeY=display;
   const miss=activeY.filter(d=>d.total>0&&d.total<d.target);
@@ -1294,9 +1297,34 @@ function renderAnalysis(sim){
   const curYear=v('curYear'),curAge=v('curAge');
   const targetMon=v('targetMon')*10000;
   const taxLimit=v('taxLimit');
-  const activeY=sim.filter(d=>d.year>=2040&&d.year<=2075);
+  const wS=(lastChartStart!=null)?lastChartStart:2040, wE=(lastChartEnd!=null)?lastChartEnd:2075;
+  const activeY=sim.filter(d=>d.year>=wS&&d.year<=wE);
   const miss=activeY.filter(d=>d.total>0&&d.total<d.target);
   const achRate=Math.round(activeY.filter(d=>d.total>=d.target).length/activeY.length*100);
+  /* 결과 진단: 미달 구간을 연속 범위로 묶어 요약 */
+  (function(){
+    const el=document.getElementById('resultDiag');
+    if(!el)return;
+    const missRows=activeY.filter(d=>d.total<d.target);
+    const ageMap={};activeY.forEach(d=>{ageMap[d.year]=d.age;});
+    const ageOf=y=>ageMap[y];
+    const missYears=missRows.map(d=>d.year);
+    if(!missYears.length){
+      el.innerHTML='✅ 표시 구간('+wS+'~'+wE+'년) 내 <strong>모든 해에 목표를 달성</strong>했습니다. 훌륭한 포트폴리오네요! 수익률을 더 보수적으로 낮춰보며 계획의 안전성을 점검해 보는 것도 좋아요.<br><br>';
+      return;
+    }
+    const ranges=[];
+    let s0=missYears[0],prev=missYears[0];
+    for(let i=1;i<=missYears.length;i++){
+      const y=missYears[i];
+      if(y!==prev+1){ranges.push([s0,prev]);s0=y;}
+      prev=y;
+    }
+    const rTxt=ranges.map(r=>r[0]===r[1]
+      ?(r[0]+'년('+ageOf(r[0])+'세)')
+      :(r[0]+'~'+r[1]+'년('+ageOf(r[0])+'~'+ageOf(r[1])+'세)')).join(', ');
+    el.innerHTML='📌 시뮬레이션 결과, 표시 구간 중 <strong>'+missYears.length+'개 연도가 목표에 미달</strong>했어요.<br>미달 구간: <strong style="color:#e2707a">'+rTxt+'</strong><br>수령 초반 미달은 주로 <strong>연금 개시 전 소득 공백</strong>, 후반 미달은 <strong>적립금 소진</strong>이 원인인 경우가 많아요.<br><br>';
+  })();
   const avg4x=activeY.slice(0,10).reduce((s,d)=>s+d.total,0)/10/12;
   const gap=targetMon-avg4x;
   const splitProds=products.filter(p=>p.type==='분할');
