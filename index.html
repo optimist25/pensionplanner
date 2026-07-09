@@ -341,6 +341,10 @@ function onboardClose(never){
   if(ob)ob.style.display="none";
   if(never){try{localStorage.setItem("nhpOnboardHide","1");}catch(e){}}
 }
+function onboardOpen(){
+  var ob=document.getElementById("onboardLayer");
+  if(ob)ob.style.display="flex";
+}
 (function(){
   var OFFSET=1047; /* 표시값 = 실제 카운트 + 1047 (1048부터 시작) */
   function show(num){
@@ -410,6 +414,7 @@ function toggleHistory(){
   <button type="button" onclick="Wiz.open()" class="wiz-launch">💬 대화형으로 입력</button>
 </div>
 <button type="button" onclick="Help.open()" class="help-cta"><span class="qm">?</span>입력 방법 영상으로 보기 (채팅·직접입력)</button>
+<div style="margin:6px 0 0 4px"><a href="javascript:void(0)" onclick="onboardOpen()" style="font-size:11.5px;color:var(--text3);text-decoration:none;font-weight:600">👋 처음 사용 안내 다시 보기</a></div>
 <div class="card">
   <details class="guide-box">
     <summary>👤 <span style="color:#378ADD;font-weight:800">기입된 예시를 알아볼까요?</span><br><span style="display:inline-block;margin-top:2px;font-weight:700">만45세 맞벌이 직장인 A씨 부부 가상사례입니다</span></summary>
