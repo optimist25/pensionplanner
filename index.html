@@ -198,7 +198,8 @@ table.dt tr:hover td{background:var(--bg2)}
 .action-effect{display:inline-block;font-size:11px;font-weight:500;margin-top:4px;padding:2px 8px;border-radius:10px;background:var(--info-bg);color:var(--info-text)}
 .divider-label{font-size:11px;font-weight:500;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
 .divider-label::after{content:'';flex:1;height:.5px;background:var(--border)}
-.hint{font-size:11px;color:var(--text3);margin-top:6px;padding:8px .num-badge{display:inline-flex;align-items:center;justify-content:center;
+.hint{font-size:11px;color:var(--text3);margin-top:6px;padding:8px}
+.num-badge{display:inline-flex;align-items:center;justify-content:center;
   width:16px;height:16px;border-radius:50%;background:var(--info-bg);color:var(--info-text);
   font-size:10px;font-weight:500;flex-shrink:0;margin-right:4px;border:.5px solid var(--info-border)}
 .pie-grid{display:flex;flex-direction:row;align-items:flex-start;gap:8px;margin-top:4px}
@@ -285,6 +286,16 @@ details.guide-box .guide-body{padding:0 14px 13px}
   #reportOverlay{position:static;background:none;display:block;padding:0}
   #reportBox{box-shadow:none;border-radius:0}
   .rp-close,.rp-print-btn{display:none}
+}
+/* ===== 데스크톱: 모바일 비율 중앙 고정 레이아웃 ===== */
+@media (min-width:600px){
+  body{background:#e8ebf1}
+  .hero,.page-header,.container,.footer{max-width:480px!important;margin-left:auto!important;margin-right:auto!important;border-left:.5px solid var(--border);border-right:.5px solid var(--border)}
+  .container,.footer{background:var(--bg)}
+  #wizOverlay{left:50%!important;right:auto!important;transform:translateX(-50%);width:480px!important;max-width:100vw!important;box-shadow:0 0 40px rgba(0,0,0,.35)}
+}
+@media (min-width:600px) and (prefers-color-scheme:dark){
+  body{background:#07090d}
 }
 </style>
 </head>
