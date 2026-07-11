@@ -810,7 +810,46 @@ function addLumpProduct(){
 function delProduct(i){products.splice(i,1);var ns=new Set();openRows.forEach(function(k){if(k<i)ns.add(k);else if(k>i)ns.add(k-1);});openRows=ns;renderTable();}
 function moveProduct(i,dir){var j=i+dir;if(j<0||j>=products.length)return;var t=products[i];products[i]=products[j];products[j]=t;var hi=openRows.has(i),hj=openRows.has(j);if(hj)openRows.add(i);else openRows.delete(i);if(hi)openRows.add(j);else openRows.delete(j);renderTable();}
 function cloneProduct(i){var c=JSON.parse(JSON.stringify(products[i]));c.name=c.name+" (복사)";products.splice(i+1,0,c);var ns=new Set();openRows.forEach(function(k){if(k<=i)ns.add(k);else ns.add(k+1);});openRows=ns;renderTable();}
-function resetProducts(){products=JSON.parse(JSON.stringify(DEFAULTS));openRows.clear();renderTable();}
+function resetProducts(){
+  var layer=document.getElementById('resetChoiceLayer');
+  if(layer){layer.style.display='flex';return;}
+  layer=document.createElement('div');
+  layer.id='resetChoiceLayer';
+  layer.style.cssText='position:fixed;inset:0;z-index:99997;background:rgba(15,20,30,.55);display:flex;align-items:center;justify-content:center;padding:24px';
+  layer.innerHTML=
+    '<div style="background:#fff;color:#1c2330;max-width:320px;width:100%;border-radius:16px;padding:20px 18px 14px;box-shadow:0 10px 36px rgba(0,0,0,.35)">'
+    +'<div style="font-size:15.5px;font-weight:800;margin-bottom:4px">어떻게 초기화할까요?</div>'
+    +'<div style="font-size:12px;color:#6b7484;margin-bottom:14px;line-height:1.5">직접 입력한 상품 내용은 사라집니다.</div>'
+    +'<button type="button" onclick="doReset(\'empty\')" style="width:100%;height:42px;margin-bottom:8px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:1px solid #d7dbe2;border-radius:10px;background:#f4f6f9;color:#1c2330;cursor:pointer">🗑️ 모두 지우기 (빈 목록에서 직접 입력)</button>'
+    +'<button type="button" onclick="doReset(\'default\')" style="width:100%;height:42px;margin-bottom:8px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:none;border-radius:10px;background:#378ADD;color:#fff;cursor:pointer">👤 기본 예시로 (맞벌이 A씨 사례)</button>'
+    +'<button type="button" onclick="doReset(null)" style="width:100%;height:38px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:600;border:none;border-radius:10px;background:transparent;color:#6b7484;cursor:pointer">취소</button>'
+    +'</div>';
+  document.body.appendChild(layer);
+}
+function doReset(mode){
+  var layer=document.getElementById('resetChoiceLayer');
+  if(layer)layer.style.display='none';
+  if(mode===null)return;
+  if(mode==='empty'){
+    /* 국민연금·연금저축 골격만 남김(값 0) — 기본 설정(나이 등)은 본인 값 유지 */
+    var cy=v('curYear')||new Date().getFullYear();
+    products=[
+      {cat:'국민연금',name:'국민연금',bal:0,rate:0,add:0,endY:cy+19,startY:cy+20,tax:'종합과세',taxedRatio:70,monthly:0,type:'종신'},
+      {cat:'연금저축',name:'연금저축',bal:0,rate:0,add:0,endY:cy+9,startY:cy+15,tax:'세액공제',taxedRatio:70,monthly:0,type:'분할'}
+    ];
+    openRows.clear();
+    renderTable();
+    alert('상품 목록을 비웠습니다. 🗑️\n국민연금·연금저축 항목만 남겨두었으니 본인 값을 채우고, 필요하면 \'+ 상품 추가\'로 늘려보세요.');
+    return;
+  }
+  /* 기본 예시 복원: 기본 설정 + 상품 전부 */
+  var defs={curAge:'45',curYear:'2026',targetMon:'500',inflRate:'2.5',taxLimit:'1,500',taxRate1:'5.5',taxRate2:'4.4',taxRate3:'3.3',compTaxRate:'15',sepRate:'5'};
+  Object.keys(defs).forEach(function(k){var el=document.getElementById(k);if(el)el.value=defs[k];});
+  products=JSON.parse(JSON.stringify(DEFAULTS));
+  openRows.clear();
+  renderTable();
+  alert('기본 예시로 초기화했습니다. ✅');
+}
 
 /* ===== 행 드래그 정렬 (마우스·터치 공용, 의존성 없음) ===== */
 function commitRowOrder(order){
