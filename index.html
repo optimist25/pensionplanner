@@ -308,9 +308,55 @@ details.guide-box .guide-body{padding:0 14px 13px}
 @media (min-width:600px) and (prefers-color-scheme:dark){
   body{background:#07090d}
 }
+/* ===== 뷰 전환 토글 + PC 대시보드 레이아웃 (추가) ===== */
+#viewToggle{position:fixed;top:12px;right:12px;z-index:9997;display:none;gap:2px;
+  background:var(--card,#fff);border:1px solid var(--border,#e2e5ea);border-radius:999px;
+  box-shadow:0 4px 16px rgba(0,0,0,.14);padding:3px;font-size:12px;font-weight:700}
+#viewToggle button{border:0;background:transparent;color:var(--text2,#6b7280);
+  padding:7px 14px;cursor:pointer;border-radius:999px;display:inline-flex;align-items:center;
+  gap:5px;line-height:1;transition:background .15s,color .15s}
+#viewToggle button.active{background:#0A5BEA;color:#fff}
+#viewToggle button:not(.active):hover{color:var(--text,#1c2330)}
+@media (min-width:1000px){ #viewToggle{display:inline-flex} }
+
+@media (min-width:1000px){
+  body.pc-view{background:#eef1f6}
+  body.pc-view .hero,
+  body.pc-view .page-header,
+  body.pc-view .container,
+  body.pc-view .footer{
+    max-width:1360px!important;margin-left:auto!important;margin-right:auto!important;
+    border-left:none!important;border-right:none!important}
+  body.pc-view .container{padding-left:28px;padding-right:28px}
+  body.pc-view #wizOverlay{left:auto!important;right:24px!important;transform:none!important;
+    width:420px!important;max-width:92vw!important}
+
+  /* 입력 페이지: 상단 [기본안내 | 대화형입력] 반반, 하단 매뉴얼입력 전체 폭 */
+  body.pc-view #page1{display:grid;grid-template-columns:1fr 1fr;
+    column-gap:20px;row-gap:0;align-items:start;padding-bottom:24px!important}
+  body.pc-view #page1 > *{min-width:0}
+  body.pc-view #page1 > :nth-child(1){grid-column:1;grid-row:1}   /* 01 기본안내 헤더 */
+  body.pc-view #page1 > :nth-child(2){grid-column:1;grid-row:2;align-self:stretch}   /* 기본안내 카드 (높이 맞춤) */
+  body.pc-view #page1 > :nth-child(3){grid-column:2;grid-row:1}   /* 02 대화형 헤더 */
+  body.pc-view #page1 > :nth-child(4){grid-column:2;grid-row:2;align-self:stretch}   /* 대화형 입력창 (높이 맞춤) */
+  body.pc-view #page1 > :nth-child(n+5){grid-column:1 / -1}       /* 03 직접입력 이하 전체 폭 */
+
+  /* 결과 페이지: 대시보드 그리드 */
+  body.pc-view #resultSection{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px;align-items:start}
+  body.pc-view #resultSection > *{margin:0;min-width:0}
+  body.pc-view #resultSection > .card:first-of-type{grid-column:1 / -1}
+  body.pc-view #summaryCards{grid-column:1 / -1}
+  body.pc-view #resultSection .card:has(#detailTable){grid-column:1 / -1}
+  body.pc-view #analysisCard{grid-column:1 / -1}
+}
 </style>
 </head>
 <body>
+<div id="viewToggle" role="group" aria-label="화면 보기 전환">
+  <button type="button" data-view="mobile" onclick="setViewMode('mobile')">📱 모바일</button>
+  <button type="button" data-view="pc" onclick="setViewMode('pc')">🖥️ PC</button>
+</div>
 <div id="onboardLayer" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(15,20,30,.62);backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:20px;">
   <div style="background:#ffffff;color:#1c2330;max-width:360px;width:100%;max-height:86vh;overflow:auto;border-radius:18px;padding:18px 16px 14px;box-shadow:0 12px 40px rgba(0,0,0,.35);">
     <div style="font-size:17px;font-weight:800;margin-bottom:2px;">처음이신가요? 👋</div>
@@ -3295,5 +3341,34 @@ var TaxGuide={
 })();
 </script>
 <!-- ===== /PWA ===== -->
+<script>
+/* ===== 화면 보기 전환 (모바일 / PC 대시보드) ===== */
+(function(){
+  var KEY = 'planb_view_mode';
+  window.setViewMode = function(mode){
+    var pc = (mode === 'pc');
+    document.body.classList.toggle('pc-view', pc);
+    var tg = document.getElementById('viewToggle');
+    if (tg){
+      tg.querySelectorAll('button').forEach(function(b){
+        b.classList.toggle('active', b.getAttribute('data-view') === mode);
+      });
+    }
+    try { localStorage.setItem(KEY, mode); } catch(e){}
+    /* 레이아웃이 바뀌면 차트가 다시 크기를 잡도록 resize 이벤트 발생 */
+    setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 60);
+  };
+  function init(){
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch(e){}
+    /* 저장값이 없으면: 넓은 화면은 PC, 좁은 화면은 모바일을 기본값으로 */
+    var mode = saved || (window.innerWidth >= 1000 ? 'pc' : 'mobile');
+    window.setViewMode(mode);
+  }
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+})();
+</script>
 </body>
 </html>
