@@ -525,28 +525,7 @@ function toggleHistory(){
 <div class="card">
   <button type="button" onclick="Help.open()" class="help-cta" style="width:100%;justify-content:flex-start;margin-bottom:10px"><span class="qm">?</span>입력 방법 영상으로 보기 (채팅·직접입력)</button>
 
-  <details style="padding:0;background:none;border:none">
-    <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:8px 14px;border:1px solid var(--info-border);border-radius:999px;background:var(--bg);color:#378ADD"><span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#378ADD;color:#fff;font-size:10px;flex-shrink:0">👤</span>기입된 예시 알아보기 (맞벌이 A씨)</summary>
-    <div class="guide-body" style="background:rgba(128,134,148,.14);border-radius:14px;padding:14px 16px;margin-top:8px">
-      <div class="guide-text" style="line-height:1.7">
-        기본으로 채워진 값은 이해를 돕기 위한 <strong>가상의 예시</strong>입니다.<br><br>
-        <strong>A씨(만 45세)</strong>는 맞벌이 직장인으로, 은퇴 후 부부 기준 <strong>월 500만원</strong>(세후)의 생활비를 목표로 준비 중입니다. 지금까지 모아둔 노후자산과 계획은 이렇습니다.<br><br>
-        · <strong>연금저축</strong> 1억원 — 매년 800만원 납입, 60세부터 월 100만원<br>
-        · <strong>IRP</strong> 2,000만원 — 매년 300만원 납입, 62세부터 월 80만원<br>
-        · <strong>퇴직연금</strong> 2억원 — 매년 800만원 적립, 65세부터 월 200만원<br>
-        · <strong>연금보험</strong> — 62세부터 월 100만원 종신 수령<br>
-        · <strong>국민연금(본인)</strong> — 65세부터 월 180만원 종신<br>
-        · <strong>국민연금(배우자)</strong> — 배우자 몫, 68세 시점부터 월 150만원 종신<br>
-        · <strong>퇴직위로금</strong> 2억원 — 57세 퇴직 때 일시 수령, 연 3%로 굴리며 60세부터 월 100만원씩 사용<br>
-        · <strong>목돈 지출 2건</strong> — 65세 자녀 결혼자금 1억원, 70세 대출금 상환 1억원<br><br>
-        전략은 이렇습니다. <strong>57세까지 납입을 마치고</strong> 퇴직 후에는 위로금과 연금저축으로 <strong>국민연금이 나오기 전(60~64세) 소득 공백기</strong>를 버팁니다. 65세부터 본인 국민연금·퇴직연금이, 68세부터 배우자 국민연금까지 합류해 수령액이 가장 두터워집니다. 자녀 결혼과 대출 상환 같은 <strong>목돈 지출도 미리 계획</strong>에 넣어 두었어요.<br><br>
-        👉 본인 상황에 맞게 아래 칸의 숫자를 직접 바꾸거나, 위의 <strong>'대화형으로 입력'</strong> 버튼으로 상담사와 대화하며 처음부터 만들어 보세요.
-      </div>
-      <div style="text-align:center;margin-top:10px">
-        <a href="javascript:void(0)" onclick="this.closest('details').removeAttribute('open');this.closest('details').scrollIntoView({block:'center'})" style="display:inline-block;font-size:12px;font-weight:700;color:#378ADD;text-decoration:none;padding:6px 18px;border:1px solid #378ADD;border-radius:999px">▲ 접기</a>
-      </div>
-    </div>
-  </details>
+  <button type="button" onclick="ExampleGuide.open()" style="width:100%;list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:8px 14px;border:1px solid var(--info-border);border-radius:999px;background:var(--bg);color:#378ADD"><span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#378ADD;color:#fff;font-size:10px;flex-shrink:0">👤</span>기입된 예시 알아보기 (맞벌이 A씨)</button>
   <button type="button" onclick="TaxGuide.open()" style="width:100%;margin-top:10px;list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:8px 14px;border:1px solid var(--info-border);border-radius:999px;background:var(--bg);color:#378ADD"><span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#378ADD;color:#fff;font-size:10px;flex-shrink:0">₩</span>이 앱의 세금계산 로직 보기</button>
 </div>
 
@@ -2723,6 +2702,39 @@ var Help=(function(){
 var TaxGuide={
   open:function(){var o=document.getElementById('taxGuideOverlay');if(o){o.style.display='flex';document.body.style.overflow='hidden';}},
   close:function(){var o=document.getElementById('taxGuideOverlay');if(o){o.style.display='none';document.body.style.overflow='';}}
+};
+</script>
+<div id="exampleGuideOverlay" style="display:none;position:fixed;inset:0;z-index:100002;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:16px">
+  <div style="background:var(--bg);color:var(--text);width:100%;max-width:560px;max-height:90vh;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+    <div style="display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:.5px solid var(--border);flex-shrink:0">
+      <span style="font-size:15px;font-weight:800">👤 기입된 예시 (맞벌이 A씨)</span>
+      <button type="button" onclick="ExampleGuide.close()" style="margin-left:auto;border:none;background:none;font-size:22px;color:var(--text3);cursor:pointer;padding:0 4px;height:auto">&times;</button>
+    </div>
+    <div style="overflow-y:auto;padding:16px 18px;font-size:13px;line-height:1.75">
+      <div class="guide-text" style="line-height:1.7">
+        기본으로 채워진 값은 이해를 돕기 위한 <strong>가상의 예시</strong>입니다.<br><br>
+        <strong>A씨(만 45세)</strong>는 맞벌이 직장인으로, 은퇴 후 부부 기준 <strong>월 500만원</strong>(세후)의 생활비를 목표로 준비 중입니다. 지금까지 모아둔 노후자산과 계획은 이렇습니다.<br><br>
+        · <strong>연금저축</strong> 1억원 — 매년 800만원 납입, 60세부터 월 100만원<br>
+        · <strong>IRP</strong> 2,000만원 — 매년 300만원 납입, 62세부터 월 80만원<br>
+        · <strong>퇴직연금</strong> 2억원 — 매년 800만원 적립, 65세부터 월 200만원<br>
+        · <strong>연금보험</strong> — 62세부터 월 100만원 종신 수령<br>
+        · <strong>국민연금(본인)</strong> — 65세부터 월 180만원 종신<br>
+        · <strong>국민연금(배우자)</strong> — 배우자 몫, 68세 시점부터 월 150만원 종신<br>
+        · <strong>퇴직위로금</strong> 2억원 — 57세 퇴직 때 일시 수령, 연 3%로 굴리며 60세부터 월 100만원씩 사용<br>
+        · <strong>목돈 지출 2건</strong> — 65세 자녀 결혼자금 1억원, 70세 대출금 상환 1억원<br><br>
+        전략은 이렇습니다. <strong>57세까지 납입을 마치고</strong> 퇴직 후에는 위로금과 연금저축으로 <strong>국민연금이 나오기 전(60~64세) 소득 공백기</strong>를 버팁니다. 65세부터 본인 국민연금·퇴직연금이, 68세부터 배우자 국민연금까지 합류해 수령액이 가장 두터워집니다. 자녀 결혼과 대출 상환 같은 <strong>목돈 지출도 미리 계획</strong>에 넣어 두었어요.<br><br>
+        👉 본인 상황에 맞게 아래 칸의 숫자를 직접 바꾸거나, 위의 <strong>'대화형으로 입력'</strong> 버튼으로 상담사와 대화하며 처음부터 만들어 보세요.
+      </div>
+    </div>
+    <div style="padding:12px 18px;border-top:.5px solid var(--border);flex-shrink:0">
+      <button type="button" onclick="ExampleGuide.close()" style="width:100%;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:800;border:none;border-radius:10px;background:#378ADD;color:#fff;cursor:pointer">닫기</button>
+    </div>
+  </div>
+</div>
+<script>
+var ExampleGuide={
+  open:function(){var o=document.getElementById('exampleGuideOverlay');if(o){o.style.display='flex';document.body.style.overflow='hidden';}},
+  close:function(){var o=document.getElementById('exampleGuideOverlay');if(o){o.style.display='none';document.body.style.overflow='';}}
 };
 </script>
 <div id="wizOverlay" role="dialog" aria-modal="true" aria-label="대화형 입력 도우미">
