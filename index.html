@@ -430,8 +430,8 @@ details.guide-box .guide-body{padding:0 14px 13px}
   <p style="margin:16px 0 0;color:#8a8a8a;font-size:14px;font-weight:500;line-height:1.55;text-align:center;padding:0 28px;">브라우저에서 <b style="color:#0A5BEA;font-weight:700">설치</b>하면 앱처럼 사용할 수 있어요</p>
   </div>
   <div style="position:absolute;bottom:26px;left:0;right:0;text-align:center;">
-    <div style="color:#0A5BEA;font-size:12px;font-weight:700;line-height:1.55;padding:0 28px;margin-bottom:8px;">✨ V3.9 업데이트<br><span style="color:#8a8a8a;font-weight:600;">PC 버전 보기 기능 추가<br>(넓은 화면 대시보드 · 모바일/PC 전환 토글)</span></div>
-    <div style="color:#888;font-size:14px;font-weight:600;">v3.9</div>
+    <div style="color:#0A5BEA;font-size:12px;font-weight:700;line-height:1.55;padding:0 28px;margin-bottom:8px;">✨ V4.0 업데이트<br><span style="color:#8a8a8a;font-weight:600;">입력사례 3가지 제시<br>(상황 설명 후 바로 시뮬레이션)</span></div>
+    <div style="color:#888;font-size:14px;font-weight:600;">v4.0</div>
   </div>
 </div>
 <script>
@@ -502,7 +502,7 @@ function toggleHistory(){
 </script>
 
 <div class="hero">
-  <h1><svg viewBox="0 0 100 100" width="38" height="38" aria-hidden="true" style="vertical-align:middle;margin-right:10px;display:inline-block"><defs><linearGradient id="planbGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1D90F9"/><stop offset=".55" stop-color="#0A5BEA"/><stop offset="1" stop-color="#043DC7"/></linearGradient></defs><rect x="3" y="3" width="94" height="94" rx="24" fill="url(#planbGrad)"/><rect x="11" y="11" width="78" height="78" rx="16" fill="none" stroke="#9CC6FF" stroke-width="2.5" opacity=".7"/><text y="45" text-anchor="middle" font-family="-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="30" font-weight="800" fill="#fff"><tspan x="36">노</tspan><tspan x="64">후</tspan></text><text y="81" text-anchor="middle" font-family="-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="30" font-weight="800"><tspan x="36" fill="#fff">준</tspan><tspan x="64" fill="#FDC307">B</tspan></text></svg>노후자금 시뮬레이터<span class="hero-ver">V3.9</span></h1>
+  <h1><svg viewBox="0 0 100 100" width="38" height="38" aria-hidden="true" style="vertical-align:middle;margin-right:10px;display:inline-block"><defs><linearGradient id="planbGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1D90F9"/><stop offset=".55" stop-color="#0A5BEA"/><stop offset="1" stop-color="#043DC7"/></linearGradient></defs><rect x="3" y="3" width="94" height="94" rx="24" fill="url(#planbGrad)"/><rect x="11" y="11" width="78" height="78" rx="16" fill="none" stroke="#9CC6FF" stroke-width="2.5" opacity=".7"/><text y="45" text-anchor="middle" font-family="-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="30" font-weight="800" fill="#fff"><tspan x="36">노</tspan><tspan x="64">후</tspan></text><text y="81" text-anchor="middle" font-family="-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="30" font-weight="800"><tspan x="36" fill="#fff">준</tspan><tspan x="64" fill="#FDC307">B</tspan></text></svg>노후자금 시뮬레이터<span class="hero-ver">V4.0</span></h1>
   <p class="hero-sub">연금·보험·국민연금 통합 수령액 시뮬레이션<br>— 오프라인 완전독립 버전</p>
   <div style="margin-top:14px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;">
     <span id="visitorBadge" style="display:none;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--info-text);background:var(--info-bg);border:.5px solid var(--info-border);padding:8px 14px;border-radius:22px;">누적 상담수 <b id="visitorNum" style="font-weight:800"></b></span>
@@ -512,7 +512,7 @@ function toggleHistory(){
 
 <div class="page-header" style="flex-wrap:wrap;gap:10px">
   <i class="ti ti-chart-line" style="font-size:22px;color:#378ADD"></i>
-  <span class="header-badge">V3.9</span>
+  <span class="header-badge">V4.0</span>
   <button type="button" onclick="openKookminPage()" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:8px 14px;border:1px solid rgba(0,0,0,.18);border-radius:10px;background:#f7f7f5;color:#1a1a18;cursor:pointer;">
     국민연금 시뮬레이션 가기 &rarr;
   </button>
@@ -525,7 +525,25 @@ function toggleHistory(){
 <div class="card">
   <button type="button" onclick="Help.open()" class="help-cta" style="width:100%;justify-content:flex-start;margin-bottom:10px"><span class="qm">?</span>입력 방법 영상으로 보기 (채팅·직접입력)</button>
 
-  <button type="button" onclick="ExampleGuide.open()" style="width:100%;list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:8px 14px;border:1px solid var(--info-border);border-radius:999px;background:var(--bg);color:#378ADD"><span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#378ADD;color:#fff;font-size:10px;flex-shrink:0">👤</span>기입된 예시 알아보기 (맞벌이 A씨)</button>
+  
+  <div style="margin:12px 0 2px">
+    <div style="font-size:11px;font-weight:800;letter-spacing:.3px;color:var(--text3);margin:0 0 2px 4px">🗂️ 예시 사례 — 눌러서 상황 보기</div>
+    <div onclick="openCase('c1')" style="display:flex;align-items:center;gap:9px;border:1px solid var(--border);border-radius:11px;padding:8px 10px;background:var(--bg2);margin-top:6px;cursor:pointer">
+      <span style="font-size:16px;flex-shrink:0">👤</span>
+      <span><span style="font-size:12px;font-weight:700;line-height:1.35">45세 직장인 (기본 예시)</span><br><span style="font-size:10.5px;color:var(--text3);line-height:1.35">목표 월 500만 · 상품 9개</span></span>
+      <button type="button" onclick="openCase('c1')" style="margin-left:auto;flex-shrink:0;height:28px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:none;border-radius:999px;background:#378ADD;color:#fff;cursor:pointer;white-space:nowrap">보기 ›</button>
+    </div>
+    <div onclick="openCase('c2')" style="display:flex;align-items:center;gap:9px;border:1px solid var(--border);border-radius:11px;padding:8px 10px;background:var(--bg2);margin-top:6px;cursor:pointer">
+      <span style="font-size:16px;flex-shrink:0">💰</span>
+      <span><span style="font-size:12px;font-weight:700;line-height:1.35">55세 · 퇴직금 5억, 60세 은퇴하면?</span><br><span style="font-size:10.5px;color:var(--text3);line-height:1.35">목표 월 500만 · 연 5% 운용</span></span>
+      <button type="button" onclick="openCase('c2')" style="margin-left:auto;flex-shrink:0;height:28px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:none;border-radius:999px;background:#378ADD;color:#fff;cursor:pointer;white-space:nowrap">보기 ›</button>
+    </div>
+    <div onclick="openCase('c3')" style="display:flex;align-items:center;gap:9px;border:1px solid var(--border);border-radius:11px;padding:8px 10px;background:var(--bg2);margin-top:6px;cursor:pointer">
+      <span style="font-size:16px;flex-shrink:0">🏢</span>
+      <span><span style="font-size:12px;font-weight:700;line-height:1.35">50세 대기업 · 57세 조기은퇴 준비</span><br><span style="font-size:10.5px;color:var(--text3);line-height:1.35">목표 월 800만 · 집중 납입형</span></span>
+      <button type="button" onclick="openCase('c3')" style="margin-left:auto;flex-shrink:0;height:28px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:none;border-radius:999px;background:#378ADD;color:#fff;cursor:pointer;white-space:nowrap">보기 ›</button>
+    </div>
+  </div>
   <button type="button" onclick="TaxGuide.open()" style="width:100%;margin-top:10px;list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:8px 14px;border:1px solid var(--info-border);border-radius:999px;background:var(--bg);color:#378ADD"><span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:#378ADD;color:#fff;font-size:10px;flex-shrink:0">₩</span>이 앱의 세금계산 로직 보기</button>
 </div>
 
@@ -736,11 +754,14 @@ function toggleHistory(){
 
 <div class="footer">
   <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:0.5px solid var(--border)">
-    <strong style="color:var(--text2)">V3.9 업데이트</strong>&ensp;
-    🖥️ PC 버전 보기 기능 추가 (넓은 화면에서 대시보드형 레이아웃으로 전환 · 우측 상단 모바일/PC 토글)
+    <strong style="color:var(--text2)">V4.0 업데이트</strong>&ensp;
+    🗂️ 입력사례 3가지 제시 (45세 직장인·55세 퇴직금 5억·50세 조기은퇴 — 상황 설명 후 바로 시뮬레이션)
     <br>
     <a href="javascript:void(0)" id="histToggle" onclick="toggleHistory()" style="display:inline-block;margin-top:6px;color:var(--text3);text-decoration:none;font-weight:600;font-size:11px">▾ 지난 업데이트 이력 보기</a>
     <div id="histOld" style="display:none;margin-top:6px">
+    <strong style="color:var(--text2)">V3.9 업데이트</strong>&ensp;
+    🖥️ PC 버전 보기 기능 추가 (넓은 화면에서 대시보드형 레이아웃으로 전환 · 우측 상단 모바일/PC 토글)
+    <br>
     <strong style="color:var(--text2)">V3.8 업데이트</strong>&ensp;
     💰 세금계산 로직 안내페이지 추가 (기본 안내 메뉴, 유형별 계산 방식과 법적 근거 명기)
     <br>
@@ -793,7 +814,7 @@ function toggleHistory(){
     ↕ 항목 순서 변경&ensp;·&ensp;📋 행 복제(Ditto)
     </div>
   </div>
-  노후연금 시뮬레이터 V3.9 &nbsp;·&nbsp; 완전 독립 오프라인 버전 &nbsp;·&nbsp; 2026.07<br>
+  노후연금 시뮬레이터 V4.0 &nbsp;·&nbsp; 완전 독립 오프라인 버전 &nbsp;·&nbsp; 2026.07<br>
   <a href="https://www.nohuplan.com" style="color:#0A5BEA;text-decoration:none;font-weight:600">https://www.nohuplan.com</a><br>
   본 시뮬레이터는 참고용이며, 실제 세금·수익률·법령은 달라질 수 있습니다. 투자 및 연금 계획은 전문가와 상담하시기 바랍니다.
 </div>
@@ -829,6 +850,86 @@ const DEFAULTS=[
   {cat:'자녀결혼',name:'자녀결혼',bal:0,rate:0,add:0,endY:2045,startY:2046,tax:'비과세',taxedRatio:0,monthly:0,type:'분할',lump:true,outflow:true,lumpAmt:-10000,lumpYear:2046},
   {cat:'대출금상환',name:'대출금상환',bal:0,rate:0,add:0,endY:2050,startY:2051,tax:'비과세',taxedRatio:0,monthly:0,type:'분할',lump:true,outflow:true,lumpAmt:-10000,lumpYear:2051},
 ];
+
+/* ===== 불러오기 예시 프리셋 3종 ===== */
+const CASE_INFO={
+  c1:{title:"👤 케이스1 · 45세 직장인 (기본 예시)", html:`<div class="guide-text" style="line-height:1.7">
+        기본으로 채워진 값은 이해를 돕기 위한 <strong>가상의 예시</strong>입니다.<br><br>
+        <strong>A씨(만 45세)</strong>는 맞벌이 직장인으로, 은퇴 후 부부 기준 <strong>월 500만원</strong>(세후)의 생활비를 목표로 준비 중입니다. 지금까지 모아둔 노후자산과 계획은 이렇습니다.<br><br>
+        · <strong>연금저축</strong> 1억원 — 매년 800만원 납입, 60세부터 월 100만원<br>
+        · <strong>IRP</strong> 2,000만원 — 매년 300만원 납입, 62세부터 월 80만원<br>
+        · <strong>퇴직연금</strong> 2억원 — 매년 800만원 적립, 65세부터 월 200만원<br>
+        · <strong>연금보험</strong> — 62세부터 월 100만원 종신 수령<br>
+        · <strong>국민연금(본인)</strong> — 65세부터 월 180만원 종신<br>
+        · <strong>국민연금(배우자)</strong> — 배우자 몫, 68세 시점부터 월 150만원 종신<br>
+        · <strong>퇴직위로금</strong> 2억원 — 57세 퇴직 때 일시 수령, 연 3%로 굴리며 60세부터 월 100만원씩 사용<br>
+        · <strong>목돈 지출 2건</strong> — 65세 자녀 결혼자금 1억원, 70세 대출금 상환 1억원<br><br>
+        전략은 이렇습니다. <strong>57세까지 납입을 마치고</strong> 퇴직 후에는 위로금과 연금저축으로 <strong>국민연금이 나오기 전(60~64세) 소득 공백기</strong>를 버팁니다. 65세부터 본인 국민연금·퇴직연금이, 68세부터 배우자 국민연금까지 합류해 수령액이 가장 두터워집니다. 자녀 결혼과 대출 상환 같은 <strong>목돈 지출도 미리 계획</strong>에 넣어 두었어요.<br><br>
+        👉 본인 상황에 맞게 아래 칸의 숫자를 직접 바꾸거나, 위의 <strong>'대화형으로 입력'</strong> 버튼으로 상담사와 대화하며 처음부터 만들어 보세요.
+      </div>`},
+  c2:{title:"💰 케이스2 · 55세 퇴직금 5억, 60세 은퇴하면?", html:`<div class="guide-body" style="background:rgba(128,134,148,.14);border-radius:14px;padding:14px 16px">
+  <div class="guide-text" style="line-height:1.7">
+    <strong>B씨(만 55세)</strong>는 은퇴가 눈앞입니다. 지금까지 회사 퇴직연금으로 <strong>5억원</strong>을 모았고, 앞으로도 매년 500만원씩 더 쌓입니다. 궁금한 건 하나예요 — <strong>"이 돈이면 60세에 은퇴해도 될까?"</strong><br><br>
+    · <strong>퇴직연금</strong> 5억원 — 연 5%로 운용, 매년 500만원 추가, 60세부터 월 320만원 수령<br>
+    · <strong>국민연금</strong> — 65세부터 월 180만원 종신<br>
+    · 목표 생활비 월 <strong>500만원</strong> (물가 2.5% 반영 시 매년 상승)<br><br>
+    핵심은 <strong>60~64세의 5년</strong>입니다. 국민연금이 나오기 전이라 퇴직연금 하나로 버텨야 하는데, 월 320만원이면 목표의 60% 수준이에요. 65세부터 국민연금이 합류하면 월 585만원으로 올라섭니다.<br><br>
+    👉 <strong>이런 걸 확인해 보세요:</strong> 수령액을 월 320만원보다 늘리면 잔액이 언제 바닥나는지, 은퇴를 62세로 늦추면 공백기가 얼마나 줄어드는지 — 결과 화면의 <strong>'⚡ 조건 바꿔보기'</strong> 슬라이더로 바로 비교할 수 있어요.
+  </div>
+</div>`},
+  c3:{title:"🏢 케이스3 · 50세 대기업, 57세 조기은퇴 준비", html:`<div class="guide-body" style="background:rgba(128,134,148,.14);border-radius:14px;padding:14px 16px">
+  <div class="guide-text" style="line-height:1.7">
+    <strong>C씨(만 50세)</strong>는 대기업에 다니며 <strong>57세 조기은퇴</strong>를 준비 중입니다. 남은 7년 동안 최대한 몰아 넣고, 은퇴와 동시에 연금을 꺼내 쓰는 전략이에요.<br><br>
+    · <strong>퇴직연금</strong> 3억원 — 연 5%, 매년 1,000만원 적립, 57세부터 월 320만원<br>
+    · <strong>연금저축</strong> 1.5억원 — 매년 600만원 납입, 57세부터 월 150만원<br>
+    · <strong>IRP</strong> 1,200만원 — 매년 300만원 납입, 57세부터 월 150만원<br>
+    · <strong>국민연금</strong> — 65세부터 월 180만원 종신<br>
+    · 목표 생활비 월 <strong>800만원</strong> (여유로운 노후 기준)<br><br>
+    전략은 <strong>57세까지 집중 납입 → 57세부터 세 계좌 동시 수령</strong>입니다. 초반 수령액은 월 700만원대로 목표에 근접하지만, IRP처럼 규모가 작은 계좌는 <strong>몇 년 만에 소진</strong>되어 수령액이 뚝 떨어지는 구간이 생깁니다.<br><br>
+    👉 <strong>이런 걸 확인해 보세요:</strong> 목표를 800만원으로 잡으면 조기은퇴에 얼마나 부족한지, 수령 개시를 60세로 늦추거나 목표를 낮추면 얼마나 개선되는지 확인해 보세요. 연금저축·IRP 수령액이 연 1,500만원을 넘는 해가 있는지도 함께 보시면 좋습니다.
+  </div>
+</div>`}
+};
+const PRESETS={
+  c1:{label:'45세 맞벌이 직장인 부부', set:{curAge:45,curYear:2026,targetMon:500,inflRate:2.5},
+    prods:[
+      {cat:'국민연금',name:'국민연금',bal:1000,rate:4.5,add:0,endY:2045,startY:2046,tax:'종합과세',taxedRatio:70,monthly:180,type:'종신'},
+      {cat:'국민연금(배우자)',name:'국민연금(배우자)',bal:1000,rate:4.5,add:0,endY:2048,startY:2049,tax:'종합과세',taxedRatio:70,monthly:150,type:'종신'},
+      {cat:'연금저축',name:'연금저축',bal:10000,rate:4.5,add:800,endY:2038,startY:2041,tax:'세액공제',taxedRatio:70,monthly:100,type:'분할'},
+      {cat:'IRP',name:'IRP',bal:2000,rate:4.5,add:300,endY:2038,startY:2043,tax:'세액공제',taxedRatio:70,monthly:80,type:'분할'},
+      {cat:'퇴직연금',name:'퇴직연금',bal:20000,rate:4.5,add:800,endY:2038,startY:2046,tax:'분리과세',taxedRatio:70,monthly:200,type:'분할'},
+      {cat:'연금보험',name:'연금보험',bal:1000,rate:4.5,add:0,endY:2042,startY:2043,tax:'비과세',taxedRatio:70,monthly:100,type:'종신'},
+      {cat:'퇴직위로금',name:'퇴직위로금',bal:0,rate:3,add:0,endY:2037,startY:2041,tax:'비과세',taxedRatio:0,monthly:100,type:'분할',lump:true,outflow:false,lumpAmt:20000,lumpYear:2038},
+      {cat:'자녀결혼',name:'자녀결혼',bal:0,rate:0,add:0,endY:2045,startY:2046,tax:'비과세',taxedRatio:0,monthly:0,type:'분할',lump:true,outflow:true,lumpAmt:-10000,lumpYear:2046},
+      {cat:'대출금상환',name:'대출금상환',bal:0,rate:0,add:0,endY:2050,startY:2051,tax:'비과세',taxedRatio:0,monthly:0,type:'분할',lump:true,outflow:true,lumpAmt:-10000,lumpYear:2051}
+    ]},
+  c2:{label:'55세 · 퇴직금 5억 굴리며 60세 은퇴', set:{curAge:55,curYear:2026,targetMon:500,inflRate:2.5},
+    prods:[
+      {cat:'국민연금',name:'국민연금',bal:1000,rate:4.5,add:0,endY:2035,startY:2036,tax:'종합과세',taxedRatio:70,monthly:180,type:'종신'},
+      {cat:'퇴직연금',name:'퇴직연금',bal:50000,rate:5,add:500,endY:2030,startY:2031,tax:'분리과세',taxedRatio:70,monthly:320,type:'분할'}
+    ]},
+  c3:{label:'50세 대기업 직장인 · 57세 조기은퇴 준비', set:{curAge:50,curYear:2026,targetMon:800,inflRate:2.5},
+    prods:[
+      {cat:'국민연금',name:'국민연금',bal:1000,rate:4.5,add:0,endY:2040,startY:2041,tax:'종합과세',taxedRatio:70,monthly:180,type:'종신'},
+      {cat:'퇴직연금',name:'퇴직연금',bal:30000,rate:5,add:1000,endY:2032,startY:2033,tax:'분리과세',taxedRatio:70,monthly:320,type:'분할'},
+      {cat:'연금저축',name:'연금저축',bal:15000,rate:4.5,add:600,endY:2032,startY:2033,tax:'세액공제',taxedRatio:70,monthly:150,type:'분할'},
+      {cat:'IRP',name:'IRP',bal:1200,rate:4.5,add:300,endY:2032,startY:2033,tax:'세액공제',taxedRatio:70,monthly:150,type:'분할'}
+    ]}
+};
+function loadPreset(key){
+  var p=PRESETS[key];
+  if(!p)return;
+  if(!confirm('현재 입력이 "'+p.label+'" 예시 값으로 바뀝니다.\n계속할까요?'))return;
+  document.getElementById('curAge').value=p.set.curAge;
+  document.getElementById('curYear').value=p.set.curYear;
+  document.getElementById('targetMon').value=p.set.targetMon;
+  document.getElementById('inflRate').value=p.set.inflRate;
+  products=JSON.parse(JSON.stringify(p.prods));
+  openRows.clear();
+  renderTable();
+  if(typeof ExampleGuide!=='undefined')ExampleGuide.close();
+  simChoice();
+}
 
 let products=JSON.parse(JSON.stringify(DEFAULTS));
 let openRows=new Set();
@@ -1903,7 +2004,7 @@ function exportPNG(){
         ctx.drawImage(b.canvas, pad, yy, dw, dh);
       } else if(b.type==='footer'){
         ctx.fillStyle='#9ca3af'; ctx.font='400 12px -apple-system,sans-serif'; ctx.textBaseline='top';
-        ctx.fillText('노후연금 시뮬레이터 v3.9 · 참고용 결과입니다', pad, y+8);
+        ctx.fillText('노후연금 시뮬레이터 v4.0 · 참고용 결과입니다', pad, y+8);
       }
       y+=b.h+gap;
     });
@@ -2710,35 +2811,35 @@ var TaxGuide={
 <div id="exampleGuideOverlay" style="display:none;position:fixed;inset:0;z-index:100002;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:16px">
   <div style="background:var(--bg);color:var(--text);width:100%;max-width:560px;max-height:90vh;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)">
     <div style="display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:.5px solid var(--border);flex-shrink:0">
-      <span style="font-size:15px;font-weight:800">👤 기입된 예시 (맞벌이 A씨)</span>
+      <span id="egTitle" style="font-size:15px;font-weight:800">예시 사례</span>
       <button type="button" onclick="ExampleGuide.close()" style="margin-left:auto;border:none;background:none;font-size:22px;color:var(--text3);cursor:pointer;padding:0 4px;height:auto">&times;</button>
     </div>
-    <div style="overflow-y:auto;padding:16px 18px;font-size:13px;line-height:1.75">
-      <div class="guide-text" style="line-height:1.7">
-        기본으로 채워진 값은 이해를 돕기 위한 <strong>가상의 예시</strong>입니다.<br><br>
-        <strong>A씨(만 45세)</strong>는 맞벌이 직장인으로, 은퇴 후 부부 기준 <strong>월 500만원</strong>(세후)의 생활비를 목표로 준비 중입니다. 지금까지 모아둔 노후자산과 계획은 이렇습니다.<br><br>
-        · <strong>연금저축</strong> 1억원 — 매년 800만원 납입, 60세부터 월 100만원<br>
-        · <strong>IRP</strong> 2,000만원 — 매년 300만원 납입, 62세부터 월 80만원<br>
-        · <strong>퇴직연금</strong> 2억원 — 매년 800만원 적립, 65세부터 월 200만원<br>
-        · <strong>연금보험</strong> — 62세부터 월 100만원 종신 수령<br>
-        · <strong>국민연금(본인)</strong> — 65세부터 월 180만원 종신<br>
-        · <strong>국민연금(배우자)</strong> — 배우자 몫, 68세 시점부터 월 150만원 종신<br>
-        · <strong>퇴직위로금</strong> 2억원 — 57세 퇴직 때 일시 수령, 연 3%로 굴리며 60세부터 월 100만원씩 사용<br>
-        · <strong>목돈 지출 2건</strong> — 65세 자녀 결혼자금 1억원, 70세 대출금 상환 1억원<br><br>
-        전략은 이렇습니다. <strong>57세까지 납입을 마치고</strong> 퇴직 후에는 위로금과 연금저축으로 <strong>국민연금이 나오기 전(60~64세) 소득 공백기</strong>를 버팁니다. 65세부터 본인 국민연금·퇴직연금이, 68세부터 배우자 국민연금까지 합류해 수령액이 가장 두터워집니다. 자녀 결혼과 대출 상환 같은 <strong>목돈 지출도 미리 계획</strong>에 넣어 두었어요.<br><br>
-        👉 본인 상황에 맞게 아래 칸의 숫자를 직접 바꾸거나, 위의 <strong>'대화형으로 입력'</strong> 버튼으로 상담사와 대화하며 처음부터 만들어 보세요.
-      </div>
-    </div>
-    <div style="padding:12px 18px;border-top:.5px solid var(--border);flex-shrink:0">
-      <button type="button" onclick="ExampleGuide.close()" style="width:100%;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:800;border:none;border-radius:10px;background:#378ADD;color:#fff;cursor:pointer">닫기</button>
+    <div id="egBody" style="overflow-y:auto;padding:16px 18px;font-size:13px;line-height:1.75"></div>
+    <div style="padding:12px 18px;border-top:.5px solid var(--border);flex-shrink:0;display:flex;gap:8px">
+      <button type="button" onclick="ExampleGuide.close()" style="flex:0 0 90px;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:1px solid var(--border2);border-radius:10px;background:var(--bg2);color:var(--text2);cursor:pointer">닫기</button>
+      <button type="button" id="egLoadBtn" onclick="ExampleGuide.load()" style="flex:1;height:42px;padding:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:13.5px;font-weight:800;border:none;border-radius:10px;background:#378ADD;color:#fff;cursor:pointer">▶ 이 입력값 보기</button>
     </div>
   </div>
 </div>
 <script>
 var ExampleGuide={
-  open:function(){var o=document.getElementById('exampleGuideOverlay');if(o){o.style.display='flex';document.body.style.overflow='hidden';}},
-  close:function(){var o=document.getElementById('exampleGuideOverlay');if(o){o.style.display='none';document.body.style.overflow='';}}
+  cur:'c1',
+  open:function(key){
+    if(key)this.cur=key;
+    var info=(typeof CASE_INFO!=='undefined')?CASE_INFO[this.cur]:null;
+    var t=document.getElementById('egTitle');
+    var bd=document.getElementById('egBody');
+    if(info){
+      if(t)t.textContent=info.title;
+      if(bd)bd.innerHTML=info.html;
+    }
+    var o=document.getElementById('exampleGuideOverlay');
+    if(o){o.style.display='flex';document.body.style.overflow='hidden';if(bd)bd.scrollTop=0;}
+  },
+  close:function(){var o=document.getElementById('exampleGuideOverlay');if(o){o.style.display='none';document.body.style.overflow='';}},
+  load:function(){loadPreset(this.cur);}
 };
+function openCase(key){ExampleGuide.open(key);}
 </script>
 <div id="wizOverlay" role="dialog" aria-modal="true" aria-label="대화형 입력 도우미">
   <div class="wiz-top">
