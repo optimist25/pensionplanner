@@ -540,7 +540,7 @@ function toggleHistory(){
     </div>
     <div onclick="openCase('c3')" style="display:flex;align-items:center;gap:9px;border:1px solid var(--border);border-radius:11px;padding:8px 10px;background:var(--bg2);margin-top:6px;cursor:pointer">
       <span style="font-size:16px;flex-shrink:0">🏢</span>
-      <span><span style="font-size:12px;font-weight:700;line-height:1.35">50세 대기업 · 57세 조기은퇴 준비</span><br><span style="font-size:10.5px;color:var(--text3);line-height:1.35">목표 월 800만 · 집중 납입형</span></span>
+      <span><span style="font-size:12px;font-weight:700;line-height:1.35">50세 대기업 · 57세 조기은퇴 준비</span><br><span style="font-size:10.5px;color:var(--text3);line-height:1.35">목표 월 800만 · 위로금 4억 포함</span></span>
       <button type="button" onclick="openCase('c3')" style="margin-left:auto;flex-shrink:0;height:28px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:none;border-radius:999px;background:#378ADD;color:#fff;cursor:pointer;white-space:nowrap">보기 ›</button>
     </div>
   </div>
@@ -883,10 +883,11 @@ const CASE_INFO={
     · <strong>퇴직연금</strong> 3억원 — 연 5%, 매년 1,000만원 적립, 57세부터 월 320만원<br>
     · <strong>연금저축</strong> 1.5억원 — 매년 600만원 납입, 57세부터 월 150만원<br>
     · <strong>IRP</strong> 1,200만원 — 매년 300만원 납입, 57세부터 월 150만원<br>
+    · <strong>퇴직위로금</strong> 4억원 — 57세 퇴직 시 일시 수령, 연 5%로 굴리다 <strong>65세부터 월 300만원</strong><br>
     · <strong>국민연금</strong> — 65세부터 월 180만원 종신<br>
     · 목표 생활비 월 <strong>800만원</strong> (여유로운 노후 기준)<br><br>
-    전략은 <strong>57세까지 집중 납입 → 57세부터 세 계좌 동시 수령</strong>입니다. 초반 수령액은 월 700만원대로 목표에 근접하지만, IRP처럼 규모가 작은 계좌는 <strong>몇 년 만에 소진</strong>되어 수령액이 뚝 떨어지는 구간이 생깁니다.<br><br>
-    👉 <strong>이런 걸 확인해 보세요:</strong> 목표를 800만원으로 잡으면 조기은퇴에 얼마나 부족한지, 수령 개시를 60세로 늦추거나 목표를 낮추면 얼마나 개선되는지 확인해 보세요. 연금저축·IRP 수령액이 연 1,500만원을 넘는 해가 있는지도 함께 보시면 좋습니다.
+    전략은 <strong>57세까지 집중 납입 → 57세부터 세 계좌 동시 수령</strong>입니다. 퇴직위로금 4억은 바로 쓰지 않고 <strong>8년간 굴려서 65세부터 꺼내 쓰는</strong> 구조라, 국민연금이 시작되는 65세부터 수령액이 크게 두터워집니다. 다만 IRP처럼 규모가 작은 계좌는 <strong>몇 년 만에 소진</strong>되어 수령액이 떨어지는 구간이 생깁니다.<br><br>
+    👉 <strong>이런 걸 확인해 보세요:</strong> 57~64세 구간이 목표에 얼마나 못 미치는지, 위로금을 더 일찍(예: 57세부터) 꺼내 쓰면 그 구간이 메워지는 대신 후반이 어떻게 되는지 비교해 보세요. 연금저축·IRP 수령액이 연 1,500만원을 넘는 해가 있는지도 함께 보시면 좋습니다.
   </div>
 </div>`}
 };
@@ -913,7 +914,8 @@ const PRESETS={
       {cat:'국민연금',name:'국민연금',bal:1000,rate:4.5,add:0,endY:2040,startY:2041,tax:'종합과세',taxedRatio:70,monthly:180,type:'종신'},
       {cat:'퇴직연금',name:'퇴직연금',bal:30000,rate:5,add:1000,endY:2032,startY:2033,tax:'분리과세',taxedRatio:70,monthly:320,type:'분할'},
       {cat:'연금저축',name:'연금저축',bal:15000,rate:4.5,add:600,endY:2032,startY:2033,tax:'세액공제',taxedRatio:70,monthly:150,type:'분할'},
-      {cat:'IRP',name:'IRP',bal:1200,rate:4.5,add:300,endY:2032,startY:2033,tax:'세액공제',taxedRatio:70,monthly:150,type:'분할'}
+      {cat:'IRP',name:'IRP',bal:1200,rate:4.5,add:300,endY:2032,startY:2033,tax:'세액공제',taxedRatio:70,monthly:150,type:'분할'},
+      {cat:'기타',name:'퇴직위로금',bal:0,rate:5,add:0,endY:2032,startY:2041,tax:'비과세',taxedRatio:0,monthly:300,type:'분할',lump:true,outflow:false,lumpAmt:40000,lumpYear:2033}
     ]}
 };
 function loadPreset(key){
