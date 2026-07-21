@@ -574,6 +574,10 @@ function toggleHistory(){
     <summary style="cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--text3);padding:8px 2px;user-select:none">
       <span style="display:inline-block;transition:transform .15s" class="tax-arrow">▸</span>세금 상세 설정 (⑤~⑩) — 기본값 권장, 필요할 때만 열어보세요
     </summary>
+    <label style="display:flex;align-items:center;gap:7px;margin:8px 0 2px;font-size:12.5px;color:var(--text2);cursor:pointer">
+      <input type="checkbox" id="npsAdjustChk" checked onchange="npsAutoAdjust=this.checked;if(document.getElementById('resultSection').style.display!=='none')runSim();" style="width:16px;height:16px;flex:0 0 auto">
+      국민연금 조기·연기수령 자동 조정 <span style="color:var(--text3)">(65세 기준 · 조기 연 6% 감액 / 연기 연 7.2% 증액)</span>
+    </label>
     <div class="input-grid g5" style="margin-top:6px">
       <div class="input-group"><label><span class="num-badge">⑤</span>저율과세 한도 (만원/년)</label><input type="text" inputmode="decimal" id="taxLimit" value="1,500" oninput="liveComma(this)"></div>
       <div class="input-group"><label><span class="num-badge">⑥</span>저율과세율 ~70세 (%)</label><input type="number" id="taxRate1" value="5.5" min="0" max="15" step="0.1"></div>
@@ -874,7 +878,7 @@ const CASE_INFO={
     · <strong>국민연금</strong> — 65세부터 월 180만원 종신<br>
     · 목표 생활비 월 <strong>500만원</strong> (물가 2.5% 반영 시 매년 상승)<br><br>
     핵심은 <strong>60~64세의 5년</strong>입니다. 국민연금이 나오기 전이라 퇴직연금 하나로 버텨야 하는데, 월 320만원이면 목표의 60% 수준이에요. 65세부터 국민연금이 합류하면 월 585만원으로 올라섭니다.<br><br>
-    👉 <strong>이런 걸 확인해 보세요:</strong> 수령액을 월 320만원보다 늘리면 잔액이 언제 바닥나는지, 은퇴를 62세로 늦추면 공백기가 얼마나 줄어드는지 — 결과 화면의 <strong>'⚡ 조건 바꿔보기'</strong> 슬라이더로 바로 비교할 수 있어요.
+    👉 <strong>이런 걸 확인해 보세요:</strong> 수령액을 월 320만원보다 늘리면 노후자금이 언제 소진되는지, 은퇴를 62세로 늦추면 공백기가 얼마나 줄어드는지 — 결과 화면의 <strong>'⚡ 조건 바꿔보기'</strong> 슬라이더로 바로 비교할 수 있어요.
   </div>
 </div>`},
   c3:{title:"🏢 케이스3 · 50세 대기업, 57세 조기은퇴 준비", html:`<div class="guide-body" style="background:rgba(128,134,148,.14);border-radius:14px;padding:14px 16px">
@@ -1223,7 +1227,8 @@ function toggleInflatePayout(){
 }
 
 let whatIfRateDelta=0; // what-if: 전체 수익률 임시 가감(%p) — 상품 원본값은 유지
-function calcAccum(p,startYear,inflRate,inflatePayout){
+function calcAccum(p,startYear,inflRate,inflatePayout,monFactor){
+  const mf=(monFactor==null?1:monFactor);
   const baseRate=+p.rate||0;
   const r=(baseRate>0? Math.max(0, baseRate+whatIfRateDelta) : baseRate)/100;
   let bal=p.bal*10000;
@@ -1242,7 +1247,7 @@ function calcAccum(p,startYear,inflRate,inflatePayout){
     } else {
       // 인플레이션 수령액 증액: 목표선과 동일하게 현재연도(startYear) 대비 매년 inflRate만큼 상향
       const inflF=(inflatePayout&&inflRate>0)?Math.pow(1+inflRate,y-startYear):1;
-      const annualPayout=p.monthly*10000*12*inflF;
+      const annualPayout=p.monthly*mf*10000*12*inflF;
       const available=(bal+add)*(1+r);
       if(p.type==='종신'){
         bal=Math.max(0,available-annualPayout);
@@ -1257,7 +1262,20 @@ function calcAccum(p,startYear,inflRate,inflatePayout){
   return result;
 }
 
-function afterTax(payout,tax,taxLimitWon,taxRate,compTaxRate,taxedRatio,sepRate){
+/* 국민연금 조기수령 감액(연 6%)·연기수령 증액(연 7.2%) 계수 — 기준 65세, 최대 ±5년 */
+function npsFactor(p,curYear,curAge){
+  if(!npsAutoAdjust)return 1;
+  var cat=(p.cat||'')+(p.name||'');
+  if(cat.indexOf('국민연금')<0)return 1;
+  if(!p.startY)return 1;
+  var claimAge=curAge+(+p.startY-curYear);
+  var d=claimAge-65;
+  if(d<-5)d=-5; if(d>5)d=5;
+  return d<0 ? 1+0.06*d : 1+0.072*d;
+}
+let npsAutoAdjust=true;
+const OVER_LIMIT_RATE=0.165; // 사적연금 연 한도 초과 시 분리과세율 (소득세법 §64의4, 지방세 포함)
+function afterTax(payout,tax,taxLimitWon,taxRate,compTaxRate,taxedRatio,sepRate,overLimit){
   if(payout<=0) return 0;
   // 비과세: 세금 없음
   if(tax==='비과세') return payout;
@@ -1270,7 +1288,9 @@ function afterTax(payout,tax,taxLimitWon,taxRate,compTaxRate,taxedRatio,sepRate)
     const ratio=(taxedRatio??100)/100;
     const taxedPart=payout*ratio;
     const freePart=payout*(1-ratio);
-    return taxedPart*(1-taxRate)+freePart;
+    // 한도 초과 연도: 저율과세 대신 16.5% 분리과세 (전액 기준)
+    const r=overLimit?OVER_LIMIT_RATE:taxRate;
+    return taxedPart*(1-r)+freePart;
   }
   // 종합과세(국민연금 등): 입력된 종합과세율 적용
   if(tax==='종합과세') return payout*(1-compTaxRate);
@@ -1284,16 +1304,22 @@ function runSim(doScroll){
   const compTaxRate=v('compTaxRate')/100||0.154;
   const sepRate=v('sepRate')/100;
 
-  const prodData=products.map(p=>calcAccum(p,curYear,inflRate,inflatePayoutMode));
+  const prodData=products.map(p=>calcAccum(p,curYear,inflRate,inflatePayoutMode,npsFactor(p,curYear,curAge)));
   const years=[];
   for(let y=curYear;y<=2080;y++) years.push(y);
 
   const sim=years.map((y,yi)=>{
     const age=curAge+(y-curYear);
     const taxR=age<70?tr1:age<80?tr2:tr3;
+    // 사적연금(세액공제) 과세대상 합계가 연 한도를 넘으면 16.5% 분리과세로 전환
+    const taxableSum=products.reduce((sm,p,pi)=>{
+      if(p.tax!=='세액공제')return sm;
+      return sm+prodData[pi][yi].payout*((p.taxedRatio??100)/100);
+    },0);
+    const overLimit=taxLimit>0 && taxableSum>taxLimit*10000;
     const perProd=products.map((_,pi)=>{
       const d=prodData[pi][yi];
-      return afterTax(d.payout,products[pi].tax,taxLimit*10000,taxR,compTaxRate,products[pi].taxedRatio??100,sepRate);
+      return afterTax(d.payout,products[pi].tax,taxLimit*10000,taxR,compTaxRate,products[pi].taxedRatio??100,sepRate,overLimit);
     });
     const total=perProd.reduce((s,x)=>s+x,0);
     const totalSplit=perProd.reduce((s,x,pi)=>s+(products[pi].type==='분할'?x:0),0);
@@ -1310,7 +1336,8 @@ function runSim(doScroll){
       if(payout<=0) return;
       if(p.tax==='세액공제'){
         const ratio=(p.taxedRatio??100)/100;
-        taxByType.lowRate+=payout*ratio*taxR;
+        if(overLimit){taxByType.separated+=payout*ratio*OVER_LIMIT_RATE;}
+        else{taxByType.lowRate+=payout*ratio*taxR;}
       } else if(p.tax==='분리과세'){
         taxByType.separated+=payout*sepRate;
       } else if(p.tax==='종합과세'){
@@ -1318,7 +1345,7 @@ function runSim(doScroll){
       }
     });
     const totalTax=taxByType.lowRate+taxByType.separated+taxByType.comprehensive;
-    return {year:y,age,total,totalSplit,totalLifetime,totalTaxLimitSubject,taxByType,totalTax,perProd,bal:products.map((_,pi)=>prodData[pi][yi].bal),target:targetMon*12*inflFactor};
+    return {year:y,age,total,totalSplit,totalLifetime,totalTaxLimitSubject,overLimit,taxByType,totalTax,perProd,bal:products.map((_,pi)=>prodData[pi][yi].bal),target:targetMon*12*inflFactor};
   });
 
   lastSim=sim;
@@ -1347,11 +1374,25 @@ function runSim(doScroll){
   if(ipb) ipb.innerHTML = inflatePayoutMode
     ? ' <span style="display:inline-block;font-size:10px;font-weight:500;background:var(--info-bg);color:var(--info-text);border:.5px solid var(--info-border);padding:1px 8px;border-radius:20px;vertical-align:middle;margin-left:4px">📈 물가상승 반영 (명목금액)</span>'
     : ' <span style="display:inline-block;font-size:10px;font-weight:500;background:var(--bg2);color:var(--text3);border:.5px solid var(--border);padding:1px 8px;border-radius:20px;vertical-align:middle;margin-left:4px">➖ 물가상승 미반영 (고정 금액)</span>';
+  /* 노후자금(분할수령 재원) 소진 시점: 분할 상품 잔고가 모두 0이 되는 첫 해 */
+  const splitIdx=products.map((p,i)=>({p,i})).filter(o=>o.p.type!=='종신'&&!o.p.outflow).map(o=>o.i);
+  let depleteYear=null,depleteAge=null;
+  if(splitIdx.length){
+    const firstPay=Math.min(...products.filter(p=>!p.outflow&&p.startY).map(p=>+p.startY));
+    for(const d of sim){
+      if(d.year<firstPay)continue;
+      const rest=splitIdx.reduce((sm,i)=>sm+(d.bal[i]||0),0);
+      if(rest<=1){depleteYear=d.year;depleteAge=d.age;break;}
+    }
+  }
+  window.lastDeplete=depleteYear?{year:depleteYear,age:depleteAge}:null;
+
   document.getElementById('summaryCards').innerHTML=`
     <div class="metric"><div class="metric-label">예상 월 최대 수령액</div><div class="metric-val">${fmt(Math.round(maxMon/10000))}만원</div></div>
     <div class="metric"><div class="metric-label">수령 초기 10년 평균 월</div><div class="metric-val ${avg4x>=targetMon?'good':'warn-c'}">${fmt(Math.round(avg4x/10000))}만원</div></div>
     <div class="metric"><div class="metric-label">목표 달성률 (${cStart}~${cEnd})</div><div class="metric-val ${achRate>=80?'good':achRate>=50?'warn-c':'bad'}">${achRate}%</div></div>
     <div class="metric"><div class="metric-label">목표 미달 연도</div><div class="metric-val ${miss.length===0?'good':'bad'}">${miss.length}년</div></div>
+    <div class="metric" style="grid-column:1/-1"><div class="metric-label">노후자금 소진 시점 <span style="color:var(--text3);font-weight:400">(분할수령 재원)</span></div><div class="metric-val ${depleteYear?'bad':'good'}" style="font-size:19px">${depleteYear?depleteYear+'년 · '+depleteAge+'세':'소진 없음 (종신 유지)'}</div></div>
   `;
 
   if(chartPayout) chartPayout.destroy();
@@ -1701,7 +1742,7 @@ function renderAnalysis(sim){
     const ageOf=y=>ageMap[y];
     const missYears=missRows.map(d=>d.year);
     if(!missYears.length){
-      el.innerHTML='✅ 표시 구간('+wS+'~'+wE+'년) 내 <strong>모든 해에 목표를 달성</strong>했습니다. 훌륭한 포트폴리오네요! 수익률을 더 보수적으로 낮춰보며 계획의 안전성을 점검해 보는 것도 좋아요.<br><br>';
+      el.innerHTML='✅ 표시 구간('+wS+'~'+wE+'년) 내 <strong>모든 해에 목표를 달성</strong>했습니다. 훌륭한 포트폴리오네요! 수익률을 더 보수적으로 낮춰보며 계획의 안전성을 점검해 보는 것도 좋아요.'+(window.lastDeplete?'<br>⏳ 다만 <strong style="color:#e2707a">'+window.lastDeplete.year+'년('+window.lastDeplete.age+'세)에 노후자금이 소진됩니다</strong> — 이후에는 종신형 연금만 남습니다.':'')+'<br><br>';
       return;
     }
     const ranges=[];
@@ -1714,7 +1755,11 @@ function renderAnalysis(sim){
     const rTxt=ranges.map(r=>r[0]===r[1]
       ?(r[0]+'년('+ageOf(r[0])+'세)')
       :(r[0]+'~'+r[1]+'년('+ageOf(r[0])+'~'+ageOf(r[1])+'세)')).join(', ');
-    el.innerHTML='📌 시뮬레이션 결과, 표시 구간 중 <strong>'+missYears.length+'개 연도가 목표에 미달</strong>했어요.<br>미달 구간: <strong style="color:#e2707a">'+rTxt+'</strong><br>수령 초반 미달은 주로 <strong>연금 개시 전 소득 공백</strong>, 후반 미달은 <strong>적립금 소진</strong>이 원인인 경우가 많아요.<br><br>';
+    var extra='';
+    if(window.lastDeplete){extra+='<br>⏳ 이 계획대로면 <strong style="color:#e2707a">'+window.lastDeplete.year+'년('+window.lastDeplete.age+'세)에 노후자금이 소진됩니다</strong> — 이후에는 종신형 연금만 남습니다.';}
+    var ovl=activeY.filter(function(d){return d.overLimit;});
+    if(ovl.length){extra+='<br>⚠ 사적연금 수령액이 연 한도를 넘는 해가 <strong>'+ovl.length+'개</strong> 있어 그 해에는 <strong>16.5% 분리과세</strong>가 적용됐어요(저율과세 미적용).';}
+    el.innerHTML='📌 시뮬레이션 결과, 표시 구간 중 <strong>'+missYears.length+'개 연도가 목표에 미달</strong>했어요.<br>미달 구간: <strong style="color:#e2707a">'+rTxt+'</strong><br>수령 초반 미달은 주로 <strong>연금 개시 전 소득 공백</strong>, 후반 미달은 <strong>적립금 소진</strong>이 원인인 경우가 많아요.'+extra+'<br><br>';
   })();
   const avg4x=activeY.slice(0,10).reduce((s,d)=>s+d.total,0)/10/12;
   const gap=targetMon-avg4x;
@@ -2787,8 +2832,12 @@ var Help=(function(){
       <p style="margin:0">69세까지 <b>5.5%</b> → 70~79세 <b>4.4%</b> → 80세부터 <b>3.3%</b>. 그 해의 만 나이로 매년 자동 적용되니, 오래 받을수록 유리한 구조입니다.</p>
       <p style="margin:6px 0 0;font-size:11px;color:var(--text3);line-height:1.6">📖 근거: 소득세법 제129조 제1항 제5호의2 — 연금소득 원천징수세율 70세 미만 5%, 70~80세 미만 4%, 80세 이상 3% (지방소득세 10% 포함 시 5.5/4.4/3.3%)</p>
 
+      <div style="font-size:13.5px;font-weight:800;margin:16px 0 6px">📅 국민연금 조기·연기수령 자동 반영</div>
+      <p style="margin:0">국민연금 개시 나이를 65세보다 <b>앞당기면 1년에 6%씩 감액</b>, <b>늦추면 1년에 7.2%씩 증액</b>되어 자동 계산됩니다(각 최대 5년). 예: 62세 개시 → 82% 수령, 70세 개시 → 136% 수령. 입력한 금액이 이미 조정된 값이라면 기본 설정의 "세금 상세 설정"에서 이 기능을 끌 수 있어요.</p>
+      <p style="margin:6px 0 0;font-size:11px;color:var(--text3);line-height:1.6">📖 근거: 국민연금법 제61조·제62조(조기노령연금, 1년당 6% 감액) · 제66조(연기연금, 1개월당 0.6% = 연 7.2% 증액)</p>
+
       <div style="font-size:13.5px;font-weight:800;margin:16px 0 6px">🚦 연 1,500만원 한도</div>
-      <p style="margin:0">연금저축·IRP 수령액이 연 1,500만원을 넘으면 실제 세법에선 세금이 확 늘 수 있어요. <b>이 앱은 넘어도 세금을 더 매기지 않는 대신</b>, 결과 화면의 "저율과세 대상 수령액" 차트에 빨간 한도선과 ⚠ 경고를 띄워줍니다. <b>빨간 선을 넘지 않게 수령 시기를 나누라는 신호</b>로 활용하세요.</p>
+      <p style="margin:0">연금저축·IRP에서 받는 돈(세액공제 받았던 부분)이 연 1,500만원을 넘으면, 그 해에는 낮은 세율(3.3~5.5%) 대신 <b>16.5% 분리과세</b>가 적용됩니다. <b>이 앱은 이를 자동으로 계산에 반영</b>하고, 결과 화면의 "저율과세 대상 수령액" 차트에 빨간 한도선과 ⚠ 경고를, 개선진단에는 초과 연도 수를 표시합니다. <b>한도를 넘지 않게 수령 시기를 나누면</b> 세금을 크게 줄일 수 있어요.</p>
       <p style="margin:6px 0 0;font-size:11px;color:var(--text3);line-height:1.6">📖 근거: 소득세법 제14조 제3항 제9호 — 사적연금소득 연 1,500만원 이하 분리과세 선택 가능(2024.1.1.부터 1,200만→1,500만원 상향) · 초과 시 전액 종합과세 또는 15%(지방세 포함 16.5%) 분리과세 선택 — 소득세법 제64조의4</p>
 
       <div style="font-size:13.5px;font-weight:800;margin:16px 0 6px">📌 꼭 알아두세요</div>
