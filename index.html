@@ -29,14 +29,12 @@
   --success-color:#3b6d11;--warn-color:#854f0b;--danger-color:#a32d2d;
   --radius:8px;--radius-lg:12px;
 }
-@media(prefers-color-scheme:dark){
-  :root{
-    --bg:#1e1e1c;--bg2:#2a2a27;--bg3:#323230;
-    --text:#f0efe8;--text2:#b4b2a9;--text3:#888780;
-    --border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.25);
-    --info-bg:#042c53;--info-text:#b5d4f4;--info-border:#185fa5;
-    --success-color:#97c459;--warn-color:#ef9f27;--danger-color:#f09595;
-  }
+:root[data-theme='dark']{
+  --bg:#1e1e1c;--bg2:#2a2a27;--bg3:#323230;
+  --text:#f0efe8;--text2:#b4b2a9;--text3:#888780;
+  --border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.25);
+  --info-bg:#042c53;--info-text:#b5d4f4;--info-border:#185fa5;
+  --success-color:#97c459;--warn-color:#ef9f27;--danger-color:#f09595;
 }
 html{scroll-behavior:smooth}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--bg3);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
@@ -191,10 +189,8 @@ table.dt tr:hover td{background:var(--bg2)}
 .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
 .badge-ok{background:#eaf3de;color:#27500a}
 .badge-miss{background:#fcebeb;color:#791f1f}
-@media(prefers-color-scheme:dark){
-  .badge-ok{background:#173404;color:#c0dd97}
-  .badge-miss{background:#501313;color:#f7c1c1}
-}
+:root[data-theme='dark'] .badge-ok{background:#173404;color:#c0dd97}
+:root[data-theme='dark'] .badge-miss{background:#501313;color:#f7c1c1}
 .input-grid.g5{grid-template-columns:repeat(5,1fr)}
 @media(max-width:900px){.input-grid.g5{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:500px){.input-grid.g5{grid-template-columns:repeat(2,1fr)}}
@@ -207,20 +203,16 @@ table.dt tr:hover td{background:var(--bg2)}
 .analysis-card.status-good{background:#eaf3de;border-color:#97c459}
 .analysis-card.status-warn{background:#faeeda;border-color:#ef9f27}
 .analysis-card.status-bad{background:#fcebeb;border-color:#f09595}
-@media(prefers-color-scheme:dark){
-  .analysis-card.status-good{background:#173404;border-color:#639922}
-  .analysis-card.status-warn{background:#412402;border-color:#ba7517}
-  .analysis-card.status-bad{background:#501313;border-color:#a32d2d}
-}
+:root[data-theme='dark'] .analysis-card.status-good{background:#173404;border-color:#639922}
+:root[data-theme='dark'] .analysis-card.status-warn{background:#412402;border-color:#ba7517}
+:root[data-theme='dark'] .analysis-card.status-bad{background:#501313;border-color:#a32d2d}
 .analysis-card-title{font-size:12px;font-weight:500;margin-bottom:6px}
 .analysis-card.status-good .analysis-card-title{color:#27500a}
 .analysis-card.status-warn .analysis-card-title{color:#633806}
 .analysis-card.status-bad .analysis-card-title{color:#791f1f}
-@media(prefers-color-scheme:dark){
-  .analysis-card.status-good .analysis-card-title{color:#c0dd97}
-  .analysis-card.status-warn .analysis-card-title{color:#fac775}
-  .analysis-card.status-bad .analysis-card-title{color:#f7c1c1}
-}
+:root[data-theme='dark'] .analysis-card.status-good .analysis-card-title{color:#c0dd97}
+:root[data-theme='dark'] .analysis-card.status-warn .analysis-card-title{color:#fac775}
+:root[data-theme='dark'] .analysis-card.status-bad .analysis-card-title{color:#f7c1c1}
 .analysis-card-body{font-size:12px;color:var(--text2);line-height:1.65}
 .action-list{list-style:none;padding:0;margin:0}
 .action-item{display:flex;gap:10px;padding:10px 12px;border-radius:var(--radius);background:var(--bg2);margin-bottom:8px;border-left:3px solid transparent;font-size:13px;line-height:1.6}
@@ -276,7 +268,7 @@ details.guide-box .guide-body{padding:0 14px 13px}
 #reportOverlay.open{display:flex}
 #reportBox{background:#fff;border-radius:16px;width:100%;max-width:720px;box-shadow:0 12px 48px rgba(0,0,0,.22);animation:rpSlide .25s ease;margin:auto}
 @keyframes rpSlide{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-@media(prefers-color-scheme:dark){#reportBox{background:var(--card)}}
+:root[data-theme='dark'] #reportBox{background:var(--card)}
 .rp-head{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:14px}
 .rp-title{font-size:16px;font-weight:700;color:var(--text)}
 .rp-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);line-height:1;padding:4px 6px;border-radius:6px}
@@ -324,6 +316,15 @@ details.guide-box .guide-body{padding:0 14px 13px}
   #reportBox{box-shadow:none;border-radius:0}
   .rp-close,.rp-print-btn{display:none}
 }
+@media(max-width:430px){
+  .page-header{gap:7px!important;padding-left:14px;padding-right:14px}
+  #kmGoBtn{font-size:12px!important;padding:7px 9px!important}
+  #themeToggle{width:32px!important;height:32px!important}
+}
+/* ===== 스플래시 다크 대응 ===== */
+:root[data-theme='dark'] #splashScreen{background:#1e1e1c!important}
+:root[data-theme='dark'] #splashScreen h1{color:#f0efe8!important}
+:root[data-theme='dark'] #spNote{color:#5EA6EC!important}
 /* ===== 섹션 헤더 ===== */
 .sec-hd{display:flex;align-items:center;gap:12px;margin:26px 2px 12px}
 .sec-hd:first-child{margin-top:4px}
@@ -342,8 +343,8 @@ details.guide-box .guide-body{padding:0 14px 13px}
   .container,.footer{background:var(--bg)}
   #wizOverlay{left:50%!important;right:auto!important;transform:translateX(-50%);width:480px!important;max-width:100vw!important;box-shadow:0 0 40px rgba(0,0,0,.35)}
 }
-@media (min-width:600px) and (prefers-color-scheme:dark){
-  body{background:#07090d}
+@media (min-width:600px){
+  :root[data-theme='dark'] body{background:#07090d}
 }
 /* ===== 뷰 전환 토글 + PC 대시보드 레이아웃 (추가) ===== */
 #viewToggle{position:fixed;top:12px;right:12px;z-index:9997;display:none;gap:2px;
@@ -400,6 +401,14 @@ details.guide-box .guide-body{padding:0 14px 13px}
   body.pc-view #analysisCard{grid-column:1 / -1}
 }
 </style>
+<script>
+/* 테마 초기화: 저장값 우선, 기본은 다크 (렌더 전에 적용) */
+(function(){
+  var t='dark';
+  try{var v=localStorage.getItem('nhpTheme');if(v==='light'||v==='dark')t=v;}catch(e){}
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
 </head>
 <body>
 <div id="viewToggle" role="group" aria-label="화면 보기 전환">
@@ -430,7 +439,7 @@ details.guide-box .guide-body{padding:0 14px 13px}
   <p style="margin:16px 0 0;color:#8a8a8a;font-size:14px;font-weight:500;line-height:1.55;text-align:center;padding:0 28px;">브라우저에서 <b style="color:#0A5BEA;font-weight:700">설치</b>하면 앱처럼 사용할 수 있어요</p>
   </div>
   <div style="position:absolute;bottom:26px;left:0;right:0;text-align:center;">
-    <div style="color:#0A5BEA;font-size:12px;font-weight:700;line-height:1.55;padding:0 28px;margin-bottom:8px;">✨ V4.1 업데이트<br><span style="color:#8a8a8a;font-weight:600;">세금로직 수정<br>(한도 초과 16.5% 자동 반영 · 국민연금 조기·연기 계수)</span></div>
+    <div id="spNote" style="color:#0A5BEA;font-size:12px;font-weight:700;line-height:1.55;padding:0 28px;margin-bottom:8px;">✨ V4.1 업데이트<br><span style="color:#8a8a8a;font-weight:600;">세금로직 수정<br>(한도 초과 16.5% 자동 반영 · 국민연금 조기·연기 계수)</span></div>
     <div style="color:#888;font-size:14px;font-weight:600;">v4.1</div>
   </div>
 </div>
@@ -491,6 +500,27 @@ function maleImgSrc(){
   var i=document.querySelector('#splashScreen img');
   return (i&&i.src)?i.src:'';
 }
+function applyTheme(mode){
+  if(mode!=='light'&&mode!=='dark')mode='dark';
+  document.documentElement.setAttribute('data-theme',mode);
+  try{localStorage.setItem('nhpTheme',mode);}catch(e){}
+  var ic=document.getElementById('themeIcon');
+  if(ic)ic.className='ti '+(mode==='dark'?'ti-sun':'ti-moon');
+  var bt=document.getElementById('themeToggle');
+  if(bt)bt.title=(mode==='dark'?'라이트 모드로 전환':'다크 모드로 전환');
+  var mt=document.querySelector('meta[name="theme-color"]');
+  if(mt)mt.setAttribute('content',mode==='dark'?'#1e1e1c':'#ffffff');
+  if(typeof syncKookminTheme==='function')syncKookminTheme();
+}
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute('data-theme')||'dark';
+  applyTheme(cur==='dark'?'light':'dark');
+}
+(function(){
+  function initThemeUI(){applyTheme(document.documentElement.getAttribute('data-theme')||'dark');}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initThemeUI);
+  else initThemeUI();
+})();
 function toggleHistory(){
   var d=document.getElementById("histOld");
   var t=document.getElementById("histToggle");
@@ -513,8 +543,11 @@ function toggleHistory(){
 <div class="page-header" style="flex-wrap:wrap;gap:10px">
   <i class="ti ti-chart-line" style="font-size:22px;color:#378ADD"></i>
   <span class="header-badge">V4.1</span>
-  <button type="button" onclick="openKookminPage()" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:8px 14px;border:1px solid rgba(0,0,0,.18);border-radius:10px;background:#f7f7f5;color:#1a1a18;cursor:pointer;">
+  <button type="button" id="kmGoBtn" onclick="openKookminPage()" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:8px 14px;border:1px solid rgba(0,0,0,.18);border-radius:10px;background:#f7f7f5;color:#1a1a18;cursor:pointer;">
     국민연금 시뮬레이션 가기 &rarr;
+  </button>
+  <button type="button" id="themeToggle" onclick="toggleTheme()" aria-label="화면 테마 전환" style="flex-shrink:0;width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);border-radius:50%;background:var(--bg);color:var(--text2);cursor:pointer">
+    <i id="themeIcon" class="ti ti-sun" style="font-size:17px"></i>
   </button>
 </div>
 
@@ -2673,22 +2706,20 @@ render();
 /* 국민연금 iframe 다크모드 동기화
    일부 웹뷰에서 srcdoc iframe이 시스템 prefers-color-scheme를 상속하지 못해
    부모 페이지가 현재 테마를 iframe에 직접 주입한다. */
-var _kmDarkMQ = window.matchMedia('(prefers-color-scheme: dark)');
 function syncKookminTheme(){
   var f=document.getElementById('kookminFrame');
   if(!f) return;
+  var t=document.documentElement.getAttribute('data-theme')||'dark';
   try{
     var doc=f.contentDocument||(f.contentWindow&&f.contentWindow.document);
     if(doc&&doc.documentElement){
-      doc.documentElement.setAttribute('data-theme', _kmDarkMQ.matches?'dark':'light');
+      doc.documentElement.setAttribute('data-theme', t);
     }
   }catch(e){}
 }
 (function(){
   var f=document.getElementById('kookminFrame');
   if(f) f.addEventListener('load', syncKookminTheme);
-  if(_kmDarkMQ.addEventListener) _kmDarkMQ.addEventListener('change', syncKookminTheme);
-  else if(_kmDarkMQ.addListener) _kmDarkMQ.addListener(syncKookminTheme);
 })();
 function openKookminPage(){
   var p=document.getElementById('kookminPage');
