@@ -321,10 +321,11 @@ details.guide-box .guide-body{padding:0 14px 13px}
   #kmGoBtn{font-size:12px!important;padding:7px 9px!important}
   #themeToggle{width:32px!important;height:32px!important}
 }
-/* ===== 스플래시 다크 대응 ===== */
-:root[data-theme='dark'] #splashScreen{background:#1e1e1c!important}
-:root[data-theme='dark'] #splashScreen h1{color:#f0efe8!important}
-:root[data-theme='dark'] #spNote{color:#5EA6EC!important}
+/* ===== 스플래시: 테마 무관 항상 흰 배경 고정 ===== */
+#splashScreen{background:#ffffff!important}
+#splashScreen h1{color:#000!important}
+#splashScreen p{color:#8a8a8a!important}
+#spNote{color:#0A5BEA!important}
 /* ===== 섹션 헤더 ===== */
 .sec-hd{display:flex;align-items:center;gap:12px;margin:26px 2px 12px}
 .sec-hd:first-child{margin-top:4px}
