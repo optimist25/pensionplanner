@@ -114,10 +114,13 @@ table.pt tr.row-dragging{opacity:.96;background:var(--info-bg);box-shadow:0 8px 
     font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
   .exp-btn::after{content:"펼치기 ▾"}
   table.pt tr.open .exp-btn::after{content:"접기 ▴"}
-  table.pt td.lumpcell .lumpwrap{flex:1;min-width:0;justify-content:flex-end;gap:6px}
-  table.pt td.lumpcell .lumpwrap input{flex:0 0 auto;min-width:0;text-align:right}
-  table.pt td.lumpcell .lumpwrap input.money{width:88px!important}
-  table.pt td.lumpcell .lumpwrap input[type=number]{width:72px!important}
+  table.pt td.lumpcell{gap:8px}
+  table.pt td.lumpcell::before{flex:0 1 auto;min-width:0;white-space:normal;
+    word-break:keep-all;line-height:1.25}
+  table.pt td.lumpcell .lumpwrap{flex:0 0 auto;min-width:0;justify-content:flex-end;gap:5px}
+  table.pt td.lumpcell .lumpwrap input{flex:0 0 auto;min-width:0;text-align:right;padding:0 6px}
+  table.pt td.lumpcell .lumpwrap input.money{width:78px!important}
+  table.pt td.lumpcell .lumpwrap input[type=number]{width:60px!important}
   table.pt tr{position:relative;padding-left:32px}
   table.pt td.grip-cell{position:absolute;left:3px;top:7px;width:26px;padding:0;border:none;justify-content:center}
   table.pt td.grip-cell::before{display:none}
@@ -152,10 +155,13 @@ table.pt tr.row-dragging{opacity:.96;background:var(--info-bg);box-shadow:0 8px 
     font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
   body:not(.pc-view) .exp-btn::after{content:"펼치기 ▾"}
   body:not(.pc-view) table.pt tr.open .exp-btn::after{content:"접기 ▴"}
-  body:not(.pc-view) table.pt td.lumpcell .lumpwrap{flex:1;min-width:0;justify-content:flex-end;gap:6px}
-  body:not(.pc-view) table.pt td.lumpcell .lumpwrap input{flex:0 0 auto;min-width:0;text-align:right}
-  body:not(.pc-view) table.pt td.lumpcell .lumpwrap input.money{width:88px!important}
-  body:not(.pc-view) table.pt td.lumpcell .lumpwrap input[type=number]{width:72px!important}
+  body:not(.pc-view) table.pt td.lumpcell{gap:8px}
+  body:not(.pc-view) table.pt td.lumpcell::before{flex:0 1 auto;min-width:0;white-space:normal;
+    word-break:keep-all;line-height:1.25}
+  body:not(.pc-view) table.pt td.lumpcell .lumpwrap{flex:0 0 auto;min-width:0;justify-content:flex-end;gap:5px}
+  body:not(.pc-view) table.pt td.lumpcell .lumpwrap input{flex:0 0 auto;min-width:0;text-align:right;padding:0 6px}
+  body:not(.pc-view) table.pt td.lumpcell .lumpwrap input.money{width:78px!important}
+  body:not(.pc-view) table.pt td.lumpcell .lumpwrap input[type=number]{width:60px!important}
   body:not(.pc-view) table.pt tr{position:relative;padding-left:32px}
   body:not(.pc-view) table.pt td.grip-cell{position:absolute;left:3px;top:7px;width:26px;padding:0;border:none;justify-content:center}
   body:not(.pc-view) table.pt td.grip-cell::before{display:none}
