@@ -486,7 +486,7 @@ function onboardOpen(){
   if(ob)ob.style.display="flex";
 }
 (function(){
-  var OFFSET=1047; /* 표시값 = 실제 카운트 + 1047 (1048부터 시작) */
+  var OFFSET=1871; /* 표시값 = 실제 카운트 + 1871 (1872부터 시작) */
   function show(num){
     var el=document.getElementById("visitorNum");
     var badge=document.getElementById("visitorBadge");
@@ -499,12 +499,12 @@ function onboardOpen(){
   var cached=null;
   try{cached=sessionStorage.getItem("nhpVisitNum");}catch(e){}
   if(cached){show(cached);return;}
-  fetch("https://api.counterapi.dev/v1/nohuplan/visitors/up").then(function(r){
+  fetch("https://countapi.mileshilliard.com/api/v1/hit/nohuplan_com_visitors").then(function(r){
     if(!r.ok)throw new Error("counter http "+r.status);
     return r.json();
   }).then(function(d){
-    var n=d&&typeof d.count==="number"?d.count:null;
-    if(n===null)return;
+    var n=d&&d.value!=null?parseInt(d.value,10):null;
+    if(n===null||isNaN(n))return;
     var disp=n+OFFSET;
     try{sessionStorage.setItem("nhpVisitNum",String(disp));}catch(e){}
     show(disp);
