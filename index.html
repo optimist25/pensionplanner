@@ -465,13 +465,31 @@ details.guide-box .guide-body{padding:0 14px 13px}
   </div>
 </div>
 <script>
+/* 브라우저가 이전 스크롤 위치를 복원하지 않도록 (스플래시 후 하단 노출 방지) */
+try{if('scrollRestoration' in history)history.scrollRestoration='manual';}catch(e){}
+(function(){
+  var h=document.documentElement;
+  h.style.overflow='hidden';
+  document.addEventListener('DOMContentLoaded',function(){
+    if(document.body)document.body.style.overflow='hidden';
+    window.scrollTo(0,0);
+  });
+})();
 window.addEventListener("load",function(){
+  window.scrollTo(0,0);
   setTimeout(function(){
     var s=document.getElementById("splashScreen");
     if(!s)return;
     s.style.opacity="0";
     setTimeout(function(){
       s.style.display="none";
+      /* 스크롤 잠금 해제 직전/직후 모두 최상단 고정 */
+      window.scrollTo(0,0);
+      document.documentElement.style.overflow="";
+      if(document.body)document.body.style.overflow="";
+      window.scrollTo(0,0);
+      requestAnimationFrame(function(){window.scrollTo(0,0);});
+      setTimeout(function(){window.scrollTo(0,0);},60);
       /* 첫 방문 온보딩 안내 (다시 보지 않기 선택 시 미표시) */
       var hide=false;
       try{hide=localStorage.getItem("nhpOnboardHide")==="1";}catch(e){}
