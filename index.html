@@ -460,8 +460,8 @@ details.guide-box .guide-body{padding:0 14px 13px}
   <p style="margin:16px 0 0;color:#8a8a8a;font-size:14px;font-weight:500;line-height:1.55;text-align:center;padding:0 28px;">브라우저에서 <b style="color:#0A5BEA;font-weight:700">설치</b>하면 앱처럼 사용할 수 있어요</p>
   </div>
   <div style="position:absolute;bottom:26px;left:0;right:0;text-align:center;">
-    <div id="spNote" style="color:#0A5BEA;font-size:12px;font-weight:700;line-height:1.55;padding:0 28px;margin-bottom:8px;">✨ V4.1 업데이트<br><span style="color:#8a8a8a;font-weight:600;">세금로직 수정<br>(한도 초과 16.5% 자동 반영 · 국민연금 조기·연기 계수)</span></div>
-    <div style="color:#888;font-size:14px;font-weight:600;">v4.1</div>
+    <div id="spNote" style="color:#0A5BEA;font-size:12px;font-weight:700;line-height:1.55;padding:0 28px;margin-bottom:8px;">✨ V4.2 업데이트<br><span style="color:#8a8a8a;font-weight:600;">상품별 세금 상세보기 &amp; 절세 진단<br>(구간별 부과 로직 · 절세방법 자동 탐색)</span></div>
+    <div style="color:#888;font-size:14px;font-weight:600;">v4.2</div>
   </div>
 </div>
 <script>
@@ -573,7 +573,7 @@ function toggleHistory(){
 </script>
 
 <div class="hero">
-  <h1><svg viewBox="0 0 100 100" width="38" height="38" aria-hidden="true" style="vertical-align:middle;margin-right:10px;display:inline-block"><defs><linearGradient id="planbGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1D90F9"/><stop offset=".55" stop-color="#0A5BEA"/><stop offset="1" stop-color="#043DC7"/></linearGradient></defs><rect x="3" y="3" width="94" height="94" rx="24" fill="url(#planbGrad)"/><rect x="11" y="11" width="78" height="78" rx="16" fill="none" stroke="#9CC6FF" stroke-width="2.5" opacity=".7"/><text y="45" text-anchor="middle" font-family="-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="30" font-weight="800" fill="#fff"><tspan x="36">노</tspan><tspan x="64">후</tspan></text><text y="81" text-anchor="middle" font-family="-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="30" font-weight="800"><tspan x="36" fill="#fff">준</tspan><tspan x="64" fill="#FDC307">B</tspan></text></svg>노후자금 시뮬레이터<span class="hero-ver">V4.1</span></h1>
+  <h1><svg viewBox="0 0 100 100" width="38" height="38" aria-hidden="true" style="vertical-align:middle;margin-right:10px;display:inline-block"><defs><linearGradient id="planbGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1D90F9"/><stop offset=".55" stop-color="#0A5BEA"/><stop offset="1" stop-color="#043DC7"/></linearGradient></defs><rect x="3" y="3" width="94" height="94" rx="24" fill="url(#planbGrad)"/><rect x="11" y="11" width="78" height="78" rx="16" fill="none" stroke="#9CC6FF" stroke-width="2.5" opacity=".7"/><text y="45" text-anchor="middle" font-family="-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="30" font-weight="800" fill="#fff"><tspan x="36">노</tspan><tspan x="64">후</tspan></text><text y="81" text-anchor="middle" font-family="-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="30" font-weight="800"><tspan x="36" fill="#fff">준</tspan><tspan x="64" fill="#FDC307">B</tspan></text></svg>노후자금 시뮬레이터<span class="hero-ver">V4.2</span></h1>
   <p class="hero-sub">연금·보험·국민연금 통합 수령액 시뮬레이션<br>— 오프라인 완전독립 버전</p>
   <div style="margin-top:14px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;">
     <span id="visitorBadge" style="display:none;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--info-text);background:var(--info-bg);border:.5px solid var(--info-border);padding:8px 14px;border-radius:22px;">누적 상담수 <b id="visitorNum" style="font-weight:800"></b></span>
@@ -583,7 +583,7 @@ function toggleHistory(){
 
 <div class="page-header" style="gap:10px">
   <i class="ti ti-chart-line" style="font-size:22px;color:#378ADD"></i>
-  <span class="header-badge">V4.1</span>
+  <span class="header-badge">V4.2</span>
   <button type="button" id="navMenuBtn" onclick="toggleNavMenu()" aria-label="메뉴 열기" aria-haspopup="true" aria-expanded="false">
     <i class="ti ti-menu-2" style="font-size:20px"></i>
   </button>
@@ -867,19 +867,42 @@ window.addEventListener('resize',closeNavMenu);
     </div>
   </div>
 
+  <div class="card" id="taxSaveCard">
+    <div class="section-label">🌱 절세 진단 — 세금 줄일 방법 찾기</div>
+    <div id="taxSaveContent"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">💰 상품별 세금 상세 — 구간별 부과 로직</div>
+    <div id="taxDeepContent"></div>
+  </div>
+
   <div class="card" id="analysisCard">
     <div class="section-label">분석 결과 및 대책</div>
     <div id="analysisContent"></div>
   </div>
 </div>
 
+<div id="taxDrawer" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.45);align-items:flex-end;justify-content:center" onclick="if(event.target===this)closeTaxDrawer()">
+  <div style="background:var(--bg);width:100%;max-width:760px;max-height:88vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 14px 26px;box-shadow:0 -8px 30px rgba(0,0,0,.25)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
+      <b id="taxDrawerTitle" style="font-size:14.5px;color:var(--text);line-height:1.35"></b>
+      <button type="button" onclick="closeTaxDrawer()" style="flex:0 0 auto;font-size:12px;font-weight:700;color:var(--text2);background:var(--bg2);border:.5px solid var(--border);border-radius:9px;padding:6px 13px;cursor:pointer">닫기</button>
+    </div>
+    <div id="taxDrawerBody"></div>
+  </div>
+</div>
+
 <div class="footer">
   <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:0.5px solid var(--border)">
-    <strong style="color:var(--text2)">V4.1 업데이트</strong>&ensp;
-    💰 세금로직 수정 (사적연금 연 1,500만원 초과 시 16.5% 분리과세 자동 반영 · 국민연금 조기/연기수령 계수 자동 적용 · 노후자금 소진 시점 표시)
+    <strong style="color:var(--text2)">V4.2 업데이트</strong>&ensp;
+    🌱 상품별 세금 상세보기 &amp; 절세 진단 추가 (투자항목마다 연도·구간별로 어떤 세율이 왜 적용되는지 표시 · 개시연도/수령액 조정 시나리오를 실제 재계산해 절세액 산출 후 바로 적용)
     <br>
     <a href="javascript:void(0)" id="histToggle" onclick="toggleHistory()" style="display:inline-block;margin-top:6px;color:var(--text3);text-decoration:none;font-weight:600;font-size:11px">▾ 지난 업데이트 이력 보기</a>
     <div id="histOld" style="display:none;margin-top:6px">
+    <strong style="color:var(--text2)">V4.1 업데이트</strong>&ensp;
+    💰 세금로직 수정 (사적연금 연 1,500만원 초과 시 16.5% 분리과세 자동 반영 · 국민연금 조기/연기수령 계수 자동 적용 · 노후자금 소진 시점 표시)
+    <br>
     <strong style="color:var(--text2)">V4.0 업데이트</strong>&ensp;
     🗂️ 입력사례 3가지 제시 (45세 직장인·55세 퇴직금 5억·50세 조기은퇴 — 상황 설명 후 바로 시뮬레이션)
     <br>
@@ -1417,6 +1440,234 @@ function afterTax(payout,tax,taxLimitWon,taxRate,compTaxRate,taxedRatio,sepRate,
   return payout;
 }
 
+
+/* ===== V4.2 세금 상세 & 절세 진단 ===== */
+function bandLabel(age){return age<70?'저율과세 ~70세':age<80?'저율과세 70~80세':'저율과세 80세~';}
+function calcTaxDetail(payout,p,ctx){
+  var d={payout:payout,taxable:0,free:0,rate:0,tax:0,net:payout,band:'-',reason:''};
+  if(!(payout>0)){d.band='수령없음';d.net=0;d.payout=0;return d;}
+  var t=p.tax;
+  if(t==='비과세'){
+    d.free=payout;d.band='비과세';
+    d.reason='연금보험 등 비과세 상품 — 과세대상 0원, 세금 없음';
+    return d;
+  }
+  if(t==='분리과세'){
+    d.taxable=payout;d.rate=ctx.sepRate;d.tax=payout*ctx.sepRate;d.net=payout-d.tax;
+    d.band='분리과세';
+    d.reason='퇴직연금(이연퇴직소득) — 입력한 분리과세율 '+(ctx.sepRate*100).toFixed(1)+'% 적용. 연 1,500만원 한도 계산에는 포함되지 않습니다.';
+    return d;
+  }
+  if(t==='종합과세'){
+    d.taxable=payout;d.rate=ctx.compTaxRate;d.tax=payout*ctx.compTaxRate;d.net=payout-d.tax;
+    d.band='종합과세';
+    d.reason='국민연금 등 공적연금 — 다른 소득과 합산 과세. 입력한 종합과세율 '+(ctx.compTaxRate*100).toFixed(1)+'% 적용.';
+    return d;
+  }
+  if(t==='세액공제'){
+    var ratio=(p.taxedRatio==null?100:p.taxedRatio)/100;
+    d.taxable=payout*ratio; d.free=payout*(1-ratio);
+    if(ctx.overLimit){
+      d.rate=OVER_LIMIT_RATE; d.band='한도초과 16.5%';
+      d.reason='이 해 사적연금(세액공제분) 과세대상 합계가 연 '+fmt(ctx.taxLimit)+'만원 한도를 넘어, 저율과세('+(ctx.taxR*100).toFixed(1)+'%) 대신 16.5% 분리과세가 적용됩니다.';
+    }else{
+      d.rate=ctx.taxR; d.band=bandLabel(ctx.age);
+      d.reason=ctx.age+'세 기준 저율과세 '+(ctx.taxR*100).toFixed(1)+'% 적용. 과세대상은 세액공제 받은 비율 '+Math.round(ratio*100)+'% 부분이며, 나머지는 비과세입니다.';
+    }
+    d.tax=d.taxable*d.rate; d.net=payout-d.tax;
+    return d;
+  }
+  return d;
+}
+/* 임의의 상품배열로 생애 총 세금/세후수령액을 계산 (절세 시나리오 비교용) */
+function simTaxSummary(prods){
+  var curYear=v('curYear'),curAge=v('curAge'),inflRate=v('inflRate')/100,taxLimit=v('taxLimit');
+  var tr1=v('taxRate1')/100,tr2=v('taxRate2')/100,tr3=v('taxRate3')/100;
+  var comp=v('compTaxRate')/100||0.154, sep=v('sepRate')/100;
+  var pd=prods.map(function(p){return calcAccum(p,curYear,inflRate,inflatePayoutMode,npsFactor(p,curYear,curAge));});
+  var n=pd.length?pd[0].length:0, tax=0,net=0,gross=0,over=0,resid=0;
+  for(var yi=0;yi<n;yi++){
+    var age=curAge+yi;
+    var taxR=age<70?tr1:age<80?tr2:tr3;
+    var tsum=0;
+    prods.forEach(function(p,pi){if(p.tax==='세액공제')tsum+=pd[pi][yi].payout*((p.taxedRatio==null?100:p.taxedRatio)/100);});
+    var overLimit=taxLimit>0&&tsum>taxLimit*10000;
+    if(overLimit)over++;
+    prods.forEach(function(p,pi){
+      var d=calcTaxDetail(pd[pi][yi].payout,p,{taxR:taxR,age:age,compTaxRate:comp,sepRate:sep,overLimit:overLimit,taxLimit:taxLimit});
+      tax+=d.tax; net+=d.net; gross+=d.payout;
+    });
+  }
+  prods.forEach(function(p,pi){ if(!p.outflow&&n>0) resid+=pd[pi][n-1].bal; });
+  return {tax:tax,net:net,gross:gross,over:over,resid:resid};
+}
+function cloneProducts(){return products.map(function(p){var o={};for(var k in p)o[k]=p[k];return o;});}
+var taxFixes=[];
+/* 절세 진단: 개시연도 이연 / 수령액 분산 후보를 실제 재계산해 '실효세율' 기준으로 비교
+   (총액 기준이면 '적게 받아서 세금이 줄어드는' 착시가 생기므로 실효세율로 판정) */
+function findTaxSavings(){
+  var base=simTaxSummary(products);
+  base.eff=base.gross>0?base.tax/base.gross:0;
+  var cands=[];
+  function push(label,changes,extra){
+    var c=cloneProducts();
+    changes.forEach(function(ch){c[ch.pi][ch.field]=ch.value;});
+    var r=simTaxSummary(c);
+    r.eff=r.gross>0?r.tax/r.gross:0;
+    cands.push({label:label,changes:changes,r:r,kind:extra});
+  }
+  /* 후보 A·B: 상품별 개시연도 이연 / 월 수령액 하향 */
+  products.forEach(function(p,pi){
+    if(p.outflow||p.type==='종신')return;
+    if(p.tax!=='세액공제'&&p.tax!=='분리과세')return;
+    for(var dy=1;dy<=5;dy++){
+      push((p.name||p.cat)+' 개시 '+dy+'년 연기',[{pi:pi,field:'startY',value:(+p.startY)+dy}],'startY');
+    }
+    if(p.monthly>0){
+      [0.9,0.8,0.7,0.6,0.5].forEach(function(k){
+        var m=Math.round(p.monthly*k/5)*5;
+        if(m<=0||m>=p.monthly)return;
+        push((p.name||p.cat)+' 월 수령액 '+fmt(p.monthly)+'→'+fmt(m)+'만원',[{pi:pi,field:'monthly',value:m}],'monthly');
+      });
+    }
+  });
+  /* 후보 C: 세액공제 상품 전체 월 수령액을 함께 낮춰 연 한도 안에 맞추기 */
+  var creditIdx=[];
+  products.forEach(function(p,pi){if(!p.outflow&&p.tax==='세액공제'&&p.monthly>0)creditIdx.push(pi);});
+  if(creditIdx.length){
+    [0.9,0.8,0.7,0.6,0.5,0.4].forEach(function(k){
+      var ch=creditIdx.map(function(pi){
+        return {pi:pi,field:'monthly',value:Math.max(5,Math.round(products[pi].monthly*k/5)*5)};
+      });
+      if(ch.every(function(c){return c.value>=products[c.pi].monthly;}))return;
+      var tot=creditIdx.reduce(function(a,pi){return a+products[pi].monthly;},0);
+      var tot2=ch.reduce(function(a,c){return a+c.value;},0);
+      push('세액공제 상품 월 수령액 합계 '+fmt(tot)+'→'+fmt(tot2)+'만원 (한도 맞추기)',ch,'combo');
+    });
+  }
+  var out=[];
+  cands.forEach(function(c){
+    var poolBase=base.gross+base.resid, poolNew=c.r.gross+c.r.resid;
+    if(poolNew<poolBase*0.97)return;                 /* 총 재원(수령액+잔여잔고)이 줄어드는 안은 제외 */
+    var effGain=base.eff-c.r.eff;
+    if(effGain<0.0005)return;                        /* 실효세율 0.05%p 미만 개선은 제외 */
+    var save=effGain*base.gross;                     /* 동일 수령액 기준 환산 절감액 */
+    var reason;
+    if(base.over>0&&c.r.over<base.over) reason='16.5% 분리과세가 적용되는 한도 초과 연도가 '+base.over+'년 → '+c.r.over+'년으로 줄어듭니다.';
+    else if(c.kind==='startY') reason='수령 시점이 뒤로 밀리면서 저율과세 구간(5.5% → 4.4% → 3.3%)이 낮은 나이대로 이동합니다.';
+    else reason='연간 과세대상액이 분산되어 낮은 세율 구간에 머무는 기간이 길어집니다.';
+    out.push({label:c.label,changes:c.changes,kind:c.kind,save:save,
+              effBase:base.eff,effNew:c.r.eff,over:c.r.over,resid:c.r.resid,residDiff:c.r.resid-base.resid,reason:reason});
+  });
+  var seen={},top=[];
+  out.sort(function(a,b){return b.save-a.save;}).forEach(function(o){
+    var k1=o.kind+'/'+o.changes.map(function(c){return c.pi;}).join(',');
+    var k2='e'+(o.effNew*10000).toFixed(0);
+    if(seen[k1]||seen[k2])return; seen[k1]=1; seen[k2]=1; top.push(o);
+  });
+  return {base:base,list:top.slice(0,4)};
+}
+function applyTaxFix(i){
+  var f=taxFixes[i]; if(!f||!f.changes)return;
+  f.changes.forEach(function(ch){
+    products[ch.pi][ch.field]=ch.value;
+    if(ch.field==='startY'&&products[ch.pi].endY>=ch.value)products[ch.pi].endY=ch.value-1;
+  });
+  renderTable(); runSim();
+  setTimeout(function(){var el=document.getElementById('taxSaveCard'); if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},120);
+}
+function renderTaxSave(){
+  var el=document.getElementById('taxSaveContent'); if(!el)return;
+  var res=findTaxSavings(); taxFixes=res.list;
+  var head='';
+  if(res.base.over>0){
+    head='<div class="analysis-card status-warn" style="margin-bottom:10px"><div class="analysis-card-title">⚠️ 연 1,500만원 한도 초과 — '+res.base.over+'개 연도</div>'
+      +'<div class="analysis-card-body">해당 연도는 저율과세(5.5~3.3%) 대신 <b>16.5% 분리과세</b>가 전액에 적용됩니다. 아래 제안으로 수령 시점·금액을 조정하면 세금을 줄일 수 있어요.</div></div>';
+  }else{
+    head='<div class="analysis-card status-good" style="margin-bottom:10px"><div class="analysis-card-title">✅ 연 한도 초과 없음</div>'
+      +'<div class="analysis-card-body">모든 연도에서 사적연금 과세대상이 연 한도 이내라 저율과세가 유지됩니다. 생애 총 납부세금은 약 <b>'+fmt(res.base.tax/10000)+'만원</b>입니다.</div></div>';
+  }
+  if(!res.list.length){
+    el.innerHTML=head+'<div style="font-size:12px;color:var(--text2);line-height:1.7;padding:2px 2px">현재 설정에서는 수령 시점·금액 조정만으로 의미 있는 추가 절세(10만원 이상) 여지가 발견되지 않았습니다. 상품 구성이나 과세비율을 바꾼 뒤 다시 확인해 보세요.</div>';
+    return;
+  }
+  var body=res.list.map(function(o,i){
+    return '<div style="border:.5px solid var(--border);border-radius:12px;padding:12px 13px;margin-bottom:9px;background:var(--bg2)">'
+      +'<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap">'
+      +'<span style="font-size:11px;font-weight:800;color:#fff;background:#5e8c1f;border-radius:20px;padding:2px 9px">절세 약 '+fmt(o.save/10000)+'만원</span>'
+      +'<b style="font-size:13px;color:var(--text);line-height:1.4">'+o.label+'</b></div>'
+      +'<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:7px">'+o.reason+'</div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-bottom:9px">실효세율 '+(o.effBase*100).toFixed(2)+'% → <b style="color:#5e8c1f">'+(o.effNew*100).toFixed(2)+'%</b> · 한도 초과 연도 '+o.over+'년'+(o.residDiff>10000?' · 남는 잔고 +'+fmt(o.residDiff/10000)+'만원(이후로 이월)':'')+'</div>'
+      +'<button type="button" onclick="applyTaxFix('+i+')" style="font-size:12px;font-weight:700;color:#fff;background:#0A5BEA;border:none;border-radius:9px;padding:7px 14px;cursor:pointer">이 방법 적용해보기</button>'
+      +'</div>';
+  }).join('');
+  el.innerHTML=head+body+'<div style="font-size:11px;color:var(--text3);line-height:1.6;margin-top:2px">※ 절감액은 <b>실효세율(총세금÷총수령액)</b> 개선분을 현재 총수령액에 환산한 값입니다. 단순히 적게 받아 세금이 줄어드는 경우는 총 재원(수령액+잔여잔고) 기준으로 걸러냈어요.<br>※ 월 수령액을 낮추는 안은 그만큼 <b>생활비가 줄고 잔고가 뒤로 이월</b>되므로, 적용 후 위쪽 그래프에서 목표 생활비 달성 여부를 꼭 함께 확인하세요. 언제든 입력값을 되돌릴 수 있습니다.</div>';
+}
+/* 상품별 세금 상세 */
+function renderTaxDeep(sim){
+  var el=document.getElementById('taxDeepContent'); if(!el)return;
+  var rows=products.map(function(p,pi){
+    if(p.outflow)return null;
+    var tax=0,gross=0,bands={};
+    sim.forEach(function(d){
+      var t=d.taxDetail&&d.taxDetail[pi]; if(!t||!(t.payout>0))return;
+      tax+=t.tax; gross+=t.payout; bands[t.band]=(bands[t.band]||0)+1;
+    });
+    if(gross<=0)return null;
+    var eff=gross>0?tax/gross*100:0;
+    return {pi:pi,name:p.name||p.cat,type:p.tax,tax:tax,gross:gross,eff:eff,bands:Object.keys(bands)};
+  }).filter(Boolean);
+  if(!rows.length){el.innerHTML='<div style="font-size:12px;color:var(--text2)">수령 내역이 있는 상품이 없습니다.</div>';return;}
+  el.innerHTML=rows.map(function(r){
+    return '<div onclick="openTaxDrawer('+r.pi+')" style="cursor:pointer;border:.5px solid var(--border);border-radius:12px;padding:11px 13px;margin-bottom:8px;background:var(--bg2)">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px">'
+      +'<b style="font-size:13px;color:var(--text)">'+r.name+' <span style="font-size:10px;font-weight:600;color:var(--text3)">'+r.type+'</span></b>'
+      +'<span style="font-size:11px;color:#378ADD;font-weight:700;white-space:nowrap">상세 보기 ›</span></div>'
+      +'<div style="font-size:12px;color:var(--text2)">생애 총 세금 <b style="color:var(--text)">'+fmt(r.tax/10000)+'만원</b> · 실효세율 <b style="color:var(--text)">'+r.eff.toFixed(2)+'%</b></div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-top:3px">적용 구간: '+r.bands.join(' → ')+'</div>'
+      +'</div>';
+  }).join('')+'<div style="font-size:11px;color:var(--text3);line-height:1.6">※ 항목을 누르면 연도별로 어떤 세율 구간이 왜 적용되는지 확인할 수 있어요.</div>';
+}
+function openTaxDrawer(pi){
+  if(!lastSim)return;
+  var p=products[pi];
+  document.getElementById('taxDrawerTitle').textContent=(p.name||p.cat)+' — 연도별 세금 상세';
+  var lastBand=null,html='';
+  var tot={payout:0,taxable:0,tax:0,net:0};
+  lastSim.forEach(function(d){
+    var t=d.taxDetail&&d.taxDetail[pi]; if(!t||!(t.payout>0))return;
+    tot.payout+=t.payout;tot.taxable+=t.taxable;tot.tax+=t.tax;tot.net+=t.net;
+    if(t.band!==lastBand){
+      html+='<tr><td colspan="6" style="background:var(--info-bg);color:var(--info-text);font-size:11px;font-weight:800;padding:6px 8px;line-height:1.55">'
+        +'▸ '+t.band+' 구간 시작 ('+d.year+'년 · '+d.age+'세)<br><span style="font-weight:500">'+t.reason+'</span></td></tr>';
+      lastBand=t.band;
+    }
+    html+='<tr>'
+      +'<td>'+d.year+'</td><td>'+d.age+'</td>'
+      +'<td style="text-align:right">'+fmt(t.payout/10000)+'</td>'
+      +'<td style="text-align:right">'+fmt(t.taxable/10000)+'</td>'
+      +'<td style="text-align:right;color:#c0392b">'+(t.rate*100).toFixed(1)+'% / '+fmt(t.tax/10000)+'</td>'
+      +'<td style="text-align:right;font-weight:700">'+fmt(t.net/10000)+'</td></tr>';
+  });
+  var body='<table class="dt" style="width:100%"><thead><tr>'
+    +'<th>연도</th><th>나이</th><th style="text-align:right">수령액</th><th style="text-align:right">과세대상</th><th style="text-align:right">세율/세액</th><th style="text-align:right">세후</th>'
+    +'</tr></thead><tbody>'+html
+    +'<tr style="background:var(--bg3)"><td colspan="2" style="font-weight:800">합계</td>'
+    +'<td style="text-align:right;font-weight:800">'+fmt(tot.payout/10000)+'</td>'
+    +'<td style="text-align:right;font-weight:800">'+fmt(tot.taxable/10000)+'</td>'
+    +'<td style="text-align:right;font-weight:800;color:#c0392b">'+fmt(tot.tax/10000)+'</td>'
+    +'<td style="text-align:right;font-weight:800">'+fmt(tot.net/10000)+'</td></tr>'
+    +'</tbody></table><div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6">단위: 만원 · 과세대상은 세액공제 상품의 경우 과세비율이 반영된 금액입니다.</div>';
+  document.getElementById('taxDrawerBody').innerHTML=body;
+  var dr=document.getElementById('taxDrawer');
+  dr.style.display='flex'; document.body.style.overflow='hidden';
+}
+function closeTaxDrawer(){
+  var dr=document.getElementById('taxDrawer');
+  if(dr)dr.style.display='none';
+  document.body.style.overflow='';
+}
+
 function runSim(doScroll){
   const curYear=v('curYear'),curAge=v('curAge'),targetMon=v('targetMon')*10000;
   const inflRate=v('inflRate')/100,taxLimit=v('taxLimit');
@@ -1441,6 +1692,7 @@ function runSim(doScroll){
       const d=prodData[pi][yi];
       return afterTax(d.payout,products[pi].tax,taxLimit*10000,taxR,compTaxRate,products[pi].taxedRatio??100,sepRate,overLimit);
     });
+    const taxDetail=products.map((p,pi)=>calcTaxDetail(prodData[pi][yi].payout,p,{taxR,age,compTaxRate,sepRate,overLimit,taxLimit}));
     const total=perProd.reduce((s,x)=>s+x,0);
     const totalSplit=perProd.reduce((s,x,pi)=>s+(products[pi].type==='분할'?x:0),0);
     const totalLifetime=perProd.reduce((s,x,pi)=>s+(products[pi].type==='종신'?x:0),0);
@@ -1465,7 +1717,7 @@ function runSim(doScroll){
       }
     });
     const totalTax=taxByType.lowRate+taxByType.separated+taxByType.comprehensive;
-    return {year:y,age,total,totalSplit,totalLifetime,totalTaxLimitSubject,overLimit,taxByType,totalTax,perProd,bal:products.map((_,pi)=>prodData[pi][yi].bal),target:targetMon*12*inflFactor};
+    return {year:y,age,total,totalSplit,totalLifetime,totalTaxLimitSubject,overLimit,taxByType,totalTax,perProd,taxDetail,bal:products.map((_,pi)=>prodData[pi][yi].bal),target:targetMon*12*inflFactor};
   });
 
   lastSim=sim;
@@ -1841,6 +2093,7 @@ function runSim(doScroll){
   document.getElementById('detailTable').innerHTML=hdr+'<tbody>'+rows+'</tbody>';
 
   renderAnalysis(sim);
+  try{renderTaxDeep(sim);renderTaxSave();}catch(e){console.warn('tax module',e);}
   syncWhatIf();
   if(doScroll){document.getElementById('resultSection').scrollIntoView({behavior:'smooth',block:'start'});}
 }
