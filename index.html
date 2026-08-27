@@ -460,8 +460,8 @@ details.guide-box .guide-body{padding:0 14px 13px}
   <p style="margin:16px 0 0;color:#8a8a8a;font-size:14px;font-weight:500;line-height:1.55;text-align:center;padding:0 28px;">브라우저에서 <b style="color:#0A5BEA;font-weight:700">설치</b>하면 앱처럼 사용할 수 있어요</p>
   </div>
   <div style="position:absolute;bottom:26px;left:0;right:0;text-align:center;">
-    <div id="spNote" style="color:#0A5BEA;font-size:12px;font-weight:700;line-height:1.55;padding:0 28px;margin-bottom:8px;">✨ V4.2 업데이트<br><span style="color:#8a8a8a;font-weight:600;">상품별 세금 상세보기 &amp; 절세 진단<br>(구간별 부과 로직 · 절세방법 자동 탐색)</span></div>
-    <div style="color:#888;font-size:14px;font-weight:600;">v4.2</div>
+    <div id="spNote" style="color:#0A5BEA;font-size:12px;font-weight:700;line-height:1.55;padding:0 28px;margin-bottom:8px;">✨ V4.3 업데이트<br><span style="color:#8a8a8a;font-weight:600;">상담사 선택 UI &amp; 말투 설정<br>(PC 상담사 바로 선택 · 말투 4종)</span></div>
+    <div style="color:#888;font-size:14px;font-weight:600;">v4.3</div>
   </div>
 </div>
 <script>
@@ -583,7 +583,7 @@ function toggleHistory(){
 
 <div class="page-header" style="gap:10px">
   <i class="ti ti-chart-line" style="font-size:22px;color:#378ADD"></i>
-  <span class="header-badge">V4.2</span>
+  <span class="header-badge">V4.3</span>
   <button type="button" id="navMenuBtn" onclick="toggleNavMenu()" aria-label="메뉴 열기" aria-haspopup="true" aria-expanded="false">
     <i class="ti ti-menu-2" style="font-size:20px"></i>
   </button>
@@ -666,12 +666,21 @@ window.addEventListener('resize',closeNavMenu);
 
 <div class="sec-hd"><span class="sec-no c2">02</span><div class="sec-tw"><span class="sec-eyebrow">Chat Input</span><span class="sec-title">대화형으로 입력하기</span></div><div class="sec-line"></div></div>
 <div class="wiz-cta">
-  <div class="wiz-cta-txt">
-    <strong style="line-height:1.5">아래 입력창에 본인 기본정보 및 재무정보를 입력해보세요.</strong>
-    <span style="line-height:1.5">독립된 오프라인 방식이라 정보는 저장되지 않아요.</span>
-    <span style="line-height:1.5;margin-top:7px">입력이 복잡해서 어려우면 네 명의 상담사 중 한 명을 골라 대화해 보세요. 대화 내용이 자동 입력됩니다.</span>
+  <div class="wiz-cta-head">
+    <div class="wiz-cta-txt">
+      <strong style="line-height:1.5">아래 입력창에 본인 기본정보 및 재무정보를 입력해보세요.</strong>
+      <span style="line-height:1.5">독립된 오프라인 방식이라 정보는 저장되지 않아요.</span>
+      <span style="line-height:1.5;margin-top:7px">입력이 복잡해서 어려우면 네 명의 상담사 중 한 명을 골라 대화해 보세요. 대화 내용이 자동 입력됩니다.</span>
+    </div>
+    <button type="button" onclick="Wiz.open()" class="wiz-launch">💬 대화형으로 입력</button>
   </div>
-  <button type="button" onclick="Wiz.open()" class="wiz-launch">💬 대화형으로 입력</button>
+
+  <div class="wiz-tone-row">
+    <span class="wiz-tone-lb">상담사 말투</span>
+    <div class="wiz-tone-seg" id="tonePickerMain"></div>
+  </div>
+
+  <div class="wiz-personas" id="personaPickerMain"></div>
 </div>
 
 
@@ -895,11 +904,14 @@ window.addEventListener('resize',closeNavMenu);
 
 <div class="footer">
   <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:0.5px solid var(--border)">
-    <strong style="color:var(--text2)">V4.2 업데이트</strong>&ensp;
-    🌱 상품별 세금 상세보기 &amp; 절세 진단 추가 (투자항목마다 연도·구간별로 어떤 세율이 왜 적용되는지 표시 · 개시연도/수령액 조정 시나리오를 실제 재계산해 절세액 산출 후 바로 적용)
+    <strong style="color:var(--text2)">V4.3 업데이트</strong>&ensp;
+    👥 상담사 선택 UI 개선 &amp; 말투 설정 추가 (PC에서는 대화형 카드에 상담사 4명을 바로 노출해 클릭 즉시 상담 시작 · 모바일·PC 공통으로 말투 4종 선택 — 캐릭터 기본/정중/신랄/친근)
     <br>
     <a href="javascript:void(0)" id="histToggle" onclick="toggleHistory()" style="display:inline-block;margin-top:6px;color:var(--text3);text-decoration:none;font-weight:600;font-size:11px">▾ 지난 업데이트 이력 보기</a>
     <div id="histOld" style="display:none;margin-top:6px">
+    <strong style="color:var(--text2)">V4.2 업데이트</strong>&ensp;
+    🌱 상품별 세금 상세보기 &amp; 절세 진단 (구간별 부과 로직 · 절세방법 자동 탐색)
+    <br>
     <strong style="color:var(--text2)">V4.1 업데이트</strong>&ensp;
     💰 세금로직 수정 (사적연금 연 1,500만원 초과 시 16.5% 분리과세 자동 반영 · 국민연금 조기/연기수령 계수 자동 적용 · 노후자금 소진 시점 표시)
     <br>
@@ -961,7 +973,7 @@ window.addEventListener('resize',closeNavMenu);
     ↕ 항목 순서 변경&ensp;·&ensp;📋 행 복제(Ditto)
     </div>
   </div>
-  노후연금 시뮬레이터 V4.1 &nbsp;·&nbsp; 완전 독립 오프라인 버전 &nbsp;·&nbsp; 2026.07<br>
+  노후연금 시뮬레이터 V4.3 &nbsp;·&nbsp; 완전 독립 오프라인 버전 &nbsp;·&nbsp; 2026.07<br>
   <a href="https://www.nohuplan.com" style="color:#0A5BEA;text-decoration:none;font-weight:600">https://www.nohuplan.com</a><br>
   본 시뮬레이터는 참고용이며, 실제 세금·수익률·법령은 달라질 수 있습니다. 투자 및 연금 계획은 전문가와 상담하시기 바랍니다.
 </div>
@@ -3083,7 +3095,27 @@ function closeKookminPage(){
 <!-- ===== 대화형 입력 도우미 ===== -->
 <style>
 .wiz-launch{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:8px 14px;border:1px solid #FEE500;border-radius:10px;background:#FEE500;color:#191919;cursor:pointer}
-.wiz-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;background:var(--info-bg);border:.5px solid var(--info-border);border-radius:12px;padding:13px 16px;margin-bottom:14px}
+.wiz-cta{display:flex;flex-direction:column;align-items:stretch;gap:12px;background:var(--info-bg);border:.5px solid var(--info-border);border-radius:12px;padding:13px 16px;margin-bottom:14px}
+.wiz-cta-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between}
+.wiz-tone-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding-top:11px;border-top:.5px dashed var(--info-border)}
+.wiz-tone-lb{font-size:12px;font-weight:800;color:var(--text2);flex-shrink:0}
+.wiz-tone-seg{display:flex;gap:6px;flex-wrap:wrap}
+.wiz-tone-seg button{font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--border);background:var(--bg);color:var(--text2);white-space:nowrap}
+.wiz-tone-seg button[aria-pressed="true"]{border-color:#378ADD;background:#378ADD;color:#fff}
+.wiz-personas{display:none;grid-template-columns:repeat(4,1fr);gap:10px}
+.wiz-pcard{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px 12px;cursor:pointer;
+  border:1px solid var(--info-border);border-radius:14px;background:var(--bg);color:var(--text);text-align:center;
+  transition:border-color .15s,box-shadow .15s,transform .15s}
+.wiz-pcard:hover{border-color:#378ADD;box-shadow:0 6px 18px rgba(55,138,221,.18);transform:translateY(-2px)}
+.wiz-pcard .pav{width:58px;height:58px;border-radius:50%;border:2px solid #378ADD;background-size:cover;background-position:center;
+  display:inline-flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
+.wiz-pcard .pnm{font-size:13px;font-weight:800;line-height:1.3}
+.wiz-pcard .psb{font-size:10.5px;font-weight:700;color:#378ADD;line-height:1.3}
+.wiz-pcard .pds{font-size:10.5px;color:var(--text3);line-height:1.5;white-space:pre-line}
+.wiz-pcard .pgo{margin-top:3px;font-size:11.5px;font-weight:700;color:#fff;background:#378ADD;padding:4px 16px;border-radius:999px}
+body.pc-view .wiz-personas{display:grid}
+body.pc-view .wiz-cta-head .wiz-launch{display:none}
 .wiz-cta-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
 .wiz-cta-txt strong{font-size:14px;color:var(--text);font-weight:600}
 .wiz-cta-txt span{font-size:12.5px;color:var(--text2)}
@@ -3427,8 +3459,65 @@ function openCase(key){ExampleGuide.open(key);}
       greet:'반갑습니다. 경제학과 최민준입니다. 연금 제도의 원리를 짚어가며 차근차근 진행하겠습니다. 공적연금(국민연금)과 사적연금으로 나누어 하나씩 여쭙겠습니다.'}
   };
   var curPersona=PERSONAS.female;
+
+  /* ===== 말투 프리셋: 페르소나와 별개로 문장 어투를 지정 ===== */
+  var TONES=[
+    {key:'auto',   icon:'🎭', label:'캐릭터 기본', desc:'상담사별 고유 말투'},
+    {key:'polite', icon:'🎩', label:'정중',       desc:'격식 있는 합쇼체'},
+    {key:'blunt',  icon:'🔥', label:'신랄',       desc:'군더더기 없이 직설적'},
+    {key:'friendly',icon:'😊',label:'친근',       desc:'편하고 다정한 말투'}
+  ];
+  var curTone='auto';
+  function pairs(t,list){for(var i=0;i<list.length;i++){t=t.split(list[i][0]).join(list[i][1]);}return t;}
+  var T_POLITE=[['여쭤볼게요','여쭙겠습니다'],['해볼게요','해보겠습니다'],['볼게요','보겠습니다'],
+    ['드릴게요','드리겠습니다'],['시작할게요','시작하겠습니다'],['할게요','하겠습니다'],
+    ['드려요','드립니다'],['이에요','입니다'],['예요','입니다'],
+    ['눌러주세요','눌러주십시오'],['눌러 주세요','눌러주십시오'],['해주세요','해주십시오'],['해 주세요','해 주십시오'],['주세요','주십시오'],
+    ['괜찮아요','괜찮습니다'],['돼요','됩니다'],['해요','합니다'],['있어요','있습니다'],['없어요','없습니다'],['좋아요','좋습니다'],
+    ['이신가요?','이십니까?'],['실 예정인가요?','실 예정입니까?'],['인가요?','입니까?'],['있나요?','있습니까?'],
+    ['했나요?','했습니까?'],['되셨나요?','되셨습니까?'],['셨나요?','셨습니까?'],['신가요?','십니까?']];
+  var T_BLUNT=[['여쭤볼게요','묻겠습니다'],['보여드릴게요','보여드리겠습니다'],['드릴게요','드리겠습니다'],
+    ['해볼게요','하겠습니다'],['볼게요','하겠습니다'],
+    ['시작할게요','시작합니다'],['할게요','합니다'],['드려요','드립니다'],
+    ['말씀해 주세요','말하세요'],['알려 주세요','말하세요'],['알려주세요','말하세요'],
+    ['입력해 주세요','입력하세요'],['입력해주세요','입력하세요'],
+    ['선택해 주세요','선택하세요'],['선택해주세요','선택하세요'],
+    ['눌러 주세요','누르세요'],['눌러주세요','누르세요'],['해 주세요','하세요'],['해주세요','하세요'],
+    ['이신가요?','입니까?'],['실 예정인가요?','실 예정입니까?'],['인가요?','입니까?'],['있나요?','있습니까?'],
+    ['했나요?','했습니까?'],['되셨나요?','되셨습니까?'],['셨나요?','셨습니까?'],['신가요?','십니까?'],
+    ['괜찮아요','문제없습니다'],['좋아요','좋습니다'],['돼요','됩니다'],['해요','합니다'],
+    ['있어요','있습니다'],['없어요','없습니다'],['이에요','입니다'],['예요','입니다'],
+    ['요!','습니다.'],['니다!','니다.'],['?!','?'],['~!','.'],['~','']];
+  var T_FRIENDLY=[['여쭤볼게요','물어볼게요'],['드릴게요','줄게요'],
+    ['말씀해 주세요','알려줘요'],['입력해 주세요','입력해 줘요'],['입력해주세요','입력해 줘요'],
+    ['눌러 주세요','눌러 줘요'],['눌러주세요','눌러 줘요'],['해 주세요','해 줘요'],['해주세요','해 줘요'],
+    ['주십시오','줘요'],['하십시오','하세요'],
+    ['이신가요?','이세요?'],['실 예정인가요?','실 예정이세요?'],['인가요?','예요?'],['있나요?','있어요?'],
+    ['했나요?','했어요?'],['되셨나요?','됐어요?'],
+    ['됩니다','돼요'],['합니다','해요'],['입니다','이에요'],['좋습니다','좋아요']];
+  function stripEmoji(t){try{return t.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{FE0F}]/gu,'').replace(/ {2,}/g,' ').trim();}catch(e){return t;}}
+  function toneText(t){
+    if(curTone==='polite')return pairs(t,T_POLITE);
+    if(curTone==='friendly')return pairs(t,T_FRIENDLY);
+    if(curTone==='blunt'){
+      t=pairs(t,T_BLUNT);
+      t=t.replace(/^(먼저|자|그럼|이제)[,、]\s*/,'').split('혹시 ').join('').split('한번 ').join('').split('차근차근 ').join('').split('천천히 ').join('');
+      t=t.replace(/!+/g,'.').replace(/\.{2,}/g,'.');
+      return stripEmoji(t);
+    }
+    return null; /* auto → 페르소나 기본 */
+  }
+  window.__wizSetTone=function(k){curTone=k;};
+  window.__wizGetTone=function(){return curTone;};
+  window.__wizTones=function(){return TONES;};
+
   /* 페르소나별 말투 변환: 기본 문장(요체)을 각자의 어투로 */
   function personaText(t){
+    var forced=toneText(t);
+    if(forced!==null)return forced;
+    return personaBase(t);
+  }
+  function personaBase(t){
     var k=curPersona.key;
     if(k==='male'){
       return t
@@ -3485,6 +3574,26 @@ function openCase(key){ExampleGuide.open(key);}
     sysd.style.cssText='text-align:center;font-size:12.5px;color:var(--text3);margin:4px 0 2px';
     sysd.textContent='상담을 진행할 전문가를 선택해 주세요';
     body().appendChild(sysd);
+    /* 말투 선택 */
+    var tw=document.createElement('div');
+    tw.style.cssText='display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:2px 0 6px';
+    TONES.forEach(function(tn){
+      var tb=document.createElement('button');tb.type='button';tb.dataset.tone=tn.key;
+      tb.textContent=tn.icon+' '+tn.label;
+      tb.style.cssText='font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;cursor:pointer;border:1px solid '+(curTone===tn.key?'#378ADD':'var(--border)')+';background:'+(curTone===tn.key?'#378ADD':'var(--bg3)')+';color:'+(curTone===tn.key?'#fff':'var(--text2)');
+      tb.onclick=function(){
+        curTone=tn.key;
+        Array.prototype.forEach.call(tw.children,function(c){
+          var on=c.dataset.tone===tn.key;
+          c.style.border='1px solid '+(on?'#378ADD':'var(--border)');
+          c.style.background=on?'#378ADD':'var(--bg3)';
+          c.style.color=on?'#fff':'var(--text2)';
+        });
+        if(window.__syncTonePickers)window.__syncTonePickers(tn.key);
+      };
+      tw.appendChild(tb);
+    });
+    body().appendChild(tw);
     /* 페르소나 카드: 대화 영역 안 2x2 그리드 */
     var wrap=document.createElement('div');
     wrap.id='personaCards';
@@ -3517,7 +3626,7 @@ function openCase(key){ExampleGuide.open(key);}
     applyHeader();
     usr(p.name+'님과 상담할게요');
     clearFoot();
-    var g=p.greet;
+    var g=personaText(p.greet);
     var b2=body();var row=document.createElement('div');row.className='wiz-botrow';
     var av=document.createElement('span');av.className='wiz-avatar wiz-av';decorateAvatar(av,30);
     var d=document.createElement('div');d.className='wiz-msg wiz-bot';d.textContent=g;
@@ -3868,7 +3977,72 @@ function openCase(key){ExampleGuide.open(key);}
     window.visualViewport.addEventListener('resize',fitViewport);
     window.visualViewport.addEventListener('scroll',fitViewport);
   }
+  function startWith(key){
+    reset();
+    body().innerHTML='';clearFoot();
+    var p=PERSONAS[key]||PERSONAS.female;
+    curPersona=p;
+    applyHeader();
+    var b2=body();var row=document.createElement('div');row.className='wiz-botrow';
+    var av=document.createElement('span');av.className='wiz-avatar wiz-av';decorateAvatar(av,30);
+    var d=document.createElement('div');d.className='wiz-msg wiz-bot';d.textContent=personaText(p.greet);
+    row.appendChild(av);row.appendChild(d);b2.appendChild(row);scroll();
+    setTimeout(qAge,400);
+  }
+  function buildPickers(){
+    /* 말투 세그먼트 (모바일·PC 공통) */
+    var seg=document.getElementById('tonePickerMain');
+    if(seg&&!seg.dataset.built){
+      seg.dataset.built='1';
+      TONES.forEach(function(tn){
+        var b=document.createElement('button');b.type='button';b.dataset.tone=tn.key;
+        b.title=tn.desc;b.textContent=tn.icon+' '+tn.label;
+        b.setAttribute('aria-pressed',curTone===tn.key?'true':'false');
+        b.onclick=function(){curTone=tn.key;syncTone(tn.key);};
+        seg.appendChild(b);
+      });
+    }
+    /* 상담사 카드 (PC 노출) */
+    var grid=document.getElementById('personaPickerMain');
+    if(grid&&!grid.dataset.built){
+      grid.dataset.built='1';
+      [PERSONAS.female,PERSONAS.male,PERSONAS.ytb,PERSONAS.prof].forEach(function(p){
+        var b=document.createElement('button');b.type='button';b.className='wiz-pcard';
+        var av=document.createElement('span');av.className='wiz-avatar pav';
+        var src=(p.key==='male')?maleImgSrc():(p.img||null);
+        if(src){av.style.backgroundImage='url("'+src+'")';}
+        else if(p.emoji){av.style.backgroundImage='none';av.style.background='var(--bg4)';av.textContent=p.emoji;}
+        var nm=document.createElement('span');nm.className='pnm';nm.textContent=p.name;
+        var sb=document.createElement('span');sb.className='psb';sb.textContent=p.sub;
+        var ds=document.createElement('span');ds.className='pds';ds.textContent=p.desc;
+        var go=document.createElement('span');go.className='pgo';go.textContent='이 상담사와 시작';
+        b.appendChild(av);b.appendChild(nm);b.appendChild(sb);b.appendChild(ds);b.appendChild(go);
+        b.onclick=function(){window.Wiz.openWith(p.key);};
+        grid.appendChild(b);
+      });
+    }
+  }
+  function syncTone(k){
+    var seg=document.getElementById('tonePickerMain');
+    if(seg)Array.prototype.forEach.call(seg.children,function(c){
+      c.setAttribute('aria-pressed',c.dataset.tone===k?'true':'false');
+    });
+  }
+  window.__syncTonePickers=syncTone;
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',buildPickers);
+  else buildPickers();
+
   window.Wiz={
+    personas:function(){
+      return [PERSONAS.female,PERSONAS.male,PERSONAS.ytb,PERSONAS.prof].map(function(p){
+        return {key:p.key,name:p.name,sub:p.sub,desc:p.desc,
+                img:(p.key==='male'?maleImgSrc():(p.img||null)),emoji:p.emoji||null};
+      });
+    },
+    tones:function(){return TONES;},
+    getTone:function(){return curTone;},
+    setTone:function(k){curTone=k;},
+    openWith:function(key){var o=document.getElementById('wizOverlay');o.classList.add('open');document.body.style.overflow='hidden';startWith(key);setTimeout(fitViewport,60);},
     open:function(){var o=document.getElementById('wizOverlay');o.classList.add('open');document.body.style.overflow='hidden';start();setTimeout(fitViewport,60);},
     close:function(){var o=document.getElementById('wizOverlay');o.classList.remove('open');o.style.height='';o.style.top='';o.style.bottom='';document.body.style.overflow='';}
   };
