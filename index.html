@@ -3103,17 +3103,20 @@ function closeKookminPage(){
 .wiz-tone-seg button{font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;cursor:pointer;
   border:1px solid var(--border);background:var(--bg);color:var(--text2);white-space:nowrap}
 .wiz-tone-seg button[aria-pressed="true"]{border-color:#378ADD;background:#378ADD;color:#fff}
-.wiz-personas{display:none;grid-template-columns:repeat(4,1fr);gap:10px}
-.wiz-pcard{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px 12px;cursor:pointer;
+.wiz-cta > *{flex-shrink:0}
+.wiz-personas{display:none;grid-template-columns:repeat(auto-fit,minmax(122px,1fr));gap:10px;flex-shrink:0;width:100%}
+.wiz-pcard{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;
+  padding:14px 8px 12px;cursor:pointer;height:auto;min-width:0;min-height:0;box-sizing:border-box;word-break:keep-all;overflow-wrap:break-word;
   border:1px solid var(--info-border);border-radius:14px;background:var(--bg);color:var(--text);text-align:center;
   transition:border-color .15s,box-shadow .15s,transform .15s}
+.wiz-pcard > *{flex-shrink:0}
 .wiz-pcard:hover{border-color:#378ADD;box-shadow:0 6px 18px rgba(55,138,221,.18);transform:translateY(-2px)}
 .wiz-pcard .pav{width:58px;height:58px;border-radius:50%;border:2px solid #378ADD;background-size:cover;background-position:center;
   display:inline-flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
 .wiz-pcard .pnm{font-size:13px;font-weight:800;line-height:1.3}
 .wiz-pcard .psb{font-size:10.5px;font-weight:700;color:#378ADD;line-height:1.3}
 .wiz-pcard .pds{font-size:10.5px;color:var(--text3);line-height:1.5;white-space:pre-line}
-.wiz-pcard .pgo{margin-top:3px;font-size:11.5px;font-weight:700;color:#fff;background:#378ADD;padding:4px 16px;border-radius:999px}
+.wiz-pcard .pgo{margin-top:3px;font-size:11.5px;font-weight:700;color:#fff;background:#378ADD;padding:4px 14px;border-radius:999px;white-space:nowrap}
 body.pc-view .wiz-personas{display:grid}
 body.pc-view .wiz-cta-head .wiz-launch{display:none}
 .wiz-cta-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -4015,7 +4018,7 @@ function openCase(key){ExampleGuide.open(key);}
         var nm=document.createElement('span');nm.className='pnm';nm.textContent=p.name;
         var sb=document.createElement('span');sb.className='psb';sb.textContent=p.sub;
         var ds=document.createElement('span');ds.className='pds';ds.textContent=p.desc;
-        var go=document.createElement('span');go.className='pgo';go.textContent='이 상담사와 시작';
+        var go=document.createElement('span');go.className='pgo';go.textContent='상담 시작';
         b.appendChild(av);b.appendChild(nm);b.appendChild(sb);b.appendChild(ds);b.appendChild(go);
         b.onclick=function(){window.Wiz.openWith(p.key);};
         grid.appendChild(b);
